@@ -13,10 +13,12 @@ namespace TinyNvidiaUpdateChecker
 {
     class MainConsole
     {
-        private readonly static string UpdateURI = "";
+        private readonly static string UpdateURI = "https://raw.githubusercontent.com/ElPumpo/TinyNvidiaUpdateChecker/master/TinyNvidiaUpdateChecker/version";
 
         private static int OfflineVer = 1000;
+        private static string sOnlineVer;
         private static int OnlineVer;
+        private static bool ErrorExists = false;
 
         //GPU Drivers
         private static string OfflineGPUDriverVersion; //359.00
@@ -42,7 +44,7 @@ namespace TinyNvidiaUpdateChecker
             string[] parms = Environment.GetCommandLineArgs();
             if (parms.Length > 1)
             {
-                if (Array.IndexOf(parms, "-hidden") != -1)
+                if (Array.IndexOf(parms, "-quiet") != -1)
                 {
                     FreeConsole();
                     showC = 0;
@@ -56,7 +58,7 @@ namespace TinyNvidiaUpdateChecker
             Console.Title = "TinyNvidiaUpdateChecker";
             Console.WriteLine("TinyNvidiaUpdateChecker launching..");
 
-
+            CheckForUpdates();
             CheckLocalVersion(); //what's the local version?
             CheckWinVer(); //what's WinVer?
             CheckOnlineVersion();
@@ -73,24 +75,58 @@ namespace TinyNvidiaUpdateChecker
 
         private static void CheckForUpdates()
         {
+            Console.WriteLine("-----UPDATE CHECKER-----");
+            Console.WriteLine("Checking for Updates..");
             try
             {
-                using (var request = new WebClient())
-                {
-                    //Download the data
-                    var requestData = request.DownloadData(UpdateURI);
+                WebClient client = new WebClient();
+                Stream stream = client.OpenRead(UpdateURI);
+                StreamReader reader = new StreamReader(stream);
+                sOnlineVer = reader.ReadToEnd();
+                reader.Close();
 
-                    //Return the data by encoding it back to text!
-                    return Encoding.ASCII.GetString(requestData);
-                }
+                OnlineVer = Convert.ToInt32(sOnlineVer);
             }
+
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message.ToString());
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Could not search for updates");
+                ErrorExists = true;
+                sOnlineVer = null;
             }
 
-            
+            //IF start
+            if (ErrorExists == false)
+            {
+                if (OnlineVer == OfflineVer)
+                {
+                    Console.WriteLine("Client is up to date");
 
+
+                }
+                else
+                {
+                    if (OfflineVer > OnlineVer)
+                    {
+                        Console.WriteLine("OfflineVer is greater than OnlineVer!");
+                    }
+
+                    if (OnlineVer < OfflineVer)
+                    {
+                        Console.WriteLine("Client is up to date");
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Update available");
+                    }
+                }
+                //IF end
+            }
+            Console.WriteLine("OnlineVer: " + OnlineVer);
+            Console.WriteLine("OfflineVer: " + OfflineVer);
+            Console.WriteLine("----UPDATE CHECKER END--");
         }
         private static void CheckLocalVersion()
         {
@@ -135,7 +171,7 @@ namespace TinyNvidiaUpdateChecker
         }
         private static void CheckWinVer()
         {
-            string WinVerOriginal = Environment.OSVersion.ToString();
+            string WinVerOriginal = Environment.OSVersion.Version.ToString();
 
             //Windows 10
             if (WinVerOriginal.Contains("10"))
