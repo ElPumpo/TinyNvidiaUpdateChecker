@@ -98,6 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GPUversion" />
+    <None Include="GPUlink" />
     <Content Include="nvidia.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
