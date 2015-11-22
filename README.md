@@ -1,7 +1,7 @@
 # TinyNvidiaUpdateChecker
 
 #About
-Tiny application which checks for NVIDA GPU drivers at each startup, developed in C# for Windows.
+Tiny application which checks for NVIDIA GPU drivers at each startup, developed in C# for Windows.
 
 #Command line arguments:
 `-quiet`: no ui.
