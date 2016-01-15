@@ -11,4 +11,18 @@ Tiny application which checks for NVIDIA GPU drivers at each startup, developed 
 + Stable internet connection or the application will not run.
 
 #License
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons-licens" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">BlockWin10Update</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://hif.ddns.net/project/hif-client" property="cc:attributionName" rel="cc:attributionURL">ElPumpo</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 license</a>.
+TinyNvidiaUpdateChecker - tiny application which checks for GPU drivers daily.
+Copyright (C) 2016 Hawaii_Beach
+
+This program Is free software: you can redistribute it And/Or modify
+it under the terms Of the GNU General Public License As published by
+the Free Software Foundation, either version 3 Of the License, Or
+(at your option) any later version.
+
+This program Is distributed In the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty Of
+MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License For more details.
+
+You should have received a copy Of the GNU General Public License
+along with this program.  If Not, see <http://www.gnu.org/licenses/>.
