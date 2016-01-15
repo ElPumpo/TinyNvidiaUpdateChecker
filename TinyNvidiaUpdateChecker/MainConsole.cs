@@ -1,15 +1,31 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace TinyNvidiaUpdateChecker
-{
-    class MainConsole
-    {
+namespace TinyNvidiaUpdateChecker {
+
+    /*
+    TinyNvidiaUpdateChecker - tiny application which checks for GPU drivers daily.
+    Copyright (C) 2016 Hawaii_Beach
+
+    This program Is free software: you can redistribute it And/Or modify
+    it under the terms Of the GNU General Public License As published by
+    the Free Software Foundation, either version 3 Of the License, Or
+    (at your option) any later version.
+
+    This program Is distributed In the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty Of
+    MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License For more details.
+
+    You should have received a copy Of the GNU General Public License
+    along with this program.  If Not, see <http://www.gnu.org/licenses/>.
+    */
+
+    class MainConsole {
 
         //Client updater stuff
         private readonly static string UpdateURI = "https://raw.githubusercontent.com/ElPumpo/TinyNvidiaUpdateChecker/master/TinyNvidiaUpdateChecker/version";
@@ -19,9 +35,10 @@ namespace TinyNvidiaUpdateChecker
         private static bool ErrorExists = false;
 
         //GPU Drivers
-        private static string OfflineGPUDriverVersion; //359.00
+        private static string OfflineGPUDriverVersion;
         private static string OnlineGPUDriverVersion;
-        private readonly static string GPUversionlink = "";
+        private readonly static string GPUversionlink = "https://raw.githubusercontent.com/ElPumpo/TinyNvidiaUpdateChecker/master/TinyNvidiaUpdateChecker/GPUlink";
+        private static string GPULinks;
 
 
         private static string WinVer;
@@ -29,7 +46,7 @@ namespace TinyNvidiaUpdateChecker
         static iniFile ini = new iniFile(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\TinyNvidiaUpdateChecker\" + "config.ini");
 
         static int showC = 1;
-        
+
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AllocConsole();
@@ -60,7 +77,11 @@ namespace TinyNvidiaUpdateChecker
             CheckForUpdates(); //Updates??
             CheckLocalVersion(); //what's the local version?
             CheckWinVer(); //what's WinVer?
-            CheckOnlineVersion();
+            //CheckOnlineVersion();
+            CheckOfflineVersion();
+
+            Console.WriteLine("OfflineGPUDriverVersion: " + OfflineGPUDriverVersion);
+            Console.WriteLine("OnlineGPUDriverVersion: " + OnlineGPUDriverVersion);
 
 
             //end
@@ -138,7 +159,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("CRITICAL: Navigate to" + PathToConfig + "and open Config.ini, ");
                 Directory.CreateDirectory(PathToConfig);
                 ini.IniWriteValue("Configuration", "CheckForUpdates", "1");
-                ini.IniWriteValue("Configuration", "LocalVersion", "XXX.XX");
+                //ini.IniWriteValue("Configuration", "LocalVersion", "XXX.XX");
                 Process.Start("file:///" + PathToConfig + "config.ini");
             }
 
@@ -146,9 +167,11 @@ namespace TinyNvidiaUpdateChecker
             {
                 Console.WriteLine("Creating config file, apparently the folder already exist");
                 ini.IniWriteValue("Configuration", "CheckForUpdates", "1");
-                ini.IniWriteValue("Configuration", "LocalVersion", "XXX.XX");
+                //ini.IniWriteValue("Configuration", "LocalVersion", "XXX.XX");
                 Process.Start("file:///" + PathToConfig + "config.ini");
             }
+
+            /* old code used for GPU detection
 
             OfflineGPUDriverVersion = ini.IniReadValue("Configuration", "LocalVersion");
             if (OfflineGPUDriverVersion == "XXX.XX")
@@ -158,6 +181,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.ReadKey();
                 Application.Exit();
             }
+
             if (OfflineGPUDriverVersion.Length != 6)
             {
                 Console.WriteLine("Invalid length of LocalVersion!");
@@ -166,6 +190,7 @@ namespace TinyNvidiaUpdateChecker
                 Process.Start("file:///" + PathToConfig + "config.ini");
                 Application.Exit();
             }
+            */
 
 
         } //Sets local GPU driver version
@@ -178,39 +203,40 @@ namespace TinyNvidiaUpdateChecker
             if (WinVerOriginal.Contains("10"))
             {
                 WinVer = "10";
- 
+
             }
             //Windows 8.1
             else if (WinVerOriginal.Contains("8.1"))
             {
                 WinVer = "8.1";
 
-                
+
             }
             //Windows 8
             else if (WinVerOriginal.Contains("8"))
             {
                 WinVer = "8";
 
-                
+
             }
             //Windows 7
             else if (WinVerOriginal.Contains("7"))
             {
                 WinVer = "7";
 
-                
+
             }
             //Windows Vista
             else if (WinVerOriginal.Contains("Vista"))
             {
                 WinVer = "Vista";
 
-            }else{
+            }
+            else {
                 WinVer = "Unknown";
                 Console.WriteLine("You're running a non-supported version of Windows; the application will determine itself.");
                 Console.ReadKey();
-                Application.Exit();
+                Environment.Exit(1);
             }
 
             Console.WriteLine("WinVer: " + WinVer);
@@ -219,55 +245,67 @@ namespace TinyNvidiaUpdateChecker
 
         private static void CheckOnlineVersion()
         {
+
+            try
+            {
+                WebClient client = new WebClient();
+                Stream stream = client.OpenRead(GPUversionlink);
+                StreamReader reader = new StreamReader(stream);
+                GPULinks = reader.ReadToEnd();
+                reader.Close();
+                stream.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Could not search for GPU drivers, check your internet connection!");
+                Console.ReadKey();
+                Application.Exit();
+            }
+
             string NVIDIALink;
 
             if (WinVer == "10")
             {
                 if (Environment.Is64BitOperatingSystem == true)
                 {
-                    NVIDIALink = "http://www.nvidia.com/download/driverResults.aspx/95705";
-                }else{
-                    NVIDIALink = "http://www.nvidia.com/download/driverResults.aspx/95687";
+                    Console.WriteLine(GPULinks);
+                    //NVIDIALink = File.ReadLines(GPULinks).Skip(2).First();
                 }
-            }else{
+                else {
+                    NVIDIALink = "10.x86";
+                }
+            }
+            else {
                 //Windows 8, 8.1, 7 and Vista share the same graphics driver
                 if (Environment.Is64BitOperatingSystem == true)
                 {
-                    NVIDIALink = "http://www.nvidia.com/download/driverResults.aspx/95597";
+                    NVIDIALink = "other.amd64";
                 }
                 else
                 {
-                    NVIDIALink = "http://www.nvidia.com/download/driverResults.aspx/95579";
+                    NVIDIALink = "other.x86";
                 }
             }
-            try
-            {
-                WebClient client = new WebClient();
-                Stream stream = client.OpenRead(GPUversionlink);
-                StreamReader reader = new StreamReader(stream);
-                string GPUlinks = reader.ReadToEnd();
-                reader.Close();
-                stream.Close();
 
-                string line = File.ReadLines(GPUlinks).Skip(14).Take(1).First();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("Could not search for GPU drivers!");
-                OnlineGPUDriverVersion = "000.00";
-            }
+            //Console.WriteLine(NVIDIALink);
 
             //Debug
-            Console.WriteLine("OfflineGPUDriverVersion: " + OfflineGPUDriverVersion);
-            Console.WriteLine("OnlineGPUDriverVersion: " + OnlineGPUDriverVersion);
+
 
 
 
 
 
         } //Gets latest GPU driver version
-    }
 
+
+        private static void CheckOfflineVersion()
+        {
+            
+        }
+
+    }
 }
 
