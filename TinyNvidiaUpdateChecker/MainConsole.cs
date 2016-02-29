@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -72,7 +73,7 @@ namespace TinyNvidiaUpdateChecker {
                 AllocConsole();
             }
             Console.Title = "TinyNvidiaUpdateChecker";
-            Console.WriteLine("TinyNvidiaUpdateChecker launching..");
+            Console.WriteLine("TinyNvidiaUpdateChecker launching . . .");
 
             CheckForUpdates(); //Updates??
             CheckLocalVersion(); //what's the local version?
@@ -96,7 +97,7 @@ namespace TinyNvidiaUpdateChecker {
         private static void CheckForUpdates()
         {
             Console.WriteLine("-----UPDATE CHECKER-----");
-            Console.WriteLine("Checking for Updates..");
+            Console.WriteLine("Checking for Updates . . .");
             try
             {
                 WebClient client = new WebClient();
@@ -303,7 +304,36 @@ namespace TinyNvidiaUpdateChecker {
 
         private static void CheckOfflineVersion()
         {
+            try
+            {
+                //        protected static string RegPath = @"";
+                using (RegistryKey Key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_Display.Driver"))
+                {
+                    if (Key != null)
+                    {
+                        Object o = Key.GetValue("DisplayVersion");
+                        if (o != null)
+                        {
+                            Console.WriteLine(o.ToString());
+                            OfflineGPUDriverVersion = o.ToString();
+                        }
+                    }
+                    
+                }
+
+                
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Could not find registry key, please insure that you're running an Nvidia GPU.");
+                Console.ReadKey();
+                Environment.Exit(1);
+            }
             
+
+
         }
 
     }
