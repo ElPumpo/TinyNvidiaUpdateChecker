@@ -7,7 +7,7 @@ I know that this application is in its early state but I'm trying really hard to
 Instead of using GeForce Experience you can use this tiny application which will be highly customizable, secure and easy to use.
 
 #Help me out
-The only real issue I currently have is a way to get the latest version available from the NVIDIA servers, if you're interested in helping me out I'd be greatful for any hint.
+The only real issue I currently have is a way to get the latest version available from the NVIDIA servers, if you're interested in helping me out I'd be greatful for anything. There's a seperate issue on this; #1.
 
 #Command line arguments:
 `-quiet`: no ui.
