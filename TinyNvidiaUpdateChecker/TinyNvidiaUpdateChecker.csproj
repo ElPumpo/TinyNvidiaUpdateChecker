@@ -53,7 +53,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>TinyNvidiaUpdateChecker.MainConsole</StartupObject>
+    <StartupObject>TinyNvidiaUpdateChecker.mainConsole</StartupObject>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
