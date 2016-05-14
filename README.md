@@ -13,7 +13,7 @@ The only real issue I currently have is a way to get the latest version availabl
 `-quiet`: no ui.
 
 #Requirements
-+ .NET Framework 4.6 (to be changed)
++ .NET Framework 4
 + Stable internet connection
 
 #License
