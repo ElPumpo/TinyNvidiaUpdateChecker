@@ -95,6 +95,7 @@
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
+    <None Include="LICENSE" />
     <None Include="version" />
   </ItemGroup>
   <ItemGroup>
