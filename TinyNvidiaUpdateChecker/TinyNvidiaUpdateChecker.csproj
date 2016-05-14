@@ -57,7 +57,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationIcon>nvidia.ico</ApplicationIcon>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -99,7 +99,7 @@
     <None Include="version" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="nvidia.ico" />
+    <Content Include="icon.ico" />
     <None Include="CHANGELOG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

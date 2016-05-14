@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Renamed MainConsole.cs to mainConsole.cs.
 - A lot of cleanup.
 - Changes in configuration file; please delete your configuration file after updating.
+- New icon as the old one was a registred trademark by NVIDIA Corporation, thanks to https://github.com/Maddoc42/Android-Material-Icon-Generator.
 
 ### Fixed
 - Windows version detector fixed.
