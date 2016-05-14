@@ -104,7 +104,7 @@ namespace TinyNvidiaUpdateChecker {
             
                 if (iOnlineGPUDriverVersion == iOfflineGPUDriverVersion)
                 {
-                    Console.WriteLine("GPU drivers are up-to-date");
+                    Console.WriteLine("GPU drivers are up-to-date!");
                 }
                 else
                 {
@@ -115,12 +115,12 @@ namespace TinyNvidiaUpdateChecker {
 
                     if (iOnlineGPUDriverVersion < iOfflineGPUDriverVersion)
                     {
-                        Console.WriteLine("GPU drivers are up-to-date");
+                        Console.WriteLine("GPU drivers are up-to-date!");
 
                     }
                     else
                     {
-                        Console.WriteLine("Newer GPU drivers are available");
+                        Console.WriteLine("Newer GPU drivers are available!");
                     }
                 }
             
@@ -131,7 +131,10 @@ namespace TinyNvidiaUpdateChecker {
 
             Console.WriteLine();
             Console.WriteLine("Job done! Press any key to exit.");
+            if(showC == 1)
+            {
             Console.ReadKey();
+            }
             Application.Exit();
 
 
@@ -244,7 +247,10 @@ namespace TinyNvidiaUpdateChecker {
                 winVer = "Unknown";
                 Console.WriteLine("You're running a non-supported version of Windows; the application will determine itself.");
                 Console.WriteLine("OS: " + verOrg);
-                Console.ReadKey();
+                if (showC == 1)
+                {
+                    Console.ReadKey();
+                }
                 Environment.Exit(1);
             }
 
@@ -270,7 +276,10 @@ namespace TinyNvidiaUpdateChecker {
             {
                 Console.WriteLine(ex.ToString());
                 Console.WriteLine("Could not find the required NVIDIA executable.");
-                Console.ReadKey();
+                if (showC == 1)
+                {
+                    Console.ReadKey();
+                }
                 Environment.Exit(1);
             }
         } // gets current NVIDIA GPU driver version

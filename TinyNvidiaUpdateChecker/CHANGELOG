@@ -1,0 +1,19 @@
+﻿# Change Log
+All notable changes to this project will be documented in this file.
+
+## [Unreleased]
+### Added
+- Added GPLv3 message.
+- Added CHANGELOG.
+- Added LICENSE.
+
+### Changed
+- Renamed MainConsole.cs to mainConsole.cs.
+- A lot of cleanup.
+
+### Fixed
+- Windows version detector fixed.
+- Fixed using "-quiet" command line argument where application would not end.
+
+## [0.1.0.0] - 2016-05-14
+Initial public release.
