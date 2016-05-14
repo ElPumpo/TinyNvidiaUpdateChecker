@@ -13,7 +13,7 @@ It has some restrictions, it can only detect local GPU driver version and not ch
 #Help me out
 The only real issue I currently have is a way to get the latest version available from the NVIDIA servers, if you're interested in helping me out I'd be greatful for anything. There's a seperate issue on this; #1.
 
-#Command line arguments:
+#Command line arguments
 `-quiet`: no ui.
 
 #Requirements
