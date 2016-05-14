@@ -34,7 +34,7 @@ namespace TinyNvidiaUpdateChecker {
         private static int OnlineVer;
         private static bool ErrorExists = false;
 
-        // GPU Drivers
+        // GPU driver version related stuff
         private static string OfflineGPUDriverVersion;
         private static string OnlineGPUDriverVersion;
 
@@ -146,7 +146,6 @@ namespace TinyNvidiaUpdateChecker {
             {
                 Console.WriteLine("Generating configuration file, folder already exists.");
                 ini.IniWriteValue("Configuration", "CheckForUpdates", "1");
-                Process.Start("file:///" + dirToConfig + "config.ini");
             }
 
 
