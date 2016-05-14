@@ -73,10 +73,10 @@ namespace TinyNvidiaUpdateChecker {
             {
                 AllocConsole();
             }
-            Console.Title = "TinyNvidiaUpdateChecker";
+            Console.Title = "TinyNvidiaUpdateChecker v" + offlineVer + "PRE-ALPHA";
             Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + "PRE-ALPHA");
             Console.WriteLine();
-            Console.WriteLine("Copyright (C) 2016 Hawaii Impossible Force team");
+            Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
             Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
             Console.WriteLine("This is free software, and you are welcome to redistribute it");
             Console.WriteLine("under certain conditions. Licensed under GPLv3.");
