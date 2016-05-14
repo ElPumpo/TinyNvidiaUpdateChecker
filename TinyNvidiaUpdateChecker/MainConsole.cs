@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Management;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -29,7 +30,7 @@ namespace TinyNvidiaUpdateChecker {
     class MainConsole {
 
         //Client updater stuff
-        private readonly static string UpdateURI = "https://raw.githubusercontent.com/ElPumpo/TinyNvidiaUpdateChecker/master/TinyNvidiaUpdateChecker/version";
+        private readonly static string serverURL = "https://raw.githubusercontent.com/ElPumpo/TinyNvidiaUpdateChecker/master/TinyNvidiaUpdateChecker/version";
         private static int OfflineVer = 1000;
         private static string sOnlineVer;
         private static int OnlineVer;
@@ -73,10 +74,10 @@ namespace TinyNvidiaUpdateChecker {
                 AllocConsole();
             }
             Console.Title = "TinyNvidiaUpdateChecker";
-            Console.WriteLine("TinyNvidiaUpdateChecker launching . . .");
+            Console.WriteLine("TinyNvidiaUpdateChecker v" + OfflineVer + "DEV launching . . .");
 
             CheckForUpdates(); //Updates??
-            CheckLocalVersion(); //what's the local version?
+            iniInit(); //what's the local version?
             CheckWinVer(); //what's WinVer?
             //CheckOnlineVersion();
             CheckOfflineVersion();
@@ -101,7 +102,7 @@ namespace TinyNvidiaUpdateChecker {
             try
             {
                 WebClient client = new WebClient();
-                Stream stream = client.OpenRead(UpdateURI);
+                Stream stream = client.OpenRead(serverURL);
                 StreamReader reader = new StreamReader(stream);
                 sOnlineVer = reader.ReadToEnd();
                 reader.Close();
@@ -151,17 +152,16 @@ namespace TinyNvidiaUpdateChecker {
             Console.WriteLine("----UPDATE CHECKER END--");
         } //Checks for client updates
 
-        private static void CheckLocalVersion()
+        private static void iniInit()
         {
             string PathToConfig = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\TinyNvidiaUpdateChecker\";
             if (!Directory.Exists(PathToConfig))
             {
                 Console.WriteLine("Creating config file, this only happen once per user.");
-                Console.WriteLine("CRITICAL: Navigate to" + PathToConfig + "and open Config.ini, ");
                 Directory.CreateDirectory(PathToConfig);
                 ini.IniWriteValue("Configuration", "CheckForUpdates", "1");
                 //ini.IniWriteValue("Configuration", "LocalVersion", "XXX.XX");
-                Process.Start("file:///" + PathToConfig + "config.ini");
+                //Process.Start("file:///" + PathToConfig + "config.ini");
             }
 
             if (!File.Exists(PathToConfig + "config.ini"))
@@ -299,43 +299,23 @@ namespace TinyNvidiaUpdateChecker {
 
 
 
-        } //Gets latest GPU driver version
-
-
+        } //Gets latest GPU driver versionPath.Combine(Environment.SystemDirectory, "Notepad.exe"));
+        
         private static void CheckOfflineVersion()
         {
             try
             {
-                //        protected static string RegPath = @"";
-                using (RegistryKey Key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_Display.Driver"))
-                {
-                    if (Key != null)
-                    {
-                        Object o = Key.GetValue("DisplayVersion");
-                        if (o != null)
-                        {
-                            Console.WriteLine(o.ToString());
-                            OfflineGPUDriverVersion = o.ToString();
-                        }
-                    }
-                    
-                }
-
-                
-
+                FileVersionInfo nvvsvcExe = FileVersionInfo.GetVersionInfo(Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\Sysnative\nvvsvc.exe");
+                OfflineGPUDriverVersion = nvvsvcExe.FileDescription.Substring(38).Trim();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("Could not find registry key, please insure that you're running an Nvidia GPU.");
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine("Could not find the required NVIDIA executable.");
                 Console.ReadKey();
                 Environment.Exit(1);
             }
-            
-
-
         }
-
     }
 }
 
