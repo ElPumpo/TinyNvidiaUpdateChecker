@@ -84,7 +84,7 @@ namespace TinyNvidiaUpdateChecker {
 
             iniInit(); // read & write configuration file
 
-            if(ini.IniReadValue("Configuration", "CheckForUpdates") == "1" )
+            if(ini.IniReadValue("Configuration", "Check for Updates") == "1" )
             {
                 checkForUpdates();
             }
@@ -98,11 +98,19 @@ namespace TinyNvidiaUpdateChecker {
             Console.WriteLine("offlineGPUDriverVersion: " + offlineGPUDriverVersion);
             Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
 
-            iOfflineGPUDriverVersion = Convert.ToInt32(offlineGPUDriverVersion.Replace(".", string.Empty));
-            iOnlineGPUDriverVersion = Convert.ToInt32(onlineGPUDriverVersion.Replace(".", string.Empty));
+            try
+            {
+                iOfflineGPUDriverVersion = Convert.ToInt32(offlineGPUDriverVersion.Replace(".", string.Empty));
+                iOnlineGPUDriverVersion = Convert.ToInt32(onlineGPUDriverVersion.Replace(".", string.Empty));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
-            
-                if (iOnlineGPUDriverVersion == iOfflineGPUDriverVersion)
+
+
+            if (iOnlineGPUDriverVersion == iOfflineGPUDriverVersion)
                 {
                     Console.WriteLine("GPU drivers are up-to-date!");
                 }
@@ -110,7 +118,7 @@ namespace TinyNvidiaUpdateChecker {
                 {
                     if (iOfflineGPUDriverVersion > iOnlineGPUDriverVersion)
                     {
-                        Console.WriteLine("iOfflineGPUDriverVersion is greater than iOnlineGPUDriverVersion!");
+                        Console.WriteLine("Current GPU drivers are newer than remote!");
                     }
 
                     if (iOnlineGPUDriverVersion < iOfflineGPUDriverVersion)
@@ -147,15 +155,16 @@ namespace TinyNvidiaUpdateChecker {
                 Console.WriteLine("Generating configuration file, this only happenes once.");
                 Console.WriteLine("The configuration file is located at: " + dirToConfig);
                 Directory.CreateDirectory(dirToConfig);
-                ini.IniWriteValue("Configuration", "CheckForUpdates", "1");
+                ini.IniWriteValue("Configuration", "Check for Updates", "1");
+                ini.IniWriteValue("Misc", "Force onlineGPUDriverVersion", "260.00");
             }
 
             if (!File.Exists(dirToConfig + "config.ini"))
             {
                 Console.WriteLine("Generating configuration file, folder already exists.");
-                ini.IniWriteValue("Configuration", "CheckForUpdates", "1");
+                ini.IniWriteValue("Configuration", "Check for Updates", "1");
+                ini.IniWriteValue("Misc", "Force onlineGPUDriverVersion", "260.00");
             }
-
 
         } // configuration files
 
@@ -262,7 +271,18 @@ namespace TinyNvidiaUpdateChecker {
         private static void checkOnlineVersion()
         {
             Console.WriteLine("CheckOnlineVersion is under construction!");
-            onlineGPUDriverVersion = "220.21"; // debug
+            //onlineGPUDriverVersion = "220.21"; // debug
+            onlineGPUDriverVersion = ini.IniReadValue("Misc", "Force onlineGPUDriverVersion");
+
+            if (onlineGPUDriverVersion.Length != 6)
+            {
+                Console.WriteLine("Invalid length of onlineGPUDriverVersion!");
+                Console.WriteLine("It's currently used to emulate a remote version from NVIDIA servers.");
+                Console.WriteLine("Current onlineGPUDriverVersion: " + onlineGPUDriverVersion);
+                Console.WriteLine("Template: XXX.XX");
+            }
+
+
         } // (todo) fetch latest NVIDIA GPU driver version
 
         private static void checkOfflineVersion()

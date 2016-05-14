@@ -6,10 +6,12 @@ All notable changes to this project will be documented in this file.
 - Added GPLv3 message.
 - Added CHANGELOG.
 - Added LICENSE.
+- Emulate remote version via configuration file.
 
 ### Changed
 - Renamed MainConsole.cs to mainConsole.cs.
 - A lot of cleanup.
+- Changes in configuration file; please delete your configuration file after updating.
 
 ### Fixed
 - Windows version detector fixed.
