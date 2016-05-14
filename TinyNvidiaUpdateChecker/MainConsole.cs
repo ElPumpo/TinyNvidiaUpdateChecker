@@ -1,8 +1,6 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Management;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -31,7 +29,7 @@ namespace TinyNvidiaUpdateChecker {
 
         // Client updater stuff
         private readonly static string serverURL = "https://raw.githubusercontent.com/ElPumpo/TinyNvidiaUpdateChecker/master/TinyNvidiaUpdateChecker/version";
-        private static int OfflineVer = 0900;
+        private static int OfflineVer = 0100;
         private static string sOnlineVer;
         private static int OnlineVer;
         private static bool ErrorExists = false;
@@ -184,7 +182,7 @@ namespace TinyNvidiaUpdateChecker {
             {
                 if (OnlineVer == OfflineVer)
                 {
-                    Console.WriteLine("Client is up to date");
+                    Console.WriteLine("Client is up-to-date!");
 
 
                 }
@@ -197,7 +195,7 @@ namespace TinyNvidiaUpdateChecker {
 
                     if (OnlineVer < OfflineVer)
                     {
-                        Console.WriteLine("Client is up to date");
+                        Console.WriteLine("Client is up-to-date!");
 
                     }
                     else
@@ -209,8 +207,8 @@ namespace TinyNvidiaUpdateChecker {
                 }
                 //IF end
             }
-            Console.WriteLine("OnlineVer: " + OnlineVer);
             Console.WriteLine("OfflineVer: " + OfflineVer);
+            Console.WriteLine("OnlineVer:  " + OnlineVer);
             Console.WriteLine("----UPDATE CHECKER END--");
         } // checks for application updates
 
@@ -266,7 +264,7 @@ namespace TinyNvidiaUpdateChecker {
         private static void checkOnlineVersion()
         {
             Console.WriteLine("CheckOnlineVersion is under construction!");
-            OnlineGPUDriverVersion = "321.22"; // debug
+            OnlineGPUDriverVersion = "220.21"; // debug
         } // (todo) fetch latest NVIDIA GPU driver version
 
         private static void checkOfflineVersion()
@@ -286,4 +284,3 @@ namespace TinyNvidiaUpdateChecker {
         } // gets current NVIDIA GPU driver version
     }
 }
-
