@@ -74,7 +74,13 @@ namespace TinyNvidiaUpdateChecker {
                 AllocConsole();
             }
             Console.Title = "TinyNvidiaUpdateChecker";
-            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + "PRE-ALPHA launching . . .");
+            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + "PRE-ALPHA");
+            Console.WriteLine();
+            Console.WriteLine("Copyright (C) 2016 Hawaii Impossible Force team");
+            Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
+            Console.WriteLine("This is free software, and you are welcome to redistribute it");
+            Console.WriteLine("under certain conditions. Licensed under GPLv3.");
+            Console.WriteLine();
 
             iniInit(); // read & write configuration file
 
@@ -152,7 +158,6 @@ namespace TinyNvidiaUpdateChecker {
 
         private static void checkForUpdates()
         {
-            Console.WriteLine();
             Console.WriteLine("-----UPDATE CHECKER-----");
             Console.WriteLine("Checking for Updates . . .");
             try
