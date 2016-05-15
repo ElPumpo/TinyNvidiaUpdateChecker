@@ -1,6 +1,10 @@
 ﻿# Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- Icon modified yet again; fixed material design and more.
+
 ## [0.2.0.0] - 2016-05-15
 ### Added
 - Added GPLv3 message.

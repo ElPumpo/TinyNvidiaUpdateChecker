@@ -29,7 +29,7 @@ namespace TinyNvidiaUpdateChecker {
 
         // Client updater stuff
         private readonly static string serverURL = "https://raw.githubusercontent.com/ElPumpo/TinyNvidiaUpdateChecker/master/TinyNvidiaUpdateChecker/version";
-        private static int offlineVer = 0200;
+        private static int offlineVer = 0300;
         private static string sOnlineVer;
         private static int onlineVer;
 

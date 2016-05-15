@@ -99,8 +99,10 @@
     <None Include="version" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="icon.ico" />
     <None Include="CHANGELOG" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
