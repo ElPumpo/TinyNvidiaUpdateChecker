@@ -19,8 +19,8 @@ It has some restrictions, it can only detect local GPU driver version and not ch
 `-quiet`: no ui.
 
 #Requirements
-+ .NET Framework 4
 + Windows 10, 8.1, 8 or Vista
++ .NET Framework 4
 + Stable internet connection
 
 #License
