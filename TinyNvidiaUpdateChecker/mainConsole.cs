@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Management;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using HtmlAgilityPack;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -38,21 +38,16 @@ namespace TinyNvidiaUpdateChecker
         private static string sOnlineVer;
         private static int onlineVer;
 
-        // GPU related stuff
-        private static string offlineGPUDriverVersion;
-        private static string onlineGPUDriverVersion;
-
-        private static int iOfflineGPUDriverVersion;
-        private static int iOnlineGPUDriverVersion;
+        private static int offlineGPUDriverVersion;
+        private static int onlineGPUDriverVersion;
 
         // other
 
+        // nvidia http request stuff
         private static string language;
         private static string osID;
         private static string finalURL;
-        
-        
-        
+        private static string driverURL;
 
         private static string winVer;
 
@@ -111,37 +106,25 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine("offlineGPUDriverVersion: " + offlineGPUDriverVersion);
             Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
 
-            try
-            {
-                iOfflineGPUDriverVersion = Convert.ToInt32(offlineGPUDriverVersion.Replace(".", string.Empty));
-                iOnlineGPUDriverVersion = Convert.ToInt32(onlineGPUDriverVersion.Replace(".", string.Empty));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
-
-
-            if (iOnlineGPUDriverVersion == iOfflineGPUDriverVersion)
+            if (onlineGPUDriverVersion == offlineGPUDriverVersion)
             {
                 Console.WriteLine("GPU drivers are up-to-date!");
             }
             else
             {
-                if (iOfflineGPUDriverVersion > iOnlineGPUDriverVersion)
+                if (offlineGPUDriverVersion > onlineGPUDriverVersion)
                 {
                     Console.WriteLine("Current GPU driver is newer than remote!");
                 }
 
-                if (iOnlineGPUDriverVersion < iOfflineGPUDriverVersion)
+                if (onlineGPUDriverVersion < offlineGPUDriverVersion)
                 {
                     Console.WriteLine("GPU drivers are up-to-date!");
 
                 }
                 else
                 {
-                    Console.WriteLine("Newer GPU drivers are available!");
+                    MessageBox.Show("There's a new update available to download, do you want to download the update now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
 
@@ -187,7 +170,7 @@ namespace TinyNvidiaUpdateChecker
             {
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(serverURL);
-                stream.ReadTimeout = 5000;
+                stream.ReadTimeout = 5;
                 StreamReader reader = new StreamReader(stream);
                 sOnlineVer = reader.ReadToEnd();
                 reader.Close();
@@ -323,25 +306,55 @@ namespace TinyNvidiaUpdateChecker
 
         private static void checkOnlineVersion()
         {
+
+            // get url
             language = "17";
             try
             {
                 WebClient client = new WebClient();
-                Stream stream = client.OpenRead("http://www.nvidia.co.uk/Download/processDriver.aspx?psid=98&pfid=756&rpf=1&osid=" + osID + "&lid=" + language + "&ctk=0");
+                Stream stream = client.OpenRead("http://www.nvidia.com/Download/processDriver.aspx?psid=98&pfid=756&rpf=1&osid=" + osID + "&lid=" + language + "&ctk=0");
                 stream.ReadTimeout = 5000;
                 StreamReader reader = new StreamReader(stream);
                 finalURL = reader.ReadToEnd();
                 reader.Close();
                 stream.Close();
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine("Error!");
+                Console.WriteLine("Error processing HTML request at processDriver.aspx!");
             }
+            // id: lnkDwnldBtn, version: tdVersion
 
-            Console.WriteLine(finalURL);
+            try
+            {
+                // HTMLAgilityPack
+                // thanks to http://www.codeproject.com/Articles/691119/Html-Agility-Pack-Massive-information-extraction-f for a great article
+
+                HtmlWeb webClient = new HtmlWeb();
+                HtmlAgilityPack.HtmlDocument htmlDocument = webClient.Load(finalURL);
+
+                // get version
+                HtmlNode tdVer = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdVersion");
+                onlineGPUDriverVersion = Convert.ToInt32(tdVer.InnerHtml.Trim().Substring(0, 6).Replace(".", string.Empty));
+                
+
+                // get driver URL
+                IEnumerable<HtmlNode> links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
+                foreach (var link in links)
+                {
+                    if (link.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/"))
+                    {
+                        driverURL = "http://www.nvidia.com" + link.Attributes["href"].Value;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Error processing HTML request at HTMLAgilityPack!");
+            }
+            Console.WriteLine("driverURL: " + driverURL);
 
         } // (todo) fetch latest NVIDIA GPU driver version
 
@@ -352,7 +365,7 @@ namespace TinyNvidiaUpdateChecker
             try
             {
                 FileVersionInfo nvvsvcExe = FileVersionInfo.GetVersionInfo(Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\System32\nvvsvc.exe"); // Sysnative?
-                offlineGPUDriverVersion = nvvsvcExe.FileDescription.Substring(38).Trim();
+                offlineGPUDriverVersion = Convert.ToInt32(nvvsvcExe.FileDescription.Substring(38).Trim().Replace(".", string.Empty));
             }
             catch (Exception ex)
             {
