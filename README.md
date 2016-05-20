@@ -1,4 +1,5 @@
 # TinyNvidiaUpdateChecker
+The application currently only supports desktop GeForce GPUs, if you want your GPU covered, start a issue above.
 
 #About
 Tiny application which checks for NVIDIA GPU drivers, developed in C# for Windows.
@@ -9,11 +10,13 @@ It searches for NVIDIA GPU drivers exactly like GeForce Experience does but in a
 When you install GeForce Experience a lot of extra services are being installed without you knowing, and we have no clue what the executables does in the background when the application isn't even used.
 Not only that but GeForce Experience is really slow and I don't want to maunally go to their website to check for updates.
 
-I know that this application is in its early state but I'm trying really hard to get it done.
+#TL;DR of code
+1. Searches for local GPU driver version from a executable named `nvvsvc.exe`
+2. Emulates remote server with a GTX 970 to get latest driver version and download link for drivers (and ofc correct operating system)
 
 #Download
-You can now download a pre-alpha build now!
-It has some restrictions, it can only detect local GPU driver version and not check for updates from NVIDIA servers.
+Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
+Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 
 #Command line arguments
 `-quiet`: no ui.
