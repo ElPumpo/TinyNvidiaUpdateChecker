@@ -15,13 +15,11 @@ I know that this application is in its early state but I'm trying really hard to
 You can now download a pre-alpha build now!
 It has some restrictions, it can only detect local GPU driver version and not check for updates from NVIDIA servers.
 
-#Help me out
-The only real issue I currently have is a way to get the latest version available from the NVIDIA servers, if you're interested in helping me out I'd be grateful for anything. There's a seperate issue on this; #1.
-
 #Command line arguments
 `-quiet`: no ui.
 
 #Requirements
++ Windows 10, 8.1, 8 or Vista
 + .NET Framework 4
 + Stable internet connection
 
