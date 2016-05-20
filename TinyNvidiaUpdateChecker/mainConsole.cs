@@ -34,7 +34,7 @@ namespace TinyNvidiaUpdateChecker
 
         // client updater stuff
         private readonly static string serverURL = "https://raw.githubusercontent.com/ElPumpo/TinyNvidiaUpdateChecker/master/TinyNvidiaUpdateChecker/version";
-        private static int offlineVer = 0300;
+        private static int offlineVer = 1000;
         private static string sOnlineVer;
         private static int onlineVer;
 
@@ -81,8 +81,8 @@ namespace TinyNvidiaUpdateChecker
             {
                 AllocConsole();
             }
-            Console.Title = "TinyNvidiaUpdateChecker v" + offlineVer + "PRE-ALPHA";
-            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + "PRE-ALPHA");
+            Console.Title = "TinyNvidiaUpdateChecker v" + offlineVer;
+            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
             Console.WriteLine();
             Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
             Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
@@ -96,7 +96,6 @@ namespace TinyNvidiaUpdateChecker
             {
                 checkForUpdates();
             }
-
 
             checkWinVer();
 
@@ -124,14 +123,15 @@ namespace TinyNvidiaUpdateChecker
                 }
                 else
                 {
-                    MessageBox.Show("There's a new update available to download, do you want to download the update now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult dialog = MessageBox.Show("There's a new update available to download, do you want to download the update now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if (dialog == DialogResult.Yes)
+                    {
+                        Process.Start(driverURL);
+                    }
+                        
                 }
             }
-
-
-            //Console.WriteLine("iOfflineGPUDriverVersion: " + iOfflineGPUDriverVersion);
-            //Console.WriteLine("iOnlineGPUDriverVersion:  " + iOnlineGPUDriverVersion);
-
 
             Console.WriteLine();
             Console.WriteLine("Job done! Press any key to exit.");
@@ -140,8 +140,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.ReadKey();
             }
             Application.Exit();
-
-
         }
 
         private static void iniInit()
@@ -299,7 +297,6 @@ namespace TinyNvidiaUpdateChecker
             }
 
             Console.WriteLine("winVer: " + winVer);
-            Console.WriteLine("osID: " + osID);
             Console.WriteLine();
 
         } // get local Windows version
@@ -323,8 +320,12 @@ namespace TinyNvidiaUpdateChecker
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine("Error processing HTML request at processDriver.aspx!");
+                if (showUI == 1)
+                {
+                    Console.ReadKey();
+                }
+                Environment.Exit(1);
             }
-            // id: lnkDwnldBtn, version: tdVersion
 
             try
             {
@@ -353,10 +354,14 @@ namespace TinyNvidiaUpdateChecker
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine("Error processing HTML request at HTMLAgilityPack!");
+                if (showUI == 1)
+                {
+                    Console.ReadKey();
+                }
+                Environment.Exit(1);
             }
-            Console.WriteLine("driverURL: " + driverURL);
 
-        } // (todo) fetch latest NVIDIA GPU driver version
+        }
 
         private static void checkOfflineVersion()
         {

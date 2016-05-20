@@ -1,7 +1,17 @@
 ﻿# Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.0.0.0] - 2016-05-20
+The application is finally in version 1! Everything seems to work fine so I decided to release it as stable.
+### Added
+- Now using HtmlAgilityPack.
+- Get remote version.
+- Get remote driver link.
+
+### Changed
+- Minor cleanup.
+- All GPU driver versions are now integers instead of being both a int and string.
+
 ### Fixed
 - Icon modified yet again; fixed material design and more.
 
@@ -22,5 +32,5 @@ All notable changes to this project will be documented in this file.
 - Windows version detector fixed.
 - Fixed using "-quiet" command line argument where application would not end.
 
-## [0.1.0.0] - 2016-05-14
+## [0.1.0.0] - 2016-05-14 [YANKED]
 Initial public release.
