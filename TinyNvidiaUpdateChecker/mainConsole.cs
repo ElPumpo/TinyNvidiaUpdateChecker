@@ -35,7 +35,6 @@ namespace TinyNvidiaUpdateChecker
         // client updater stuff
         private readonly static string serverURL = "https://raw.githubusercontent.com/ElPumpo/TinyNvidiaUpdateChecker/master/TinyNvidiaUpdateChecker/version";
         private static int offlineVer = 1000;
-        private static string sOnlineVer;
         private static int onlineVer;
 
         private static int offlineGPUDriverVersion;
@@ -168,34 +167,27 @@ namespace TinyNvidiaUpdateChecker
             {
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(serverURL);
-                stream.ReadTimeout = 5;
                 StreamReader reader = new StreamReader(stream);
-                sOnlineVer = reader.ReadToEnd();
+                onlineVer = Convert.ToInt32(reader.ReadToEnd());
                 reader.Close();
                 stream.Close();
-
-                onlineVer = Convert.ToInt32(sOnlineVer);
             }
 
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine("Could not search for updates!");
-                sOnlineVer = null;
             }
 
-            //IF start
             if (onlineVer == offlineVer)
             {
                 Console.WriteLine("Client is up-to-date!");
-
-
             }
             else
             {
                 if (offlineVer > onlineVer)
                 {
-                    Console.WriteLine("OfflineVer is greater than OnlineVer!");
+                    Console.WriteLine("offlineVer is greater than onlineVer!");
                 }
 
                 if (onlineVer < offlineVer)
@@ -310,7 +302,6 @@ namespace TinyNvidiaUpdateChecker
             {
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead("http://www.nvidia.com/Download/processDriver.aspx?psid=98&pfid=756&rpf=1&osid=" + osID + "&lid=" + language + "&ctk=0");
-                stream.ReadTimeout = 5000;
                 StreamReader reader = new StreamReader(stream);
                 finalURL = reader.ReadToEnd();
                 reader.Close();
@@ -384,6 +375,5 @@ namespace TinyNvidiaUpdateChecker
             }
 
         } // gets current NVIDIA GPU driver version
-
     }
 }
