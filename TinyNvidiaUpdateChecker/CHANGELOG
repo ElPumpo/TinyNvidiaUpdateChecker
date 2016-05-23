@@ -1,6 +1,13 @@
 ﻿# Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- Documentation.
+
+### Changed
+- Minor cleanup / improved code.
+
 ## [1.0.0.0] - 2016-05-20
 The application is finally in version 1! Everything seems to work fine so I decided to release it as stable.
 ### Added
