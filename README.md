@@ -18,6 +18,8 @@ Not only that but GeForce Experience is really slow and I don't want to maunally
 Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
 Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 
+If you're forkin this project don't worry about the  dependencies as they are handled by NuGet.
+
 #Command line arguments
 `-quiet`: no ui.
 
