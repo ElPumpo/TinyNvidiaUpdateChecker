@@ -30,6 +30,7 @@ If you're forkin this project don't worry about the  dependencies as they are ha
 
 #License
 TinyNvidiaUpdateChecker - tiny application which checks for GPU drivers daily.
+
 Copyright (C) 2016 Hawaii_Beach
 
 This program Is free software: you can redistribute it And/Or modify
