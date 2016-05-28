@@ -23,7 +23,7 @@ If you're forkin this project don't worry about the  dependencies as they are ha
 #Command line arguments
 `-quiet` - no ui
 
-`-debug` - display debug information
+`-debug` - display debug information (v1.1.0.0 and over)
 
 #Requirements
 + Windows 10, 8.1, 8 or Vista
