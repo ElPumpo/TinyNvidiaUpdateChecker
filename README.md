@@ -21,7 +21,9 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 If you're forkin this project don't worry about the  dependencies as they are handled by NuGet.
 
 #Command line arguments
-`-quiet`: no ui.
+`-quiet` - no ui
+
+`-debug` - display debug information
 
 #Requirements
 + Windows 10, 8.1, 8 or Vista
