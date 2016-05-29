@@ -68,38 +68,31 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static string osID;
 
-        /// <summary>
-        /// URL from 
-        /// </summary>
         private static string finalURL;
-
-        /// <summary>
-        /// Remote GPU driver version
-        /// </summary>
         private static string driverURL;
 
         /// <summary>
-        /// Remote GPU driver version
+        /// Local Windows version (not used?)
         /// </summary>
         private static string winVer;
 
         /// <summary>
-        /// Remote GPU driver version
+        /// Direction for configuration folder
         /// </summary>
         private static string dirToConfig = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Hawaii_Beach\TinyNvidiaUpdateChecker\";
 
         /// <summary>
-        /// Remote GPU driver version
+        /// Direction for configuration file
         /// </summary>
         private static iniFile ini = new iniFile(dirToConfig + "config.ini");
 
         /// <summary>
-        /// Remote GPU driver version
+        /// Show UI or go quiet | 1: show | 0: quiet
         /// </summary>
         private static int showUI = 1;
 
         /// <summary>
-        /// Enable debugging
+        /// Enable extended information
         /// </summary>
         private static int debug = 0;
 
