@@ -3,8 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Added
-- Documentation.
+- Basic documentation.
 - Language specific downloads.
+- "-debug" command line argument used for debugging purposes.
 
 ### Changed
 - Major cleanup / improved code.

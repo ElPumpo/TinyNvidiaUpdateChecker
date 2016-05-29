@@ -310,7 +310,7 @@ namespace TinyNvidiaUpdateChecker
                 winVer = "Unknown";
                 Console.WriteLine("You're running a non-supported version of Windows; the application will determine itself.");
                 Console.WriteLine("OS: " + verOrg);
-                if (showUI == 1) Console.ReadKey();
+                if(showUI == 1) Console.ReadKey();
                 Environment.Exit(1);
             }
 
@@ -457,7 +457,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                     error = 1;
                 }
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
             }
             if(error == 0)
             {
