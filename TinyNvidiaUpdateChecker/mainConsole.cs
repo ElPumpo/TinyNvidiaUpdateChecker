@@ -110,14 +110,34 @@ namespace TinyNvidiaUpdateChecker
             if (parms.Length > 1)
             {
                 // go quiet mode
-                if(Array.IndexOf(parms, "-quiet") != -1)
+                if(Array.IndexOf(parms, "--quiet") != -1)
                 {
                     FreeConsole();
                     showUI = 0;
                 }
 
-                if(Array.IndexOf(parms, "-debug") != -1) debug = 1; // enable debug
-            
+                if(Array.IndexOf(parms, "--debug") != -1) debug = 1; // enable debug
+
+                if (Array.IndexOf(parms, "--?") != -1) // help menu
+                {
+                    Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+                    Console.WriteLine();
+                    Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
+                    Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
+                    Console.WriteLine("This is free software, and you are welcome to redistribute it");
+                    Console.WriteLine("under certain conditions. Licensed under GPLv3.");
+                    Console.WriteLine();
+                    Console.WriteLine("Usage: " + Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location) + " [--quiet] [--debug] [--?]");
+                    Console.WriteLine();
+                    Console.WriteLine("--quiet        Application runs quiet.");
+                    Console.WriteLine("--debug        Enable debugging for extended information.");
+                    Console.WriteLine("--?            Displays this message.");
+                    Console.WriteLine();
+                    Environment.Exit(0);
+                }
+
+
+
             }
             if (showUI == 1) AllocConsole();
 
@@ -377,7 +397,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("language: " + language);
                 Console.WriteLine();
             }
-        }
+        } // decide driver langauge
 
         private static void gpuInfo()
         {
@@ -396,7 +416,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
-                Console.WriteLine("Are you running a NVIDIA card?");
             }
 
             // get remote version
