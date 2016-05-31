@@ -10,20 +10,16 @@ It searches for NVIDIA GPU drivers exactly like GeForce Experience does but in a
 When you install GeForce Experience a lot of extra services are being installed without you knowing, and we have no clue what the executables does in the background when the application isn't even used.
 Not only that but GeForce Experience is really slow and I don't want to maunally go to their website to check for updates.
 
-#TL;DR of code
-1. Searches for local GPU driver version from a executable named `nvvsvc.exe`
-2. Emulates remote server with a GTX 970 to get latest driver version and download link for drivers (and ofc correct operating system)
-
 #Download
 Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
 Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 
-If you're forkin this project don't worry about the  dependencies as they are handled by NuGet.
+If you're forkin this project don't worry about the dependencies as they are handled by NuGet.
 
 #Command line arguments
-`-quiet` - no ui
+`--quiet` - no ui
 
-`-debug` - display debug information (v1.1.0.0 and over)
+`--debug` - display debug information
 
 #Requirements
 + Windows 10, 8.1, 8 or Vista
