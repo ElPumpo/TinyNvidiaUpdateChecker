@@ -135,9 +135,6 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                     Environment.Exit(0);
                 }
-
-
-
             }
             if (showUI == 1) AllocConsole();
 
@@ -202,7 +199,7 @@ namespace TinyNvidiaUpdateChecker
 
         private static void iniInit()
         {
-            // create dir if non exist
+            // create dir if it doesn't exist
             if(!Directory.Exists(dirToConfig)) Directory.CreateDirectory(dirToConfig);
 
             // create config file
@@ -404,7 +401,7 @@ namespace TinyNvidiaUpdateChecker
             Console.Write("Looking up GPU information . . . ");
             int error = 0;
 
-            // get local driver version
+            // query local driver version
             try
             {
                 FileVersionInfo nvvsvcExe = FileVersionInfo.GetVersionInfo(Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\System32\nvvsvc.exe"); // Sysnative?
