@@ -17,9 +17,11 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 If you're forkin this project don't worry about the dependencies as they are handled by NuGet.
 
 #Command line arguments
-`--quiet` - no ui
-
-`--debug` - display debug information
+| Argument   | Explanation |
+| ---------- |:-----------------------------------------------:|
+| --quiet    | run quiet |
+| --debug | turn debugging on |
+| --?         | view help |
 
 #Requirements
 + Windows 10, 8.1, 8 or Vista
@@ -27,7 +29,7 @@ If you're forkin this project don't worry about the dependencies as they are han
 + Stable internet connection
 
 #License
-TinyNvidiaUpdateChecker - tiny application which checks for GPU drivers daily.
+TinyNvidiaUpdateChecker - Check for NVIDIA desktop GPU drivers, GeForce Experience replacer
 
 Copyright (C) 2016 Hawaii_Beach
 
