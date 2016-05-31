@@ -483,7 +483,7 @@ namespace TinyNvidiaUpdateChecker
             if(!File.Exists("HtmlAgilityPack.dll"))
             {
                 Console.WriteLine("The required binary file cannot be found and the application will deteminate itself.");
-                Console.ReadKey();
+                if (showUI == 1) Console.ReadKey();
                 Environment.Exit(2);
             }
         }

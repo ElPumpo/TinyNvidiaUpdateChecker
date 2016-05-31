@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- Check for required DLL file.
 - Basic documentation.
 - Language specific downloads.
 - "--debug" command line argument used for debugging purposes.
