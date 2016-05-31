@@ -16,12 +16,19 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 
 If you're forking this project don't worry about the dependencies as they are handled by NuGet.
 
-#Command line arguments
+#Command arguments
 | Argument   | Explanation |
-| ---------- |:-----------------------------------------------:|
-| --quiet    | run quiet |
+| ---------- |:-----------:|
+| --quiet | run quiet |
 | --debug | turn debugging on |
-| --?         | view help |
+| --? | view help |
+
+#Configuration file
+You may customize the application using the config file located at `%localappdata%\Hawaii_Beach\TinyNvidiaUpdateChecker` and modify `config.ini`
+
+| Option | Restrictions | Effect |
+| ------ | ------------ |:------:|
+| Check for Updates | 0 or 1 | whether or not the application will search for client updates |
 
 #Requirements
 + Windows 10, 8.1, 8 or Vista
