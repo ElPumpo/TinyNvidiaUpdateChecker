@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TinyNvidiaUpdateChecker")]
-[assembly: AssemblyDescription("Tiny application which checks for GPU drivers daily")]
+[assembly: AssemblyDescription("Check for NVIDIA desktop GPU drivers, GeForce Experience replacer")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TinyNvidiaUpdateChecker")]
