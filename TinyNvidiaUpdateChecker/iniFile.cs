@@ -6,7 +6,7 @@ namespace TinyNvidiaUpdateChecker {
     public class iniFile {
 
         /*
-        TinyNvidiaUpdateChecker - tiny application which checks for GPU drivers daily.
+        TinyNvidiaUpdateChecker - Check for NVIDIA desktop GPU drivers, GeForce Experience replacer
         Copyright (C) 2016 Hawaii_Beach
 
         This program Is free software: you can redistribute it And/Or modify
