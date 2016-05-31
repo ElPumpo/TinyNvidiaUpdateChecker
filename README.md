@@ -28,7 +28,7 @@ You may customize the application using the config file located at `%localappdat
 
 | Option | Restrictions | Effect |
 | ------ | ------------ |:------:|
-| Check for Updates | 0 or 1 | whether or not the application will search for client updates |
+| Check for Updates | 0 or 1 | enables or disables searches for client updates |
 
 #Requirements
 + Windows 10, 8.1, 8 or Vista
