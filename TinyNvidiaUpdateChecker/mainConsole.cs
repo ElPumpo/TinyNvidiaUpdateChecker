@@ -147,6 +147,8 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine("under certain conditions. Licensed under GPLv3.");
             Console.WriteLine();
 
+            checkDll();
+
             iniInit(); // read & write configuration file
 
             checkWinVer(); // get current windows version
@@ -194,7 +196,7 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
             Console.WriteLine("Job done! Press any key to exit.");
             if(showUI == 1) Console.ReadKey();
-            Application.Exit();
+            Environment.Exit(0);
         }
 
         private static void iniInit()
@@ -475,5 +477,15 @@ namespace TinyNvidiaUpdateChecker
             }
 
         } // get local and remote GPU driver version
+
+        private static void checkDll()
+        {
+            if(!File.Exists("HtmlAgilityPack.dll"))
+            {
+                Console.WriteLine("The required binary file cannot be found and the application will deteminate itself.");
+                Console.ReadKey();
+                Environment.Exit(2);
+            }
+        }
     }
 }
