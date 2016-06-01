@@ -14,12 +14,21 @@ Not only that but GeForce Experience is really slow and I don't want to maunally
 Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
 Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 
-If you're forkin this project don't worry about the dependencies as they are handled by NuGet.
+If you're forking this project don't worry about the dependencies as they are handled by NuGet.
 
-#Command line arguments
-`--quiet` - no ui
+#Command arguments
+| Argument   | Explanation |
+| ---------- |:-----------:|
+| --quiet | run quiet |
+| --debug | turn debugging on |
+| --? | view help |
 
-`--debug` - display debug information
+#Configuration file
+You may customize the application using the config file located at `%localappdata%\Hawaii_Beach\TinyNvidiaUpdateChecker` and modify `config.ini`
+
+| Option | Restrictions | Effect |
+| ------ | ------------ |:------:|
+| Check for Updates | 0 or 1 | enables or disables searches for client updates |
 
 #Requirements
 + Windows 10, 8.1, 8 or Vista
@@ -27,7 +36,7 @@ If you're forkin this project don't worry about the dependencies as they are han
 + Stable internet connection
 
 #License
-TinyNvidiaUpdateChecker - tiny application which checks for GPU drivers daily.
+TinyNvidiaUpdateChecker - Check for NVIDIA desktop GPU drivers, GeForce Experience replacer
 
 Copyright (C) 2016 Hawaii_Beach
 
