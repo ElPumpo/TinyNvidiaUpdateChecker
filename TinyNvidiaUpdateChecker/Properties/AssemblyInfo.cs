@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("TinyNvidiaUpdateChecker")]
 [assembly: AssemblyDescription("Check for NVIDIA desktop GPU drivers, GeForce Experience replacer")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Hawaii_Beach")]
 [assembly: AssemblyProduct("TinyNvidiaUpdateChecker")]
 [assembly: AssemblyCopyright("Copyright © Hawaii_Beach 2016")]
 [assembly: AssemblyTrademark("")]

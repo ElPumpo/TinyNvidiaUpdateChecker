@@ -208,8 +208,9 @@ namespace TinyNvidiaUpdateChecker
             if(!File.Exists(dirToConfig + "config.ini"))
             {
                 Console.WriteLine("Generating configuration file, this only happenes once.");
-                Console.WriteLine("The configuration file is located at: " + dirToConfig);
+                Console.WriteLine("The configuration file is located at " + dirToConfig);
                 ini.IniWriteValue("Configuration", "Check for Updates", "1");
+                Console.WriteLine();
             }
 
         } // configuration files
