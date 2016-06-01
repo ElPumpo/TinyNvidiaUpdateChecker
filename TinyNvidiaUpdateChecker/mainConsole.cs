@@ -13,7 +13,7 @@ namespace TinyNvidiaUpdateChecker
 {
 
     /*
-    TinyNvidiaUpdateChecker - Check for NVIDIA desktop GPU drivers, GeForce Experience replacer
+    TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
     Copyright (C) 2016 Hawaii_Beach
 
     This program Is free software: you can redistribute it And/Or modify
@@ -41,7 +41,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Current client version
         /// </summary>
-        private static int offlineVer = 1100;
+        private static int offlineVer = 1200;
 
         /// <summary>
         /// Remote client version
@@ -155,7 +155,7 @@ namespace TinyNvidiaUpdateChecker
 
             getLanguage(); // get current langauge
 
-            if(ini.IniReadValue("Configuration", "Check for Updates") == "1") searchForUpdates();
+            if(ini.IniReadValue("Configuration", "bCheck for Updates") == "1") searchForUpdates();
 
             gpuInfo();
 
@@ -209,7 +209,8 @@ namespace TinyNvidiaUpdateChecker
             {
                 Console.WriteLine("Generating configuration file, this only happenes once.");
                 Console.WriteLine("The configuration file is located at " + dirToConfig);
-                ini.IniWriteValue("Configuration", "Check for Updates", "1");
+                ini.IniWriteValue("Configuration", "bCheck for Updates", "1");
+                ini.IniWriteValue("Configuration", "bDesktopGPU", "1");
                 Console.WriteLine();
             }
 
@@ -418,11 +419,25 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine(ex.StackTrace);
             }
 
+            int psid;
+            int pfid;
+
+            // get correct gpu drivers
+            if (ini.IniReadValue("Configuration", "bDesktopGPU") == "1")
+            {
+                psid = 98;
+                pfid = 756;
+            } else
+            {
+                psid = 99;
+                pfid = 757;
+            }
+
             // get remote version
             try
             {
                 WebClient client = new WebClient();
-                Stream stream = client.OpenRead("http://www.nvidia.com/Download/processDriver.aspx?psid=98&pfid=756&rpf=1&osid=" + osID + "&lid=" + language.ToString() + "&ctk=0");
+                Stream stream = client.OpenRead("http://www.nvidia.com/Download/processDriver.aspx?psid=" + psid.ToString() + "&pfid=" + pfid.ToString() + "&rpf=1&osid=" + osID + "&lid=" + language.ToString() + "&ctk=0");
                 StreamReader reader = new StreamReader(stream);
                 finalURL = reader.ReadToEnd();
                 reader.Close();
@@ -475,6 +490,12 @@ namespace TinyNvidiaUpdateChecker
             {
                 Console.Write("OK!");
                 Console.WriteLine();
+            }
+
+            if (debug == 1)
+            {
+                Console.WriteLine("psid: " + psid);
+                Console.WriteLine("pfid: " + pfid);
             }
 
         } // get local and remote GPU driver version
