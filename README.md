@@ -36,7 +36,7 @@ You may customize the application using the config file located at `%localappdat
 + Stable internet connection
 
 #License
-TinyNvidiaUpdateChecker - Check for NVIDIA desktop GPU drivers, GeForce Experience replacer
+TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
 
 Copyright (C) 2016 Hawaii_Beach
 
