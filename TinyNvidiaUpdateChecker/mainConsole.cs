@@ -61,12 +61,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Langauge ID for GPU driver download
         /// </summary>
-        private static int language;
-
-        /// <summary>
-        /// OS ID for GPU driver download
-        /// </summary>
-        private static string osID;
+        private static int langID;
 
         private static string finalURL;
         private static string driverURL;
@@ -75,6 +70,11 @@ namespace TinyNvidiaUpdateChecker
         /// Local Windows version (not used?)
         /// </summary>
         private static string winVer;
+
+        /// <summary>
+        /// OS ID for GPU driver download
+        /// </summary>
+        private static string osID;
 
         /// <summary>
         /// Direction for configuration folder
@@ -116,9 +116,18 @@ namespace TinyNvidiaUpdateChecker
                     showUI = 0;
                 }
 
+                // erase config
+                if(Array.IndexOf(parms, "--eraseConfig") != -1)
+                {
+                    if(File.Exists(dirToConfig + "config.ini"))
+                    {
+                        File.Delete(dirToConfig + "config.ini");
+                    }
+                }
+
                 if(Array.IndexOf(parms, "--debug") != -1) debug = 1; // enable debug
 
-                if (Array.IndexOf(parms, "--?") != -1) // help menu
+                if(Array.IndexOf(parms, "--?") != -1) // help menu
                 {
                     Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                     Console.WriteLine();
@@ -127,9 +136,10 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("This is free software, and you are welcome to redistribute it");
                     Console.WriteLine("under certain conditions. Licensed under GPLv3.");
                     Console.WriteLine();
-                    Console.WriteLine("Usage: " + Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location) + " [--quiet] [--debug] [--?]");
+                    Console.WriteLine("Usage: " + Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location) + " [--quiet] [--eraseConfig] [--debug] [--?]");
                     Console.WriteLine();
                     Console.WriteLine("--quiet        Application runs quiet.");
+                    Console.WriteLine("--eraseConfig  Erase local configuration file.");
                     Console.WriteLine("--debug        Enable debugging for extended information.");
                     Console.WriteLine("--?            Displays this message.");
                     Console.WriteLine();
@@ -209,8 +219,29 @@ namespace TinyNvidiaUpdateChecker
             {
                 Console.WriteLine("Generating configuration file, this only happenes once.");
                 Console.WriteLine("The configuration file is located at " + dirToConfig);
-                ini.IniWriteValue("Configuration", "bCheck for Updates", "1");
-                ini.IniWriteValue("Configuration", "bDesktopGPU", "1");
+                // &whql=0 << for future BETA driver support
+
+                // update checking
+                DialogResult dialogUpdates = MessageBox.Show("Do you want to search for client updates?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if(dialogUpdates == DialogResult.Yes)
+                {
+                    ini.IniWriteValue("Configuration", "bCheck for Updates", "1");
+                } else
+                {
+                    ini.IniWriteValue("Configuration", "bCheck for Updates", "0");
+                }
+
+
+                DialogResult dialogGPUType = MessageBox.Show("Are you running a desktop GPU?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if(dialogGPUType == DialogResult.Yes)
+                {
+                    ini.IniWriteValue("Configuration", "bDesktopGPU", "1");
+                }
+                else
+                {
+                    ini.IniWriteValue("Configuration", "bDesktopGPU", "0");
+                }
+
                 Console.WriteLine();
             }
 
@@ -266,7 +297,7 @@ namespace TinyNvidiaUpdateChecker
         {
             string verOrg = Environment.OSVersion.Version.ToString();
 
-            //Windows 10
+            // Windows 10
             if (verOrg.Contains("10.0"))
             {
                 winVer = "10";
@@ -277,7 +308,7 @@ namespace TinyNvidiaUpdateChecker
                     osID = "56";
                 }
             }
-            //Windows 8.1
+            // Windows 8.1
             else if (verOrg.Contains("6.3"))
             {
                 winVer = "8.1";
@@ -288,7 +319,7 @@ namespace TinyNvidiaUpdateChecker
                     osID = "40";
                 }
             }
-            //Windows 8
+            // Windows 8
             else if (verOrg.Contains("6.2"))
             {
                 winVer = "8";
@@ -299,7 +330,7 @@ namespace TinyNvidiaUpdateChecker
                     osID = "40";
                 }
             }
-            //Windows 7
+            // Windows 7
             else if (verOrg.Contains("6.1"))
             {
                 winVer = "7";
@@ -310,7 +341,7 @@ namespace TinyNvidiaUpdateChecker
                     osID = "40";
                 }
             }
-            //Windows Vista
+            // Windows Vista
             else if (verOrg.Contains("6.0"))
             {
                 winVer = "Vista";
@@ -332,6 +363,7 @@ namespace TinyNvidiaUpdateChecker
             {
                 Console.WriteLine("winVer: " + winVer);
                 Console.WriteLine("osID: " + osID);
+                Console.WriteLine("verOrg: " + verOrg);
                 Console.WriteLine();
             }
             
@@ -346,56 +378,57 @@ namespace TinyNvidiaUpdateChecker
             switch(cultName)
             {
                 case "en-US":
-                    language = 1;
+                    langID = 1;
                     break;
                 case "en-GB":
-                    language = 2;
+                    langID = 2;
                     break;
                 case "zh-CHS":
-                    language = 5;
+                    langID = 5;
                     break;
                 case "zh-CHT":
-                    language = 6;
+                    langID = 6;
                     break;
                 case "ja-JP":
-                    language = 7;
+                    langID = 7;
                     break;
                 case "ko-KR":
-                    language = 8;
+                    langID = 8;
                     break;
                 case "de-DE":
-                    language = 9;
+                    langID = 9;
                     break;
                 case "es-ES":
-                    language = 10;
+                    langID = 10;
                     break;
                 case "fr-FR":
-                    language = 12;
+                    langID = 12;
                     break;
                 case "it-IT":
-                    language = 13;
+                    langID = 13;
                     break;
                 case "pl-PL":
-                    language = 14;
+                    langID = 14;
                     break;
                 case "pt-BR":
-                    language = 15;
+                    langID = 15;
                     break;
                 case "ru-RU":
-                    language = 16;
+                    langID = 16;
                     break;
                 case "tr-TR":
-                    language = 19;
+                    langID = 19;
                     break;
                 default:
-                    language = 17;
+                    // intl
+                    langID = 17;
                     break;
             }
 
             if(debug == 1)
             {
+                Console.WriteLine("langID: " + langID);
                 Console.WriteLine("cultName: " + cultName);
-                Console.WriteLine("language: " + language);
                 Console.WriteLine();
             }
         } // decide driver langauge
@@ -419,25 +452,25 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine(ex.StackTrace);
             }
 
-            int psid;
-            int pfid;
+            int psID;
+            int pfID;
 
             // get correct gpu drivers
-            if (ini.IniReadValue("Configuration", "bDesktopGPU") == "1")
+            if(ini.IniReadValue("Configuration", "bDesktopGPU") == "1")
             {
-                psid = 98;
-                pfid = 756;
+                psID = 98;
+                pfID = 756;
             } else
             {
-                psid = 99;
-                pfid = 757;
+                psID = 99;
+                pfID = 757;
             }
 
             // get remote version
             try
             {
                 WebClient client = new WebClient();
-                Stream stream = client.OpenRead("http://www.nvidia.com/Download/processDriver.aspx?psid=" + psid.ToString() + "&pfid=" + pfid.ToString() + "&rpf=1&osid=" + osID + "&lid=" + language.ToString() + "&ctk=0");
+                Stream stream = client.OpenRead("http://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID + "&lid=" + langID.ToString() + "&ctk=0");
                 StreamReader reader = new StreamReader(stream);
                 finalURL = reader.ReadToEnd();
                 reader.Close();
@@ -492,10 +525,10 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
 
-            if (debug == 1)
+            if(debug == 1)
             {
-                Console.WriteLine("psid: " + psid);
-                Console.WriteLine("pfid: " + pfid);
+                Console.WriteLine("psid: " + psID);
+                Console.WriteLine("pfid: " + pfID);
             }
 
         } // get local and remote GPU driver version
