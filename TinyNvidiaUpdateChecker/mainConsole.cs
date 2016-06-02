@@ -41,7 +41,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Current client version
         /// </summary>
-        private static int offlineVer = 1200;
+        private static string offlineVer = "1.2.0";
 
         /// <summary>
         /// Remote client version
@@ -74,7 +74,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// OS ID for GPU driver download
         /// </summary>
-        private static string osID;
+        private static int osID;
 
         /// <summary>
         /// Direction for configuration folder
@@ -172,10 +172,8 @@ namespace TinyNvidiaUpdateChecker
             if(onlineGPUDriverVersion == offlineGPUDriverVersion)
             {
                 Console.WriteLine("GPU drivers are up-to-date!");
-            }
-            else
-            {
-                if(offlineGPUDriverVersion > onlineGPUDriverVersion)
+            } else {
+                if (offlineGPUDriverVersion > onlineGPUDriverVersion)
                 {
                     Console.WriteLine("Current GPU driver is newer than remote!");
                 }
@@ -183,9 +181,7 @@ namespace TinyNvidiaUpdateChecker
                 if(onlineGPUDriverVersion < offlineGPUDriverVersion)
                 {
                     Console.WriteLine("GPU drivers are up-to-date!");
-                }
-                else
-                {
+                } else {
                     Console.WriteLine("There are new drivers to download!");
                     DialogResult dialog = MessageBox.Show("There's a new update available to download, do you want to download the update now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
@@ -226,8 +222,7 @@ namespace TinyNvidiaUpdateChecker
                 if(dialogUpdates == DialogResult.Yes)
                 {
                     ini.IniWriteValue("Configuration", "bCheck for Updates", "1");
-                } else
-                {
+                } else {
                     ini.IniWriteValue("Configuration", "bCheck for Updates", "0");
                 }
 
@@ -236,9 +231,7 @@ namespace TinyNvidiaUpdateChecker
                 if(dialogGPUType == DialogResult.Yes)
                 {
                     ini.IniWriteValue("Configuration", "bDesktopGPU", "1");
-                }
-                else
-                {
+                } else {
                     ini.IniWriteValue("Configuration", "bDesktopGPU", "0");
                 }
 
@@ -274,7 +267,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
 
-            if(onlineVer > offlineVer)
+            if(onlineVer > onlineVer)
             {
                 Console.WriteLine("There is a update available for TinyNvidiaUpdateChecker!");
                 DialogResult dialog = MessageBox.Show("There's a new client update available to download, do you want to be navigate to the page?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
@@ -303,53 +296,53 @@ namespace TinyNvidiaUpdateChecker
                 winVer = "10";
                 if(Environment.Is64BitOperatingSystem == true)
                 {
-                    osID = "57";
+                    osID = 57;
                 } else {
-                    osID = "56";
+                    osID = 56;
                 }
             }
             // Windows 8.1
             else if (verOrg.Contains("6.3"))
             {
                 winVer = "8.1";
-                if (Environment.Is64BitOperatingSystem == true)
+                if(Environment.Is64BitOperatingSystem == true)
                 {
-                    osID = "41";
+                    osID = 41;
                 } else {
-                    osID = "40";
+                    osID = 40;
                 }
             }
             // Windows 8
             else if (verOrg.Contains("6.2"))
             {
                 winVer = "8";
-                if (Environment.Is64BitOperatingSystem == true)
+                if(Environment.Is64BitOperatingSystem == true)
                 {
-                    osID = "41";
+                    osID = 41;
                 } else {
-                    osID = "40";
+                    osID = 40;
                 }
             }
             // Windows 7
             else if (verOrg.Contains("6.1"))
             {
                 winVer = "7";
-                if (Environment.Is64BitOperatingSystem == true)
+                if(Environment.Is64BitOperatingSystem == true)
                 {
-                    osID = "41";
+                    osID = 41;
                 } else {
-                    osID = "40";
+                    osID = 40;
                 }
             }
             // Windows Vista
             else if (verOrg.Contains("6.0"))
             {
                 winVer = "Vista";
-                if (Environment.Is64BitOperatingSystem == true)
+                if(Environment.Is64BitOperatingSystem == true)
                 {
-                    osID = "41";
+                    osID = 41;
                 } else {
-                    osID = "40";
+                    osID = 40;
                 }
             } else {
                 winVer = "Unknown";
@@ -362,7 +355,7 @@ namespace TinyNvidiaUpdateChecker
             if(debug == 1)
             {
                 Console.WriteLine("winVer: " + winVer);
-                Console.WriteLine("osID: " + osID);
+                Console.WriteLine("osID: " + osID.ToString());
                 Console.WriteLine("verOrg: " + verOrg);
                 Console.WriteLine();
             }
@@ -460,8 +453,7 @@ namespace TinyNvidiaUpdateChecker
             {
                 psID = 98;
                 pfID = 756;
-            } else
-            {
+            } else {
                 psID = 99;
                 pfID = 757;
             }
@@ -470,7 +462,7 @@ namespace TinyNvidiaUpdateChecker
             try
             {
                 WebClient client = new WebClient();
-                Stream stream = client.OpenRead("http://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID + "&lid=" + langID.ToString() + "&ctk=0");
+                Stream stream = client.OpenRead("http://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0");
                 StreamReader reader = new StreamReader(stream);
                 finalURL = reader.ReadToEnd();
                 reader.Close();
@@ -519,6 +511,7 @@ namespace TinyNvidiaUpdateChecker
                 }
                 Console.WriteLine(ex.StackTrace);
             }
+
             if(error == 0)
             {
                 Console.Write("OK!");

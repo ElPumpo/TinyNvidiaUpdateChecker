@@ -6,10 +6,12 @@ All notable changes to this project will be documented in this file.
 - Missing author in assembly information.
 - Support mobile NVIDIA GPUs.
 - New argument - "--eraseConfig", erases configuration file.
-- Improved config system.
 
 ### Changed
 - Minor cleanup.
+- Now following the Semantic Versioning 2.0.0 standard, http://semver.org/spec/v2.0.0.html.
+- Improved config system.
+- Improved update system.
 
 ## [1.1.0.0] - 2016-05-31
 ### Added
