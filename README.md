@@ -16,6 +16,11 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 
 If you're forking this project don't worry about the dependencies as they are handled by NuGet.
 
+#Requirements
++ Windows 10, 8.1, 8 or Vista
++ .NET Framework 4
++ Stable internet connection
+
 #Command arguments
 | Argument   | Explanation |
 | ---------- |:-----------:|
@@ -29,11 +34,6 @@ You may customize the application using the config file located at `%localappdat
 | Option | Restrictions | Effect |
 | ------ | ------------ |:------:|
 | Check for Updates | 0 or 1 | enables or disables searches for client updates |
-
-#Requirements
-+ Windows 10, 8.1, 8 or Vista
-+ .NET Framework 4
-+ Stable internet connection
 
 #License
 TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
