@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 // Version information for this assembly consists of the following three values:
 //      Major Version
 //      Minor Version 
-//      Patch Version
+//      Patch
 // Following the Semantic Versioning 2.0.0 standard; see http://semver.org/spec/v2.0.0.html.
 [assembly: AssemblyVersion("1.2.0")]
 [assembly: AssemblyFileVersion("1.2.0")]

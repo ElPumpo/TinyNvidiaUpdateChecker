@@ -8,6 +8,7 @@ using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
+using System.Reflection;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -36,13 +37,13 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Server adress
         /// </summary>
-        private readonly static string serverURL = "https://raw.githubusercontent.com/ElPumpo/TinyNvidiaUpdateChecker/master/TinyNvidiaUpdateChecker/version";
+        private readonly static string serverURL = "http://elpumpo.github.io/TinyNvidiaUpdateChecker/";
 
         /// <summary>
         /// Current client version
         /// </summary>
-        private static string offlineVer = "1.2.0";
-
+        private static string offlineVer = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+        
         /// <summary>
         /// Remote client version
         /// </summary>
@@ -246,12 +247,12 @@ namespace TinyNvidiaUpdateChecker
             int error = 0;
             try
             {
-                WebClient client = new WebClient();
-                Stream stream = client.OpenRead(serverURL);
-                StreamReader reader = new StreamReader(stream);
-                onlineVer = Convert.ToInt32(reader.ReadToEnd());
-                reader.Close();
-                stream.Close();
+                HtmlWeb webClient = new HtmlWeb();
+                HtmlAgilityPack.HtmlDocument htmlDocument = webClient.Load(serverURL);
+
+                // get version
+                HtmlNode tdVer = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "currentVersion");
+                onlineVer = Convert.ToInt32(tdVer.InnerText.Replace(".", string.Empty));
             }
 
             catch (Exception ex)
@@ -266,8 +267,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("OK!");
                 Console.WriteLine();
             }
-
-            if(onlineVer > onlineVer)
+            int iOfflineVer = Convert.ToInt32(offlineVer.Replace(".", string.Empty));
+            if (onlineVer > iOfflineVer)
             {
                 Console.WriteLine("There is a update available for TinyNvidiaUpdateChecker!");
                 DialogResult dialog = MessageBox.Show("There's a new client update available to download, do you want to be navigate to the page?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
@@ -280,8 +281,8 @@ namespace TinyNvidiaUpdateChecker
 
             if(debug == 1)
             {
-                Console.WriteLine("offlineVer: " + offlineVer);
-                Console.WriteLine("onlineVer:  " + onlineVer);
+                Console.WriteLine("iOfflineVer: " + iOfflineVer);
+                Console.WriteLine("onlineVer:   " + onlineVer);
             }
             Console.WriteLine();
         } // checks for application updates
@@ -333,17 +334,7 @@ namespace TinyNvidiaUpdateChecker
                 } else {
                     osID = 40;
                 }
-            }
-            // Windows Vista
-            else if (verOrg.Contains("6.0"))
-            {
-                winVer = "Vista";
-                if(Environment.Is64BitOperatingSystem == true)
-                {
-                    osID = 41;
-                } else {
-                    osID = 40;
-                }
+
             } else {
                 winVer = "Unknown";
                 Console.WriteLine("You're running a non-supported version of Windows; the application will determine itself.");
