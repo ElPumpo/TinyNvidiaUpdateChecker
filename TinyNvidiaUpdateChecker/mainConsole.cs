@@ -37,7 +37,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Server adress
         /// </summary>
-        private readonly static string serverURL = "http://elpumpo.github.io/TinyNvidiaUpdateChecker/";
+        private readonly static string serverURL = "https://elpumpo.github.io/TinyNvidiaUpdateChecker/";
 
         /// <summary>
         /// Current client version
@@ -415,7 +415,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("cultName: " + cultName);
                 Console.WriteLine();
             }
-        } // decide driver langauge
+        } // decide driver langauge 
 
         private static void gpuInfo()
         {
@@ -453,7 +453,7 @@ namespace TinyNvidiaUpdateChecker
             try
             {
                 WebClient client = new WebClient();
-                Stream stream = client.OpenRead("http://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0");
+                Stream stream = client.OpenRead("https://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0");
                 StreamReader reader = new StreamReader(stream);
                 finalURL = reader.ReadToEnd();
                 reader.Close();
@@ -488,7 +488,7 @@ namespace TinyNvidiaUpdateChecker
                 {
                     if(link.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/"))
                     {
-                        driverURL = "http://www.nvidia.com" + link.Attributes["href"].Value;
+                        driverURL = "https://www.nvidia.com" + link.Attributes["href"].Value;
                     }
                 }
             }
