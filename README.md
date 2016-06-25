@@ -1,5 +1,4 @@
-# TinyNvidiaUpdateChecker
-The application currently only supports desktop GeForce GPUs, if you want your GPU covered, start a issue above.
+#TinyNvidiaUpdateChecker
 
 #About
 Tiny application which checks for NVIDIA GPU drivers, developed in C# for Windows.
