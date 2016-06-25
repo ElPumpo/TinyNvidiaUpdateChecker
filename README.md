@@ -17,7 +17,7 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 If you're forking this project don't worry about the dependencies as they are handled by NuGet.
 
 #Requirements
-+ Windows 10, 8.1, 8 or Vista
++ Windows 10, 8.1, 8 or 7
 + .NET Framework 4
 + Stable internet connection
 
