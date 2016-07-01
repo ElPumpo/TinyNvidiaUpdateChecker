@@ -8,7 +8,6 @@ using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
-using System.Reflection;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -42,7 +41,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Current client version
         /// </summary>
-        private static string offlineVer = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+        private static string offlineVer = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion;
         
         /// <summary>
         /// Remote client version
@@ -128,7 +127,7 @@ namespace TinyNvidiaUpdateChecker
 
                 if(Array.IndexOf(parms, "--debug") != -1) debug = 1; // enable debug
 
-                if(Array.IndexOf(parms, "--?") != -1) // help menu
+                if(Array.IndexOf(parms, "--help") != -1) // help menu
                 {
                     Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                     Console.WriteLine();
@@ -137,12 +136,12 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("This is free software, and you are welcome to redistribute it");
                     Console.WriteLine("under certain conditions. Licensed under GPLv3.");
                     Console.WriteLine();
-                    Console.WriteLine("Usage: " + Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location) + " [--quiet] [--eraseConfig] [--debug] [--?]");
+                    Console.WriteLine("Usage: " + Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location) + " [--quiet] [--eraseConfig] [--debug] [--help]");
                     Console.WriteLine();
                     Console.WriteLine("--quiet        Application runs quiet.");
                     Console.WriteLine("--eraseConfig  Erase local configuration file.");
                     Console.WriteLine("--debug        Enable debugging for extended information.");
-                    Console.WriteLine("--?            Displays this message.");
+                    Console.WriteLine("--help         Displays this message.");
                     Console.WriteLine();
                     Environment.Exit(0);
                 }
