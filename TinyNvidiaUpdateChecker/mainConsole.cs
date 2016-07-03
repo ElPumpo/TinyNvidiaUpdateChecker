@@ -8,6 +8,7 @@ using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
+using System.Reflection;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -41,7 +42,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Current client version
         /// </summary>
-        private static string offlineVer = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion;
+        private static string offlineVer = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
         
         /// <summary>
         /// Remote client version
@@ -106,56 +107,61 @@ namespace TinyNvidiaUpdateChecker
         [STAThread]
         static void Main(string[] args)
         {
+            Console.Title = "TinyNvidiaUpdateChecker v" + offlineVer;
             string[] parms = Environment.GetCommandLineArgs();
+            int isSet = 0;
             if (parms.Length > 1)
             {
+                
                 // go quiet mode
-                if(Array.IndexOf(parms, "--quiet") != -1)
+                if(Array.IndexOf(parms, "--quiet") != -1) //@todo fix broken function
                 {
                     FreeConsole();
                     showUI = 0;
+                    isSet = 1;
                 }
 
                 // erase config
                 if(Array.IndexOf(parms, "--eraseConfig") != -1)
                 {
-                    if(File.Exists(dirToConfig + "config.ini"))
+                    isSet = 1;
+                    if (File.Exists(dirToConfig + "config.ini"))
                     {
                         File.Delete(dirToConfig + "config.ini");
                     }
                 }
 
-                if(Array.IndexOf(parms, "--debug") != -1) debug = 1; // enable debug
-
-                if(Array.IndexOf(parms, "--help") != -1) // help menu
+                if(Array.IndexOf(parms, "--debug") != -1)
                 {
-                    Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+                    isSet = 1;
+                    debug = 1;
+                }
+                // enable debug
+
+                if (Array.IndexOf(parms, "--help") != -1) // help menu
+                {
+                    isSet = 1;
+                    introMessage();
+                    Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [--quiet] [--eraseConfig] [--debug] [--help]");
                     Console.WriteLine();
-                    Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
-                    Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
-                    Console.WriteLine("This is free software, and you are welcome to redistribute it");
-                    Console.WriteLine("under certain conditions. Licensed under GPLv3.");
-                    Console.WriteLine();
-                    Console.WriteLine("Usage: " + Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location) + " [--quiet] [--eraseConfig] [--debug] [--help]");
-                    Console.WriteLine();
-                    Console.WriteLine("--quiet        Application runs quiet.");
+                    Console.WriteLine("--quiet        Run application quiet.");
                     Console.WriteLine("--eraseConfig  Erase local configuration file.");
                     Console.WriteLine("--debug        Enable debugging for extended information.");
                     Console.WriteLine("--help         Displays this message.");
                     Console.WriteLine();
                     Environment.Exit(0);
                 }
+
+                if(isSet == 0)
+                {
+                    introMessage();
+                    Console.WriteLine("Invalid command. type --help for help.");
+                    Environment.Exit(1);
+                }
             }
             if (showUI == 1) AllocConsole();
 
-            Console.Title = "TinyNvidiaUpdateChecker v" + offlineVer;
-            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
-            Console.WriteLine();
-            Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
-            Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
-            Console.WriteLine("This is free software, and you are welcome to redistribute it");
-            Console.WriteLine("under certain conditions. Licensed under GPLv3.");
-            Console.WriteLine();
+            introMessage();
 
             checkDll();
 
@@ -189,7 +195,6 @@ namespace TinyNvidiaUpdateChecker
                     {
                         Process.Start(driverURL);
                     }
-                        
                 }
             }
 
@@ -198,6 +203,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("offlineGPUDriverVersion: " + offlineGPUDriverVersion);
                 Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
             }
+
+
 
             Console.WriteLine();
             Console.WriteLine("Job done! Press any key to exit.");
@@ -524,6 +531,17 @@ namespace TinyNvidiaUpdateChecker
                 if(showUI == 1) Console.ReadKey();
                 Environment.Exit(2);
             }
+        }
+
+        private static void introMessage()
+        {
+            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+            Console.WriteLine();
+            Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
+            Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
+            Console.WriteLine("This is free software, and you are welcome to redistribute it");
+            Console.WriteLine("under certain conditions. Licensed under GPLv3.");
+            Console.WriteLine();
         }
     }
 }

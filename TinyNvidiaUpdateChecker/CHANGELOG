@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Now following the Semantic Versioning 2.0.0 standard, http://semver.org/spec/v2.0.0.html.
 - Improved config system.
 - Improved update system.
+- Improved command line argument handler.
 
 ## [1.1.0.0] - 2016-05-31
 ### Added
