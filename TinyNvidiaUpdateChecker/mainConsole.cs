@@ -131,14 +131,15 @@ namespace TinyNvidiaUpdateChecker
                     }
                 }
 
+                // enable debug
                 if(Array.IndexOf(parms, "--debug") != -1)
                 {
                     isSet = 1;
                     debug = 1;
                 }
-                // enable debug
 
-                if (Array.IndexOf(parms, "--help") != -1) // help menu
+                // help menu
+                if(Array.IndexOf(parms, "--help") != -1)
                 {
                     isSet = 1;
                     introMessage();
@@ -203,8 +204,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("offlineGPUDriverVersion: " + offlineGPUDriverVersion);
                 Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
             }
-
-
 
             Console.WriteLine();
             Console.WriteLine("Job done! Press any key to exit.");
