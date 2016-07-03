@@ -155,7 +155,7 @@ namespace TinyNvidiaUpdateChecker
                 if(isSet == 0)
                 {
                     introMessage();
-                    Console.WriteLine("Invalid command. type --help for help.");
+                    Console.WriteLine("Invalid command, type --help for help.");
                     Environment.Exit(1);
                 }
             }
@@ -542,6 +542,6 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine("This is free software, and you are welcome to redistribute it");
             Console.WriteLine("under certain conditions. Licensed under GPLv3.");
             Console.WriteLine();
-        }
+        } // show legal message
     }
 }
