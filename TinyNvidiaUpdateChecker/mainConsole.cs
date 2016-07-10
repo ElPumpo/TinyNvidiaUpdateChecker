@@ -4,11 +4,13 @@ using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using HtmlAgilityPack;
+using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
 using System.Reflection;
+using HtmlAgilityPack;
+
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -68,7 +70,7 @@ namespace TinyNvidiaUpdateChecker
         private static string driverURL;
 
         /// <summary>
-        /// Local Windows version (not used?)
+        /// Local Windows version
         /// </summary>
         private static string winVer;
 
@@ -76,16 +78,6 @@ namespace TinyNvidiaUpdateChecker
         /// OS ID for GPU driver download
         /// </summary>
         private static int osID;
-
-        /// <summary>
-        /// Direction for configuration folder
-        /// </summary>
-        private static string dirToConfig = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Hawaii_Beach\TinyNvidiaUpdateChecker\";
-
-        /// <summary>
-        /// Direction for configuration file
-        /// </summary>
-        private static iniFile ini = new iniFile(dirToConfig + "config.ini");
 
         /// <summary>
         /// Show UI or go quiet | 1: show | 0: quiet
@@ -96,6 +88,13 @@ namespace TinyNvidiaUpdateChecker
         /// Enable extended information
         /// </summary>
         private static int debug = 0;
+
+        /// <summary>
+        /// Direction for configuration folder
+        /// </summary>
+        private static string dirToConfig = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Hawaii_Beach\TinyNvidiaUpdateChecker\";
+
+        private static string fullConfig = dirToConfig + "app.config";
 
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -122,17 +121,17 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 // erase config
-                if(Array.IndexOf(parms, "--eraseConfig") != -1)
+                if (Array.IndexOf(parms, "--eraseConfig") != -1)
                 {
                     isSet = 1;
-                    if (File.Exists(dirToConfig + "config.ini"))
+                    if (File.Exists(fullConfig))
                     {
-                        File.Delete(dirToConfig + "config.ini");
+                        File.Delete(fullConfig);
                     }
                 }
 
                 // enable debug
-                if(Array.IndexOf(parms, "--debug") != -1)
+                if (Array.IndexOf(parms, "--debug") != -1)
                 {
                     isSet = 1;
                     debug = 1;
@@ -149,30 +148,29 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("--eraseConfig  Erase local configuration file.");
                     Console.WriteLine("--debug        Enable debugging for extended information.");
                     Console.WriteLine("--help         Displays this message.");
-                    Console.WriteLine();
                     Environment.Exit(0);
                 }
 
                 if(isSet == 0)
                 {
                     introMessage();
-                    Console.WriteLine("Invalid command, type --help for help.");
+                    Console.WriteLine("Unknown command, type --help for help.");
                     Environment.Exit(1);
                 }
             }
-            if (showUI == 1) AllocConsole();
+            if(showUI == 1) AllocConsole();
 
             introMessage();
 
             checkDll();
 
-            iniInit(); // read & write configuration file
+            configSetup(); // read & write configuration file
 
             checkWinVer(); // get current windows version
 
             getLanguage(); // get current langauge
 
-            if(ini.IniReadValue("Configuration", "bCheck for Updates") == "1") searchForUpdates();
+            if(ReadSetting("Check for Updates") == "true") searchForUpdates();
 
             gpuInfo();
 
@@ -211,37 +209,41 @@ namespace TinyNvidiaUpdateChecker
             Environment.Exit(0);
         }
 
-        private static void iniInit()
+        private static void configSetup()
         {
-            // create dir if it doesn't exist
-            if(!Directory.Exists(dirToConfig)) Directory.CreateDirectory(dirToConfig);
-
+            
+            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", fullConfig);
+            if (debug == 1)
+            {
+                Console.WriteLine("Current configuration file is located at: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+                Console.WriteLine();
+            }
             // create config file
-            if(!File.Exists(dirToConfig + "config.ini"))
+            if(!File.Exists(fullConfig))
             {
                 Console.WriteLine("Generating configuration file, this only happenes once.");
-                Console.WriteLine("The configuration file is located at " + dirToConfig);
-                // &whql=0 << for future BETA driver support
+                Console.WriteLine("The configuration file is located at: " + dirToConfig);
 
+                string key1 = "Check for Updates";
                 // update checking
                 DialogResult dialogUpdates = MessageBox.Show("Do you want to search for client updates?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if(dialogUpdates == DialogResult.Yes)
                 {
-                    ini.IniWriteValue("Configuration", "bCheck for Updates", "1");
+                    AddUpdateAppSettings(key1, "true");
                 } else {
-                    ini.IniWriteValue("Configuration", "bCheck for Updates", "0");
+                    AddUpdateAppSettings(key1, "false");
                 }
 
-
+                string key2 = "Desktop GPU";
                 DialogResult dialogGPUType = MessageBox.Show("Are you running a desktop GPU?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if(dialogGPUType == DialogResult.Yes)
                 {
-                    ini.IniWriteValue("Configuration", "bDesktopGPU", "1");
-                } else {
-                    ini.IniWriteValue("Configuration", "bDesktopGPU", "0");
+                    AddUpdateAppSettings(key2, "true");
                 }
-
-                Console.WriteLine();
+                else
+                {
+                    AddUpdateAppSettings(key2, "false");
+                }
             }
 
         } // configuration files
@@ -445,7 +447,7 @@ namespace TinyNvidiaUpdateChecker
             int pfID;
 
             // get correct gpu drivers
-            if(ini.IniReadValue("Configuration", "bDesktopGPU") == "1")
+            if(ReadSetting("Desktop GPU") == "true")
             {
                 psID = 98;
                 pfID = 756;
@@ -454,7 +456,7 @@ namespace TinyNvidiaUpdateChecker
                 pfID = 757;
             }
 
-            // get remote version
+            // finish request
             try
             {
                 WebClient client = new WebClient();
@@ -542,5 +544,84 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine("under certain conditions. Licensed under GPLv3.");
             Console.WriteLine();
         } // show legal message
+
+        private static string ReadSetting(string key)
+        {
+            string result = null;
+            try
+             {
+                var appSettings = ConfigurationManager.AppSettings[key];
+                if(appSettings != null)
+                {
+                    result = appSettings;
+                } else
+                {
+                    // error reading stuff
+                    Console.WriteLine();
+                    Console.WriteLine("Error reading configuration file, attempting to repair key '" + key + "' . . .");
+                    repairConfig(key);
+                }
+            }
+            catch (ConfigurationErrorsException ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+            }
+            return result;
+        }
+
+        private static void AddUpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+                if (settings[key] == null)
+                {
+                    settings.Add(key, value);
+                }
+                else
+                {
+                    settings[key].Value = value;
+                }
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+            }
+        }
+
+        private static void repairConfig(string key)
+        {
+            string val = arrayOfConfig(key);
+
+            if(val != null) {
+                AddUpdateAppSettings(key, val);
+                Console.WriteLine("Finished request, key '" + key + "' with val '" + val + "' has been set!");
+                Console.WriteLine();
+            }
+
+        }
+
+        private static string arrayOfConfig(string keyIn)
+        {
+            switch(keyIn)
+            {
+                case "Check for Updates":
+                    return "true";
+
+                case "Desktop GPU":
+                    return "true";
+
+                default:
+                    Console.WriteLine("Cannot repair config: unregistred key!");
+                    break;
+
+            }
+            return null;
+
+            //@todo ask user for val out exactly like configSetup does
+        }
     }
 }

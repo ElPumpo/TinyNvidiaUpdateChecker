@@ -8,7 +8,8 @@ All notable changes to this project will be documented in this file.
 - New argument - "--eraseConfig", erases configuration file.
 
 ### Changed
-- Minor cleanup.
+- Minor cleanup and improvements.
+- Moved from '.ini' configuration format to '.xml' for several reasons. Had a great time doing that.
 - Now following the Semantic Versioning 2.0.0 standard, http://semver.org/spec/v2.0.0.html.
 - Improved config system.
 - Improved update system.
