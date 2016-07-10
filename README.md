@@ -17,22 +17,24 @@ If you're forking this project don't worry about the dependencies as they are ha
 
 #Requirements
 + Windows 10, 8.1, 8 or 7
-+ .NET Framework 4
++ .NET framework 4
 + Stable internet connection
 
 #Command arguments
 | Argument   | Explanation |
 | ---------- |:-----------:|
 | --quiet | run quiet |
+| --eraseConfig | erase local configuration file |
 | --debug | turn debugging on |
-| --? | view help |
+| --help | view help |
 
 #Configuration file
-You may customize the application using the config file located at `%localappdata%\Hawaii_Beach\TinyNvidiaUpdateChecker` and modify `config.ini`
+You may customize the application using the config file located at `%localappdata%\Hawaii_Beach\TinyNvidiaUpdateChecker` and modify `app.config`
 
 | Option | Restrictions | Effect |
 | ------ | ------------ |:------:|
-| Check for Updates | 0 or 1 | enables or disables searches for client updates |
+| Check for Updates | false or true | enables or disables searches for client updates |
+| Desktop GPU | false or true | if set to true the application will search for desktop GPU drivers, if set to false the application will search for mobile GPU drivers |
 
 #License
 TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
