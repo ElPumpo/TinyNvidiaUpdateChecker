@@ -170,7 +170,7 @@ namespace TinyNvidiaUpdateChecker
 
             getLanguage(); // get current langauge
 
-            if(ReadSetting("Check for Updates") == "true") searchForUpdates();
+            if(readValue("Check for Updates") == "true") searchForUpdates();
 
             gpuInfo();
 
@@ -224,26 +224,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Generating configuration file, this only happenes once.");
                 Console.WriteLine("The configuration file is located at: " + dirToConfig);
 
-                string key1 = "Check for Updates";
-                // update checking
-                DialogResult dialogUpdates = MessageBox.Show("Do you want to search for client updates?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                if(dialogUpdates == DialogResult.Yes)
-                {
-                    AddUpdateAppSettings(key1, "true");
-                } else {
-                    AddUpdateAppSettings(key1, "false");
-                }
-
-                string key2 = "Desktop GPU";
-                DialogResult dialogGPUType = MessageBox.Show("Are you running a desktop GPU?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                if(dialogGPUType == DialogResult.Yes)
-                {
-                    AddUpdateAppSettings(key2, "true");
-                }
-                else
-                {
-                    AddUpdateAppSettings(key2, "false");
-                }
+                setConfigValue("Check for Updates");
+                setConfigValue("Desktop GPU");
             }
 
         } // configuration files
@@ -445,9 +427,9 @@ namespace TinyNvidiaUpdateChecker
 
             int psID;
             int pfID;
-
+            
             // get correct gpu drivers
-            if(ReadSetting("Desktop GPU") == "true")
+            if(readValue("Desktop GPU") == "true")
             {
                 psID = 98;
                 pfID = 756;
@@ -545,31 +527,32 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
         } // show legal message
 
-        private static string ReadSetting(string key)
+        private static string readValue(string key)
         {
             string result = null;
             try
              {
                 var appSettings = ConfigurationManager.AppSettings[key];
+
                 if(appSettings != null)
                 {
                     result = appSettings;
-                } else
-                {
-                    // error reading stuff
+                } else {
+                    // error reading key
                     Console.WriteLine();
                     Console.WriteLine("Error reading configuration file, attempting to repair key '" + key + "' . . .");
-                    repairConfig(key);
+                    setConfigValue(key);
                 }
             }
             catch (ConfigurationErrorsException ex)
             {
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.Message);
+                Console.WriteLine();
             }
             return result;
         }
 
-        private static void AddUpdateAppSettings(string key, string value)
+        private static void setValue(string key, string value)
         {
             try
             {
@@ -588,40 +571,43 @@ namespace TinyNvidiaUpdateChecker
             }
             catch (ConfigurationErrorsException ex)
             {
-                Console.WriteLine(ex.StackTrace);
-            }
-        }
-
-        private static void repairConfig(string key)
-        {
-            string val = arrayOfConfig(key);
-
-            if(val != null) {
-                AddUpdateAppSettings(key, val);
-                Console.WriteLine("Finished request, key '" + key + "' with val '" + val + "' has been set!");
+                Console.WriteLine(ex.Message);
                 Console.WriteLine();
             }
-
         }
 
-        private static string arrayOfConfig(string keyIn)
+        private static void setConfigValue(string key)
         {
-            switch(keyIn)
-            {
-                case "Check for Updates":
-                    return "true";
+            //@todo add advanced options
+            string str1 = null;
 
+            switch (key) {
+
+                // check for update
+                case "Check for Updates":
+                    str1 = "Do you want to search for client updates?";
+                    break;
+
+                // gpu
                 case "Desktop GPU":
-                    return "true";
+                    str1 = "Are you running a desktop GPU?";
+                    break;
 
                 default:
-                    Console.WriteLine("Cannot repair config: unregistred key!");
+                    str1 = "Unknown";
                     break;
 
             }
-            return null;
 
-            //@todo ask user for val out exactly like configSetup does
+            DialogResult dialogUpdates = MessageBox.Show(str1, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            if (dialogUpdates == DialogResult.Yes)
+            {
+                setValue(key, "true");
+            }
+            else
+            {
+                setValue(key, "false");
+            }
         }
     }
 }

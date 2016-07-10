@@ -4,14 +4,13 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - Missing author in assembly information.
-- Support mobile NVIDIA GPUs.
+- Support for mobile NVIDIA GPUs.
 - New argument - "--eraseConfig", erases configuration file.
 
 ### Changed
 - Minor cleanup and improvements.
-- Moved from '.ini' configuration format to '.xml' for several reasons. Had a great time doing that.
+- Complete re-write of config system, had a great time doing so and had to be done - old system was wanky. Moved to '.xml' format powered by the .NET framework.
 - Now following the Semantic Versioning 2.0.0 standard, http://semver.org/spec/v2.0.0.html.
-- Improved config system.
 - Improved update system.
 - Improved command line argument handler.
 
