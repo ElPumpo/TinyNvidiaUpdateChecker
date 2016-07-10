@@ -1,7 +1,7 @@
 ﻿# Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.2.0] - 2016-07-10
 ### Added
 - Missing author in assembly information.
 - Support for mobile NVIDIA GPUs.

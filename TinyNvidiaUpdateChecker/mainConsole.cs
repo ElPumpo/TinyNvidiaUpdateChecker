@@ -104,7 +104,7 @@ namespace TinyNvidiaUpdateChecker
         static extern bool FreeConsole();
 
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.Title = "TinyNvidiaUpdateChecker v" + offlineVer;
             string[] parms = Environment.GetCommandLineArgs();
@@ -157,6 +157,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("Unknown command, type --help for help.");
                     Environment.Exit(1);
                 }
+
             }
             if(showUI == 1) AllocConsole();
 
@@ -170,7 +171,10 @@ namespace TinyNvidiaUpdateChecker
 
             getLanguage(); // get current langauge
 
-            if(readValue("Check for Updates") == "true") searchForUpdates();
+            if(readValue("Check for Updates") == "true")
+            {
+                searchForUpdates();
+            }
 
             gpuInfo();
 
@@ -212,12 +216,14 @@ namespace TinyNvidiaUpdateChecker
         private static void configSetup()
         {
             
-            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", fullConfig);
+            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", fullConfig); // set config dir
+
             if (debug == 1)
             {
                 Console.WriteLine("Current configuration file is located at: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
                 Console.WriteLine();
             }
+
             // create config file
             if(!File.Exists(fullConfig))
             {
@@ -514,7 +520,7 @@ namespace TinyNvidiaUpdateChecker
                 if(showUI == 1) Console.ReadKey();
                 Environment.Exit(2);
             }
-        }
+        } // check necessary dll
 
         private static void introMessage()
         {
@@ -550,7 +556,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
             return result;
-        }
+        } // read key from config
 
         private static void setValue(string key, string value)
         {
@@ -574,7 +580,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine(ex.Message);
                 Console.WriteLine();
             }
-        }
+        } // create / update key in config
 
         private static void setConfigValue(string key)
         {
@@ -608,6 +614,6 @@ namespace TinyNvidiaUpdateChecker
             {
                 setValue(key, "false");
             }
-        }
+        } // setup for config values
     }
 }
