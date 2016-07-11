@@ -87,7 +87,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Enable extended information
         /// </summary>
-        private static int debug = 0;
+        private static Boolean debug = false;
 
         /// <summary>
         /// Direction for configuration folder
@@ -134,7 +134,7 @@ namespace TinyNvidiaUpdateChecker
                 if (Array.IndexOf(parms, "--debug") != -1)
                 {
                     isSet = 1;
-                    debug = 1;
+                    debug = true;
                 }
 
                 // help menu
@@ -201,7 +201,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            if(debug == 1)
+            if(debug == true)
             {
                 Console.WriteLine("offlineGPUDriverVersion: " + offlineGPUDriverVersion);
                 Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
@@ -215,13 +215,13 @@ namespace TinyNvidiaUpdateChecker
 
         private static void configSetup()
         {
-            
-            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", fullConfig); // set config dir
 
-            if (debug == 1)
+            // set config dir
+            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", fullConfig);
+
+            if(debug == true)
             {
                 Console.WriteLine("Current configuration file is located at: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-                Console.WriteLine();
             }
 
             // create config file
@@ -230,9 +230,11 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Generating configuration file, this only happenes once.");
                 Console.WriteLine("The configuration file is located at: " + dirToConfig);
 
-                setConfigValue("Check for Updates");
-                setConfigValue("Desktop GPU");
+                setupValue("Check for Updates");
+                setupValue("GPU Type");
             }
+
+            Console.WriteLine();
 
         } // configuration files
 
@@ -274,7 +276,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            if(debug == 1)
+            if(debug == true)
             {
                 Console.WriteLine("iOfflineVer: " + iOfflineVer);
                 Console.WriteLine("onlineVer:   " + onlineVer);
@@ -338,7 +340,7 @@ namespace TinyNvidiaUpdateChecker
                 Environment.Exit(1);
             }
 
-            if(debug == 1)
+            if(debug == true)
             {
                 Console.WriteLine("winVer: " + winVer);
                 Console.WriteLine("osID: " + osID.ToString());
@@ -352,9 +354,9 @@ namespace TinyNvidiaUpdateChecker
 
         private static void getLanguage()
         {
-            string cultName = CultureInfo.CurrentCulture.ToString(); // https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx
+            string cultName = CultureInfo.CurrentCulture.ToString(); // https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx - http://www.lingoes.net/en/translator/langcode.htm
 
-            switch(cultName)
+            switch (cultName)
             {
                 case "en-US":
                     langID = 1;
@@ -404,7 +406,7 @@ namespace TinyNvidiaUpdateChecker
                     break;
             }
 
-            if(debug == 1)
+            if(debug == true)
             {
                 Console.WriteLine("langID: " + langID);
                 Console.WriteLine("cultName: " + cultName);
@@ -431,15 +433,14 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine(ex.StackTrace);
             }
 
-            int psID;
-            int pfID;
-            
+            int psID = 0;
+            int pfID = 0;
+
             // get correct gpu drivers
-            if(readValue("Desktop GPU") == "true")
-            {
+            if(readValue("GPU Type") == "desktop") {
                 psID = 98;
                 pfID = 756;
-            } else {
+            }else if(readValue("GPU Type") == "mobile") {
                 psID = 99;
                 pfID = 757;
             }
@@ -447,8 +448,10 @@ namespace TinyNvidiaUpdateChecker
             // finish request
             try
             {
+                string processURL = "https://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0";
+
                 WebClient client = new WebClient();
-                Stream stream = client.OpenRead("https://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0");
+                Stream stream = client.OpenRead(processURL);
                 StreamReader reader = new StreamReader(stream);
                 finalURL = reader.ReadToEnd();
                 reader.Close();
@@ -504,7 +507,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
 
-            if(debug == 1)
+            if(debug == true)
             {
                 Console.WriteLine("psid: " + psID);
                 Console.WriteLine("pfid: " + pfID);
@@ -536,18 +539,22 @@ namespace TinyNvidiaUpdateChecker
         private static string readValue(string key)
         {
             string result = null;
+
             try
-             {
+            {
                 var appSettings = ConfigurationManager.AppSettings[key];
 
                 if(appSettings != null)
                 {
                     result = appSettings;
                 } else {
+
                     // error reading key
                     Console.WriteLine();
                     Console.WriteLine("Error reading configuration file, attempting to repair key '" + key + "' . . .");
-                    setConfigValue(key);
+                    setupValue(key);
+
+                    result = ConfigurationManager.AppSettings[key]; //refresh var
                 }
             }
             catch (ConfigurationErrorsException ex)
@@ -555,6 +562,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine(ex.Message);
                 Console.WriteLine();
             }
+
             return result;
         } // read key from config
 
@@ -582,38 +590,39 @@ namespace TinyNvidiaUpdateChecker
             }
         } // create / update key in config
 
-        private static void setConfigValue(string key)
+        private static void setupValue(string key)
         {
-            //@todo add advanced options
-            string str1 = null;
+            string message = null;
+            string[] value = null;
 
             switch (key) {
 
                 // check for update
                 case "Check for Updates":
-                    str1 = "Do you want to search for client updates?";
+                    message = "Do you want to search for client updates?";
+                    value = new string[] { "true", "false" };
                     break;
 
                 // gpu
-                case "Desktop GPU":
-                    str1 = "Are you running a desktop GPU?";
+                case "GPU Type":
+                    message = "If you're running a desktop GPU select Yes, if you're running a mobile GPU select No.";
+                    value = new string[] { "desktop", "mobile" };
                     break;
 
                 default:
-                    str1 = "Unknown";
+                    message = "Unknown";
+                    value = null;
                     break;
 
             }
 
-            DialogResult dialogUpdates = MessageBox.Show(str1, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-            if (dialogUpdates == DialogResult.Yes)
-            {
-                setValue(key, "true");
+            DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if(dialogUpdates == DialogResult.Yes) {
+                setValue(key, value[0]);
+            } else {
+                setValue(key, value[1]);
             }
-            else
-            {
-                setValue(key, "false");
-            }
+
         } // setup for config values
     }
 }

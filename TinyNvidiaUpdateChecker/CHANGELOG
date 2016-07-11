@@ -1,6 +1,14 @@
 ﻿# Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Repairing a config key does no longer skip the request.
+
+### Changed
+- Changes around config system, "Desktop GPU" has been replaced with "GPU Type".
+
 ## [1.2.0] - 2016-07-10
 ### Added
 - Missing author in assembly information.
