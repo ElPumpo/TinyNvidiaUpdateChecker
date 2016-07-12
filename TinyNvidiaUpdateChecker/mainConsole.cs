@@ -80,14 +80,14 @@ namespace TinyNvidiaUpdateChecker
         private static int osID;
 
         /// <summary>
-        /// Show UI or go quiet | 1: show | 0: quiet
+        /// Show UI or go quiet mode
         /// </summary>
-        private static int showUI = 1;
+        private static bool showUI = true;
 
         /// <summary>
         /// Enable extended information
         /// </summary>
-        private static Boolean debug = false;
+        private static bool debug = false;
 
         /// <summary>
         /// Direction for configuration folder
@@ -116,7 +116,7 @@ namespace TinyNvidiaUpdateChecker
                 if(Array.IndexOf(parms, "--quiet") != -1) //@todo fix broken function
                 {
                     FreeConsole();
-                    showUI = 0;
+                    showUI = false;
                     isSet = 1;
                 }
 
@@ -159,7 +159,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
             }
-            if(showUI == 1) AllocConsole();
+            if(showUI == true) AllocConsole();
 
             introMessage();
 
@@ -171,28 +171,22 @@ namespace TinyNvidiaUpdateChecker
 
             getLanguage(); // get current langauge
 
-            if(readValue("Check for Updates") == "true")
-            {
+            if(readValue("Check for Updates") == "true") {
                 searchForUpdates();
             }
 
             gpuInfo();
 
-            if(onlineGPUDriverVersion == offlineGPUDriverVersion)
-            {
+            if(onlineGPUDriverVersion == offlineGPUDriverVersion) {
                 Console.WriteLine("GPU drivers are up-to-date!");
             } else {
-                if (offlineGPUDriverVersion > onlineGPUDriverVersion)
-                {
-                    Console.WriteLine("Current GPU driver is newer than remote!");
-                }
-
-                if(onlineGPUDriverVersion < offlineGPUDriverVersion)
-                {
+                if(offlineGPUDriverVersion > onlineGPUDriverVersion) {
+                    Console.WriteLine("Current GPU driver is newer than remote!");}
+                if(onlineGPUDriverVersion < offlineGPUDriverVersion) {
                     Console.WriteLine("GPU drivers are up-to-date!");
                 } else {
                     Console.WriteLine("There are new drivers to download!");
-                    DialogResult dialog = MessageBox.Show("There's a new update available to download, do you want to download the update now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                    DialogResult dialog = MessageBox.Show("There's a new update available to download, do you want to download the update now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if(dialog == DialogResult.Yes)
                     {
@@ -209,7 +203,7 @@ namespace TinyNvidiaUpdateChecker
 
             Console.WriteLine();
             Console.WriteLine("Job done! Press any key to exit.");
-            if(showUI == 1) Console.ReadKey();
+            if(showUI == true) Console.ReadKey();
             Environment.Exit(0);
         }
 
@@ -336,7 +330,7 @@ namespace TinyNvidiaUpdateChecker
                 winVer = "Unknown";
                 Console.WriteLine("You're running a non-supported version of Windows; the application will determine itself.");
                 Console.WriteLine("OS: " + verOrg);
-                if(showUI == 1) Console.ReadKey();
+                if(showUI == true) Console.ReadKey();
                 Environment.Exit(1);
             }
 
@@ -520,14 +514,14 @@ namespace TinyNvidiaUpdateChecker
             if(!File.Exists("HtmlAgilityPack.dll"))
             {
                 Console.WriteLine("The required binary cannot be found and the application will determinate itself. It must be put in the same folder as this executable.");
-                if(showUI == 1) Console.ReadKey();
+                if(showUI == true) Console.ReadKey();
                 Environment.Exit(2);
             }
         } // check necessary dll
 
         private static void introMessage()
         {
-            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
             Console.WriteLine();
             Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
             Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
