@@ -153,7 +153,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
             }
-            if(showUI == true) AllocConsole();
+            if (showUI == true) AllocConsole();
 
             introMessage();
 
@@ -290,8 +290,7 @@ namespace TinyNvidiaUpdateChecker
             string verOrg = Environment.OSVersion.Version.ToString();
 
             // Windows 10
-            if (verOrg.Contains("10.0"))
-            {
+            if (verOrg.Contains("10.0")) {
                 winVer = "10";
                 if (Environment.Is64BitOperatingSystem == true) {
                     osID = 57;
@@ -300,8 +299,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
             // Windows 8.1
-            else if (verOrg.Contains("6.3"))
-            {
+            else if (verOrg.Contains("6.3")) {
                 winVer = "8.1";
                 if (Environment.Is64BitOperatingSystem == true) {
                     osID = 41;
@@ -310,8 +308,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
             // Windows 8
-            else if (verOrg.Contains("6.2"))
-            {
+            else if (verOrg.Contains("6.2")) {
                 winVer = "8";
                 if (Environment.Is64BitOperatingSystem == true) {
                     osID = 41;
@@ -320,8 +317,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
             // Windows 7
-            else if (verOrg.Contains("6.1"))
-            {
+            else if (verOrg.Contains("6.1")) {
                 winVer = "7";
                 if (Environment.Is64BitOperatingSystem == true) {
                     osID = 41;
@@ -337,8 +333,7 @@ namespace TinyNvidiaUpdateChecker
                 Environment.Exit(1);
             }
 
-            if (debug == true)
-            {
+            if (debug == true) {
                 Console.WriteLine("winVer: " + winVer);
                 Console.WriteLine("osID: " + osID.ToString());
                 Console.WriteLine("verOrg: " + verOrg);
@@ -403,8 +398,7 @@ namespace TinyNvidiaUpdateChecker
                     break;
             }
 
-            if(debug == true)
-            {
+            if (debug == true) {
                 Console.WriteLine("langID: " + langID);
                 Console.WriteLine("cultName: " + cultName);
                 Console.WriteLine();
@@ -524,8 +518,7 @@ namespace TinyNvidiaUpdateChecker
 
         private static void checkDll()
         {
-            if (!File.Exists("HtmlAgilityPack.dll"))
-            {
+            if (!File.Exists("HtmlAgilityPack.dll")) {
                 Console.WriteLine("The required binary cannot be found and the application will determinate itself. It must be put in the same folder as this executable.");
                 if (showUI == true) Console.ReadKey();
                 Environment.Exit(2);
