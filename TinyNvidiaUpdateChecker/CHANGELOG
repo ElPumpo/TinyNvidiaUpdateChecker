@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Changes around config system, "Desktop GPU" has been replaced with "GPU Type".
+- Code 10% more bullet proof.
 
 ## [1.2.0] - 2016-07-10
 ### Added

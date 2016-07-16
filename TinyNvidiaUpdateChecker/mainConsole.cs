@@ -181,7 +181,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("GPU drivers are up-to-date!");
                 } else {
                     Console.WriteLine("There are new drivers to download!");
-                    DialogResult dialog = MessageBox.Show("There is a new update available to download, do you want to download the update now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    DialogResult dialog = MessageBox.Show("There is a new update available to download, do you want to download the update?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (dialog == DialogResult.Yes) {
 
@@ -202,9 +202,9 @@ namespace TinyNvidiaUpdateChecker
 
                         Console.Write("OK!");
                         Console.WriteLine();
-                        Console.WriteLine("The downloaded file has been saved at: " + savePath);
+                        Console.WriteLine("The downloaded file has been saved at " + savePath);
 
-                        DialogResult dialog2 = MessageBox.Show("Do you want to run the driver installer now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        DialogResult dialog2 = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                         if (dialog2 == DialogResult.Yes) {
                             Process.Start(savePath);
@@ -270,7 +270,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (onlineVer > iOfflineVer) {
                 Console.WriteLine("There is a update available for TinyNvidiaUpdateChecker!");
-                DialogResult dialog = MessageBox.Show("There's a new client update available to download, do you want to be navigate to the page?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                DialogResult dialog = MessageBox.Show("There's a new client update available to download, do you want to be navigate to the GitHub download section?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                 if (dialog == DialogResult.Yes) {
                     Process.Start("https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases");
@@ -549,10 +549,10 @@ namespace TinyNvidiaUpdateChecker
 
             try
             {
-                var appSettings = ConfigurationManager.AppSettings[key];
+                Debug.WriteLine("read key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'");
 
-                if (appSettings != null) {
-                    result = appSettings;
+                if (ConfigurationManager.AppSettings[key] != null) {
+                    result = ConfigurationManager.AppSettings[key];
                 } else {
 
                     // error reading key
@@ -560,7 +560,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("Error reading configuration file, attempting to repair key '" + key + "' . . .");
                     setupValue(key);
 
-                    result = ConfigurationManager.AppSettings[key]; //refresh var
+                    result = ConfigurationManager.AppSettings[key];
                 }
             } catch (ConfigurationErrorsException ex) {
                 Console.WriteLine(ex.Message);
@@ -570,19 +570,22 @@ namespace TinyNvidiaUpdateChecker
             return result;
         } // read key from config
 
-        private static void setValue(string key, string value)
+        private static void setValue(string key, string val)
         {
             try
             {
                 var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                 var settings = configFile.AppSettings.Settings;
+
                 if (settings[key] == null) {
-                    settings.Add(key, value);
+                    settings.Add(key, val);
                 } else {
-                    settings[key].Value = value;
+                    settings[key].Value = val;
                 }
+
                 configFile.Save(ConfigurationSaveMode.Modified);
                 ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+
             } catch (ConfigurationErrorsException ex) {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine();
