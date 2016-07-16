@@ -66,7 +66,8 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static int langID;
 
-        private static string driverURL;
+        private static string downloadURL;
+        private static string savePath;
 
         /// <summary>
         /// Local Windows version
@@ -114,6 +115,7 @@ namespace TinyNvidiaUpdateChecker
                 // go quiet mode
                 if(Array.IndexOf(parms, "--quiet") != -1) //@todo fix broken function
                 {
+                    MessageBox.Show("This mode does currently NOT work!");
                     FreeConsole();
                     showUI = false;
                     isSet = 1;
@@ -175,6 +177,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             gpuInfo();
+            offlineGPUDriverVersion = 10000;
 
             if(onlineGPUDriverVersion == offlineGPUDriverVersion) {
                 Console.WriteLine("GPU drivers are up-to-date!");
@@ -185,19 +188,40 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("GPU drivers are up-to-date!");
                 } else {
                     Console.WriteLine("There are new drivers to download!");
-                    DialogResult dialog = MessageBox.Show("There's a new update available to download, do you want to download the update now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    DialogResult dialog = MessageBox.Show("There is a new update available to download, do you want to download the update now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                    if(dialog == DialogResult.Yes)
+                    if (dialog == DialogResult.Yes)
                     {
-                        Process.Start(driverURL);
+
+                        WebClient downloadClient = new WebClient();
+                        Console.WriteLine();
+                        Console.Write("Downloading driver file . . . ");
+
+                        try
+                        {
+                            savePath = Path.GetTempPath() + downloadURL.Split('/').Last();
+                            downloadClient.DownloadFile(downloadURL, savePath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.Write("ERROR!");
+                            Console.WriteLine();
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine();
+                        }
+
+                        Console.Write("OK!");
+                        Console.WriteLine();
+                        Console.WriteLine("The downloaded file has been saved at: " + savePath);
+
+                        DialogResult dialog2 = MessageBox.Show("Do you want to run the driver installer now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                        if (dialog2 == DialogResult.Yes)
+                        {
+                            Process.Start(savePath);
+                        }
                     }
                 }
-            }
-
-            if(debug == true)
-            {
-                Console.WriteLine("offlineGPUDriverVersion: " + offlineGPUDriverVersion);
-                Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
             }
 
             Console.WriteLine();
@@ -412,7 +436,8 @@ namespace TinyNvidiaUpdateChecker
         {
             Console.Write("Looking up GPU information . . . ");
             int error = 0;
-            string finalURL = null;
+            string processURL = null;
+            string confirmURL = null;
 
             // query local driver version
             try
@@ -443,12 +468,12 @@ namespace TinyNvidiaUpdateChecker
             // finish request
             try
             {
-                string processURL = "https://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0";
+                string gpuURL = "https://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0";
 
                 WebClient client = new WebClient();
-                Stream stream = client.OpenRead(processURL);
+                Stream stream = client.OpenRead(gpuURL);
                 StreamReader reader = new StreamReader(stream);
-                finalURL = reader.ReadToEnd();
+                processURL = reader.ReadToEnd();
                 reader.Close();
                 stream.Close();
             }
@@ -469,7 +494,7 @@ namespace TinyNvidiaUpdateChecker
                 // thanks to http://www.codeproject.com/Articles/691119/Html-Agility-Pack-Massive-information-extraction-f for a great article
 
                 HtmlWeb webClient = new HtmlWeb();
-                HtmlAgilityPack.HtmlDocument htmlDocument = webClient.Load(finalURL);
+                HtmlAgilityPack.HtmlDocument htmlDocument = webClient.Load(processURL);
 
                 // get version
                 HtmlNode tdVer = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdVersion");
@@ -481,9 +506,21 @@ namespace TinyNvidiaUpdateChecker
                 {
                     if(link.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/"))
                     {
-                        driverURL = "https://www.nvidia.com" + link.Attributes["href"].Value;
+                        confirmURL = "https://www.nvidia.com" + link.Attributes["href"].Value;
                     }
                 }
+
+                // get download link
+                htmlDocument = webClient.Load(confirmURL);
+                links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
+                foreach (var link in links)
+                {
+                    if (link.Attributes["href"].Value.Contains("download.nvidia"))
+                    {
+                        downloadURL = link.Attributes["href"].Value;
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -506,8 +543,11 @@ namespace TinyNvidiaUpdateChecker
             {
                 Console.WriteLine("psID: " + psID);
                 Console.WriteLine("pfID: " + pfID);
-                Console.WriteLine("finalURL: " + finalURL);
-                Console.WriteLine("driverURL: " + driverURL);
+                Console.WriteLine("processURL: " + processURL);
+                Console.WriteLine("confirmURL: " + confirmURL);
+                Console.WriteLine("downloadURL: " + downloadURL);
+                Console.WriteLine("offlineGPUDriverVersion: " + offlineGPUDriverVersion);
+                Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
             }
 
         } // get local and remote GPU driver version
