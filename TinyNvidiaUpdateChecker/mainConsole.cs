@@ -66,7 +66,6 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static int langID;
 
-        private static string finalURL;
         private static string driverURL;
 
         /// <summary>
@@ -216,6 +215,7 @@ namespace TinyNvidiaUpdateChecker
             if(debug == true)
             {
                 Console.WriteLine("Current configuration file is located at: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+                Console.WriteLine();
             }
 
             // create config file
@@ -226,9 +226,9 @@ namespace TinyNvidiaUpdateChecker
 
                 setupValue("Check for Updates");
                 setupValue("GPU Type");
-            }
 
-            Console.WriteLine();
+                Console.WriteLine();
+            }
 
         } // configuration files
 
@@ -412,6 +412,7 @@ namespace TinyNvidiaUpdateChecker
         {
             Console.Write("Looking up GPU information . . . ");
             int error = 0;
+            string finalURL = null;
 
             // query local driver version
             try
@@ -503,8 +504,10 @@ namespace TinyNvidiaUpdateChecker
 
             if(debug == true)
             {
-                Console.WriteLine("psid: " + psID);
-                Console.WriteLine("pfid: " + pfID);
+                Console.WriteLine("psID: " + psID);
+                Console.WriteLine("pfID: " + pfID);
+                Console.WriteLine("finalURL: " + finalURL);
+                Console.WriteLine("driverURL: " + driverURL);
             }
 
         } // get local and remote GPU driver version

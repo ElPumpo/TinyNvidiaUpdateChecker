@@ -2,7 +2,6 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
-
 ### Fixed
 - Repairing a config key does no longer skip the request.
 
