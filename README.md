@@ -17,7 +17,8 @@ If you're forking this project don't worry about the dependencies as they are ha
 
 #Requirements
 + Windows 10, 8.1, 8 or 7
-+ .NET framework 4
++ .NET framework 4 (should be pre-installed)
++ `HtmlAgilityPack.dll` in same folder as the executable
 + Stable internet connection
 
 #Command arguments
