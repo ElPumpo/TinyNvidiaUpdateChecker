@@ -5,12 +5,12 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Instead of just launching web browser where user has to load the NVIDA website in order to download the driver, the application now does it for you.
 
-### Fixed
-- Repairing a config key does no longer skip the request.
-
 ### Changed
 - Changes around config system, "Desktop GPU" has been replaced with "GPU Type".
 - Code 10% more bullet proof.
+
+### Fixed
+- Repairing a config key does no longer skip the request.
 
 ## [1.2.0] - 2016-07-10
 ### Added
@@ -24,6 +24,9 @@ All notable changes to this project will be documented in this file.
 - Now following the Semantic Versioning 2.0.0 standard, http://semver.org/spec/v2.0.0.html.
 - Improved update system.
 - Improved command line argument handler.
+
+### Fixed
+- Solved issue where quiet mode wouldn't show any message boxes.
 
 ## [1.1.0.0] - 2016-05-31
 ### Added
