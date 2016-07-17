@@ -217,6 +217,9 @@ namespace TinyNvidiaUpdateChecker
             Environment.Exit(0);
         }
 
+        /// <summary>
+        /// Initialize configuration manager
+        /// </summary>
         private static void configInit()
         {
 
@@ -239,8 +242,11 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
 
-        } // configuration files
+        }
 
+        /// <summary>
+        /// Search for client updates
+        /// </summary>
         private static void searchForUpdates()
         {
             Console.Write("Searching for Updates . . . ");
@@ -283,6 +289,10 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
         } // checks for application updates
 
+        /// <summary>
+        /// Gets the current Windows version and sets important value 'osID'.
+        /// </summary>
+        /// <seealso cref="gpuInfo"> Used here, decides OS and OS architecture.</seealso>
         private static void checkWinVer()
         {
             string verOrg = Environment.OSVersion.Version.ToString();
@@ -340,8 +350,12 @@ namespace TinyNvidiaUpdateChecker
             
             
 
-        } // get local Windows version
+        }
 
+        /// <summary>
+        /// Gets the local langauge used by operator and sets value 'langID'.
+        /// </summary>
+        /// <seealso cref="gpuInfo"> Used here, decides driver download language and possibly download server.</seealso>
         private static void getLanguage()
         {
             string cultName = CultureInfo.CurrentCulture.ToString(); // https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx - http://www.lingoes.net/en/translator/langcode.htm
@@ -401,8 +415,11 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("cultName: " + cultName);
                 Console.WriteLine();
             }
-        } // decide driver langauge 
+        }
 
+        /// <summary>
+        /// A lot of things going on inside: gets current gpu driver, fetches latest gpu driver from NVIDIA server and fetches download link for latest drivers.
+        /// </summary>
         private static void gpuInfo()
         {
             Console.Write("Looking up GPU information . . . ");
@@ -524,8 +541,11 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
             }
 
-        } // get local and remote GPU driver version
+        }
 
+        /// <summary>
+        /// Nothing important, just a check if the required dll is placed correctly.
+        /// </summary>
         private static void checkDll()
         {
             if (!File.Exists("HtmlAgilityPack.dll")) {
@@ -533,8 +553,11 @@ namespace TinyNvidiaUpdateChecker
                 if (showUI == true) Console.ReadKey();
                 Environment.Exit(2);
             }
-        } // check necessary dll
+        }
 
+        /// <summary>
+        /// Intro with legal message for cleanup at the top.
+        /// </summary>
         private static void introMessage()
         {
             Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
@@ -544,8 +567,11 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine("This is free software, and you are welcome to redistribute it");
             Console.WriteLine("under certain conditions. Licensed under GPLv3.");
             Console.WriteLine();
-        } // show legal message
+        }
 
+        /// <summary>
+        /// Reads value from configuration file, and adds if requested key / value is missing - returns a string.</summary>
+        /// <param name="key"> Config key to read value from.</param>
         private static string readValue(string key)
         {
             string result = null;
@@ -575,6 +601,10 @@ namespace TinyNvidiaUpdateChecker
             return result;
         } // read key from config
 
+        /// <summary>
+        /// Set / update value in configuration.</summary>
+        /// <param name="key"> Requested key name.</param>
+        /// <param name="val"> Requested value.</param>
         private static void setValue(string key, string val)
         {
             try
@@ -596,8 +626,12 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine(ex.Message);
                 Console.WriteLine();
             }
-        } // create / update key in config
+        }
 
+        /// <summary>
+        /// Ask operator for key value, not to be confused with setValue. Only called from setValue.</summary>
+        /// <param name="key"> Requested key name.</param>
+        /// <seealso cref="setValue(string, string)"> Where decisions are made.</seealso>
         private static void setupValue(string key)
         {
             string message = null;
@@ -631,6 +665,6 @@ namespace TinyNvidiaUpdateChecker
                 setValue(key, value[1]);
             }
 
-        } // setup for config values
+        }
     }
 }

@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - Instead of just launching web browser where user has to load the NVIDA website in order to download the driver, the application now does it for you.
+- Basic documentation started.
 
 ### Changed
 - Changes around config system, "Desktop GPU" has been replaced with "GPU Type".
