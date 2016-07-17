@@ -112,8 +112,7 @@ namespace TinyNvidiaUpdateChecker
             if (parms.Length > 1) {
                 
                 // go quiet mode
-                if (Array.IndexOf(parms, "--quiet") != -1) { //@todo fix broken function
-                    MessageBox.Show("This mode does currently NOT work!");
+                if (Array.IndexOf(parms, "--quiet") != -1) {
                     FreeConsole();
                     showUI = false;
                     isSet = 1;
@@ -170,7 +169,6 @@ namespace TinyNvidiaUpdateChecker
             }
 
             gpuInfo();
-            offlineGPUDriverVersion = 10000;
 
             if (onlineGPUDriverVersion == offlineGPUDriverVersion) {
                 Console.WriteLine("GPU drivers are up-to-date!");
@@ -542,7 +540,7 @@ namespace TinyNvidiaUpdateChecker
 
             try
             {
-                Debug.WriteLine("read key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'");
+                Debug.WriteLine("read: key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'");
 
                 if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
