@@ -158,7 +158,7 @@ namespace TinyNvidiaUpdateChecker
 
             checkDll();
 
-            configSetup(); // read & write configuration file
+            configInit(); // read & write configuration file
 
             checkWinVer(); // get current windows version
 
@@ -217,7 +217,7 @@ namespace TinyNvidiaUpdateChecker
             Environment.Exit(0);
         }
 
-        private static void configSetup()
+        private static void configInit()
         {
 
             // set config dir
@@ -425,13 +425,25 @@ namespace TinyNvidiaUpdateChecker
             int psID = 0;
             int pfID = 0;
 
-            // get correct gpu drivers
-            if (readValue("GPU Type") == "desktop") {
-                psID = 98;
-                pfID = 756;
-            } else if(readValue("GPU Type") == "mobile") {
-                psID = 99;
-                pfID = 757;
+            // loop until value is selected by user
+            int set = 0;
+            while (set == 0)
+            {
+                // get correct gpu drivers
+                if (readValue("GPU Type") == "desktop")
+                {
+                    set = 1;
+                    psID = 98;
+                    pfID = 756;
+                }
+                else if (readValue("GPU Type") == "mobile")
+                {
+                    set = 1;
+                    psID = 99;
+                    pfID = 757;
+                } else {
+                    setupValue("GPU Type");
+                }
             }
 
             // finish request
@@ -540,7 +552,7 @@ namespace TinyNvidiaUpdateChecker
 
             try
             {
-                Debug.WriteLine("read: key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'");
+                Debug.WriteLine("Queue: key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'");
 
                 if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
@@ -558,6 +570,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
 
+            //@todo add check for invalid values
+
             return result;
         } // read key from config
 
@@ -568,6 +582,7 @@ namespace TinyNvidiaUpdateChecker
                 var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                 var settings = configFile.AppSettings.Settings;
 
+                // check if already in config
                 if (settings[key] == null) {
                     settings.Add(key, val);
                 } else {
