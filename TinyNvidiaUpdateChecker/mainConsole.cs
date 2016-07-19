@@ -164,7 +164,7 @@ namespace TinyNvidiaUpdateChecker
 
             getLanguage(); // get current langauge
 
-            if (readValue("Check for Updates") == "true") {
+            if (readSetting("Check for Updates") == "true") {
                 searchForUpdates();
             }
 
@@ -222,6 +222,7 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void configInit()
         {
+            // powered by the .NET framework "Settings" function
 
             // set config dir
             AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", fullConfig);
@@ -236,8 +237,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Generating configuration file, this only happenes once.");
                 Console.WriteLine("The configuration file is located at: " + dirToConfig);
 
-                setupValue("Check for Updates");
-                setupValue("GPU Type");
+                setupSetting("Check for Updates");
+                setupSetting("GPU Type");
 
                 Console.WriteLine();
             }
@@ -443,23 +444,20 @@ namespace TinyNvidiaUpdateChecker
             int pfID = 0;
 
             // loop until value is selected by user
-            int set = 0;
-            while (set == 0)
+            while (psID == 0)
             {
                 // get correct gpu drivers
-                if (readValue("GPU Type") == "desktop")
+                if (readSetting("GPU Type") == "desktop")
                 {
-                    set = 1;
                     psID = 98;
                     pfID = 756;
                 }
-                else if (readValue("GPU Type") == "mobile")
+                else if (readSetting("GPU Type") == "mobile")
                 {
-                    set = 1;
                     psID = 99;
                     pfID = 757;
                 } else {
-                    setupValue("GPU Type");
+                    setupSetting("GPU Type");
                 }
             }
 
@@ -570,9 +568,9 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// Reads value from configuration file, and adds if requested key / value is missing - returns a string.</summary>
+        /// Reads setting from configuration file, and adds if requested key / value is missing - returns a string.</summary>
         /// <param name="key"> Config key to read value from.</param>
-        private static string readValue(string key)
+        private static string readSetting(string key)
         {
             string result = null;
 
@@ -587,7 +585,7 @@ namespace TinyNvidiaUpdateChecker
                     // error reading key
                     Console.WriteLine();
                     Console.WriteLine("Error reading configuration file, attempting to repair key '" + key + "' . . .");
-                    setupValue(key);
+                    setupSetting(key);
 
                     result = ConfigurationManager.AppSettings[key];
                 }
@@ -602,10 +600,10 @@ namespace TinyNvidiaUpdateChecker
         } // read key from config
 
         /// <summary>
-        /// Set / update value in configuration.</summary>
+        /// Set / update setting in configuration.</summary>
         /// <param name="key"> Requested key name.</param>
         /// <param name="val"> Requested value.</param>
-        private static void setValue(string key, string val)
+        private static void setSetting(string key, string val)
         {
             try
             {
@@ -629,10 +627,10 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// Ask operator for key value, not to be confused with setValue. Only called from setValue.</summary>
+        /// Ask operator for setting value, not to be confused with setSetting. Only called from setSetting.</summary>
         /// <param name="key"> Requested key name.</param>
-        /// <seealso cref="setValue(string, string)"> Where decisions are made.</seealso>
-        private static void setupValue(string key)
+        /// <seealso cref="setSetting(string, string)"> Where settings are made.</seealso>
+        private static void setupSetting(string key)
         {
             string message = null;
             string[] value = null;
@@ -660,9 +658,9 @@ namespace TinyNvidiaUpdateChecker
 
             DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (dialogUpdates == DialogResult.Yes) {
-                setValue(key, value[0]);
+                setSetting(key, value[0]);
             } else {
-                setValue(key, value[1]);
+                setSetting(key, value[1]);
             }
 
         }
