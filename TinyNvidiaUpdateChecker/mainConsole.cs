@@ -444,7 +444,7 @@ namespace TinyNvidiaUpdateChecker
             int pfID = 0;
 
             // loop until value is selected by user
-            while (psID == 0)
+            while (psID == 0 && pfID == 0)
             {
                 // get correct gpu drivers
                 if (readSetting("GPU Type") == "desktop")
