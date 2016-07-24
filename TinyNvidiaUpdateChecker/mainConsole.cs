@@ -443,19 +443,24 @@ namespace TinyNvidiaUpdateChecker
             int psID = 0;
             int pfID = 0;
 
+            /// In order to proceed, we must input what GPU we have.
+            /// Looking at the supported products on NVIDIA website for desktop and mobile GeForce series,
+            /// we can see that they're sharing drivers with other GPU families, the only thing we have to do is tell the website
+            /// if we're running a mobile or desktop GPU.
+
             // loop until value is selected by user
             while (psID == 0 && pfID == 0)
             {
                 // get correct gpu drivers
                 if (readSetting("GPU Type") == "desktop")
                 {
-                    psID = 98;
-                    pfID = 756;
+                    psID = 98;  // GeForce 900-series
+                    pfID = 756; // GTX 970
                 }
                 else if (readSetting("GPU Type") == "mobile")
                 {
-                    psID = 99;
-                    pfID = 757;
+                    psID = 99;  // GeForce 900M-series (M for Mobile)
+                    pfID = 758; // GTX 970M
                 } else {
                     setupSetting("GPU Type");
                 }
