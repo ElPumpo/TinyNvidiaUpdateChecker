@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 
 namespace TinyNvidiaUpdateChecker
@@ -36,16 +37,12 @@ namespace TinyNvidiaUpdateChecker
         {
             string result = null;
 
-            try
-            {
+            try {
                 Debug.WriteLine("Queue: key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'");
 
-                if (ConfigurationManager.AppSettings[key] != null)
-                {
+                if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
-                }
-                else
-                {
+                } else {
 
                     // error reading key
                     Console.WriteLine();
@@ -55,9 +52,8 @@ namespace TinyNvidiaUpdateChecker
                     result = ConfigurationManager.AppSettings[key];
                 }
             }
-            catch (ConfigurationErrorsException ex)
-            {
-                Console.WriteLine(ex.Message);
+            catch (ConfigurationErrorsException ex) {
+                Console.WriteLine(ex.StackTrace);
                 Console.WriteLine();
             }
 
@@ -91,8 +87,16 @@ namespace TinyNvidiaUpdateChecker
             }
             catch (ConfigurationErrorsException ex)
             {
-                Console.WriteLine(ex.Message);
+                // clean config file
+                if (File.Exists(mainConsole.fullConfig)) {
+                    File.Delete(mainConsole.fullConfig);
+                }
+
+                Console.WriteLine(ex.StackTrace);
                 Console.WriteLine();
+                Console.WriteLine("The config file has been wiped due to an syntax error, please run the application again and setup your values.");
+                if (mainConsole.showUI == true) Console.ReadKey();
+                Environment.Exit(1);
             }
         }
 

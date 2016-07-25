@@ -81,7 +81,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Show UI or go quiet mode
         /// </summary>
-        private static bool showUI = true;
+        public static bool showUI = true;
 
         /// <summary>
         /// Enable extended information
@@ -93,7 +93,7 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static string dirToConfig = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName);
         
-        private static string fullConfig = Path.Combine(dirToConfig, "app.config");
+        public static string fullConfig = Path.Combine(dirToConfig, "app.config");
 
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -269,7 +269,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Initialize configuration manager
         /// </summary>
-        private static void configInit()
+        public static void configInit()
         {
             // powered by the .NET framework "Settings" function
 
