@@ -183,7 +183,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             gpuInfo();
-            offlineGPUDriverVersion = 1;
+
             if (onlineGPUDriverVersion == offlineGPUDriverVersion) {
                 Console.WriteLine("Your GPU drivers are up-to-date!");
             } else {
