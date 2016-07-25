@@ -199,22 +199,23 @@ namespace TinyNvidiaUpdateChecker
                         
                         Console.WriteLine();
 
-                        //@todo error handling could be better:
+                        // @todo error handling could be better:
                         // isolate saveFileDialog errors with accually downloading GPU driver
 
-                        //@todo add status bar for download progress
+                        // @todo add status bar for download progress
 
                         try {
                             WebClient downloadClient = new WebClient();
 
                             string driverName = downloadURL.Split('/').Last();
 
+                            // set attributes
                             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
                             saveFileDialog1.Filter = "Executable|*.exe";
                             saveFileDialog1.Title = "Choose save file for GPU driver";
                             saveFileDialog1.FileName = driverName;
 
-                            string result = saveFileDialog1.ShowDialog().ToString();
+                            string result = saveFileDialog1.ShowDialog().ToString(); // show dialog and get status (will wait for input)
 
                             switch (result) {
                                 case "OK":
@@ -227,11 +228,11 @@ namespace TinyNvidiaUpdateChecker
                                     break;
                             }
 
-                            if (debug == true)
-                            {
+                            if (debug == true) {
                                 Console.WriteLine("savePath: " + savePath);
                                 Console.WriteLine("result: " + result);
                             }
+
                             Console.Write("Downloading driver file . . . ");
 
                             downloadClient.DownloadFile(downloadURL, savePath);
