@@ -91,9 +91,9 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Direction for configuration folder, blueprint: <local-appdata><author><project-name>
         /// </summary>
-        private static string dirToConfig = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName + @"\");
+        private static string dirToConfig = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName);
         
-        private static string fullConfig = dirToConfig + "app.config";
+        private static string fullConfig = Path.Combine(dirToConfig, "app.config");
 
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -106,6 +106,10 @@ namespace TinyNvidiaUpdateChecker
         private static void Main(string[] args)
         {
             Console.Title = "TinyNvidiaUpdateChecker v" + offlineVer;
+
+            /// The command line argument handler does its work here,
+            /// for a list of available arguments, use the '--help' argument.
+            
             string[] parms = Environment.GetCommandLineArgs();
             int isSet = 0;
 
@@ -158,11 +162,11 @@ namespace TinyNvidiaUpdateChecker
 
             checkDll();
 
-            configInit(); // read & write configuration file
+            configInit();
 
-            checkWinVer(); // get current windows version
+            checkWinVer();
 
-            getLanguage(); // get current langauge
+            getLanguage();
             
             bool set = false;
             string key = "Check for Updates";
@@ -174,8 +178,7 @@ namespace TinyNvidiaUpdateChecker
                     searchForUpdates();
                     set = true;
                 } else if (val == "false") {
-                    // eat dirt
-                    set = true;
+                    set = true; // leave loophole
                 } else {
                     // invalid value
                     SettingManager.setupSetting(key);
@@ -487,13 +490,13 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine(ex.StackTrace);
             }
 
-            int psID = 0;
-            int pfID = 0;
-
             /// In order to proceed, we must input what GPU we have.
             /// Looking at the supported products on NVIDIA website for desktop and mobile GeForce series,
             /// we can see that they're sharing drivers with other GPU families, the only thing we have to do is tell the website
             /// if we're running a mobile or desktop GPU.
+            
+            int psID = 0;
+            int pfID = 0;
 
             // loop until value is selected by user
             string key = "GPU Type";
@@ -548,10 +551,8 @@ namespace TinyNvidiaUpdateChecker
 
                 // get driver URL
                 IEnumerable<HtmlNode> links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
-                foreach (var link in links)
-                {
-                    if (link.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/"))
-                    {
+                foreach (var link in links) {
+                    if (link.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/")) {
                         confirmURL = "https://www.nvidia.com" + link.Attributes["href"].Value;
                     }
                 }
@@ -559,17 +560,14 @@ namespace TinyNvidiaUpdateChecker
                 // get download link
                 htmlDocument = webClient.Load(confirmURL);
                 links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
-                foreach (var link in links)
-                {
-                    if (link.Attributes["href"].Value.Contains("download.nvidia"))
-                    {
+                foreach (var link in links) {
+                    if (link.Attributes["href"].Value.Contains("download.nvidia")) {
                         downloadURL = link.Attributes["href"].Value;
                     }
                 }
 
             } catch (Exception ex) {
-                if (error == 0)
-                {
+                if (error == 0) {
                     Console.Write("ERROR!");
                     Console.WriteLine();
                     error = 1;
