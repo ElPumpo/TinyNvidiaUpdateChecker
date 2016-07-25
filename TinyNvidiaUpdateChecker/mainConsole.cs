@@ -163,9 +163,23 @@ namespace TinyNvidiaUpdateChecker
             checkWinVer(); // get current windows version
 
             getLanguage(); // get current langauge
+            
+            bool set = false;
+            string key = "Check for Updates";
 
-            if (readSetting("Check for Updates") == "true") {
-                searchForUpdates();
+            while (set == false) {
+                
+                string val = readSetting(key);
+                if (val == "true") {
+                    searchForUpdates();
+                    set = true;
+                } else if (val == "false") {
+                    // eat dirt
+                    set = true;
+                } else {
+                    // invalid value
+                    setupSetting(key);
+                }   
             }
 
             gpuInfo();
@@ -187,8 +201,7 @@ namespace TinyNvidiaUpdateChecker
                         Console.WriteLine();
                         Console.Write("Downloading driver file . . . ");
 
-                        try
-                        {
+                        try {
                             savePath = Path.GetTempPath() + downloadURL.Split('/').Last();
                             downloadClient.DownloadFile(downloadURL, savePath);
                         } catch (Exception ex) {
@@ -449,19 +462,18 @@ namespace TinyNvidiaUpdateChecker
             /// if we're running a mobile or desktop GPU.
 
             // loop until value is selected by user
-            while (psID == 0 && pfID == 0)
-            {
+            while (psID == 0 && pfID == 0) {
+                string val = readSetting("GPU Type");
+
                 // get correct gpu drivers
-                if (readSetting("GPU Type") == "desktop")
-                {
+                if (val == "desktop") {
                     psID = 98;  // GeForce 900-series
                     pfID = 756; // GTX 970
-                }
-                else if (readSetting("GPU Type") == "mobile")
-                {
+                } else if (val == "mobile") {
                     psID = 99;  // GeForce 900M-series (M for Mobile)
                     pfID = 758; // GTX 970M
                 } else {
+                    // invalid value
                     setupSetting("GPU Type");
                 }
             }
@@ -599,10 +611,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
 
-            //@todo add check for invalid values
-
             return result;
-        } // read key from config
+        }
 
         /// <summary>
         /// Set / update setting in configuration.</summary>
@@ -655,6 +665,7 @@ namespace TinyNvidiaUpdateChecker
                     break;
 
                 default:
+                    MessageBox.Show("Unknown key '" + key + "'", "TinyNvidiaUpdateChecker", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     message = "Unknown";
                     value = null;
                     break;
