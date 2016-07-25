@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 - Basic documentation started.
 
 ### Changed
-- Changes around config system, "Desktop GPU" has been replaced with "GPU Type".
+- Changes around config system, for example the key "Desktop GPU" has been renamed to "GPU Type".
 - Code 10% more bullet proof.
 
 ### Fixed

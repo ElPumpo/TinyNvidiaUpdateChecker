@@ -4,7 +4,6 @@ using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
@@ -169,7 +168,7 @@ namespace TinyNvidiaUpdateChecker
 
             while (set == false) {
                 
-                string val = readSetting(key);
+                string val = SettingManager.readSetting(key);
                 if (val == "true") {
                     searchForUpdates();
                     set = true;
@@ -178,7 +177,7 @@ namespace TinyNvidiaUpdateChecker
                     set = true;
                 } else {
                     // invalid value
-                    setupSetting(key);
+                    SettingManager.setupSetting(key);
                 }   
             }
 
@@ -250,8 +249,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Generating configuration file, this only happenes once.");
                 Console.WriteLine("The configuration file is located at: " + dirToConfig);
 
-                setupSetting("Check for Updates");
-                setupSetting("GPU Type");
+                SettingManager.setupSetting("Check for Updates");
+                SettingManager.setupSetting("GPU Type");
 
                 Console.WriteLine();
             }
@@ -463,7 +462,7 @@ namespace TinyNvidiaUpdateChecker
 
             // loop until value is selected by user
             while (psID == 0 && pfID == 0) {
-                string val = readSetting("GPU Type");
+                string val = SettingManager.readSetting("GPU Type");
 
                 // get correct gpu drivers
                 if (val == "desktop") {
@@ -474,7 +473,7 @@ namespace TinyNvidiaUpdateChecker
                     pfID = 758; // GTX 970M
                 } else {
                     // invalid value
-                    setupSetting("GPU Type");
+                    SettingManager.setupSetting("GPU Type");
                 }
             }
 
@@ -582,103 +581,6 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine("This is free software, and you are welcome to redistribute it");
             Console.WriteLine("under certain conditions. Licensed under GPLv3.");
             Console.WriteLine();
-        }
-
-        /// <summary>
-        /// Reads setting from configuration file, and adds if requested key / value is missing - returns a string.</summary>
-        /// <param name="key"> Config key to read value from.</param>
-        private static string readSetting(string key)
-        {
-            string result = null;
-
-            try
-            {
-                Debug.WriteLine("Queue: key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'");
-
-                if (ConfigurationManager.AppSettings[key] != null) {
-                    result = ConfigurationManager.AppSettings[key];
-                } else {
-
-                    // error reading key
-                    Console.WriteLine();
-                    Console.WriteLine("Error reading configuration file, attempting to repair key '" + key + "' . . .");
-                    setupSetting(key);
-
-                    result = ConfigurationManager.AppSettings[key];
-                }
-            } catch (ConfigurationErrorsException ex) {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine();
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Set / update setting in configuration.</summary>
-        /// <param name="key"> Requested key name.</param>
-        /// <param name="val"> Requested value.</param>
-        private static void setSetting(string key, string val)
-        {
-            try
-            {
-                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                var settings = configFile.AppSettings.Settings;
-
-                // check if already in config
-                if (settings[key] == null) {
-                    settings.Add(key, val);
-                } else {
-                    settings[key].Value = val;
-                }
-
-                configFile.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
-
-            } catch (ConfigurationErrorsException ex) {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine();
-            }
-        }
-
-        /// <summary>
-        /// Ask operator for setting value, not to be confused with setSetting. Only called from setSetting.</summary>
-        /// <param name="key"> Requested key name.</param>
-        /// <seealso cref="setSetting(string, string)"> Where settings are made.</seealso>
-        private static void setupSetting(string key)
-        {
-            string message = null;
-            string[] value = null;
-
-            switch (key) {
-
-                // check for update
-                case "Check for Updates":
-                    message = "Do you want to search for client updates?";
-                    value = new string[] { "true", "false" };
-                    break;
-
-                // gpu
-                case "GPU Type":
-                    message = "If you're running a desktop GPU select Yes, if you're running a mobile GPU select No.";
-                    value = new string[] { "desktop", "mobile" };
-                    break;
-
-                default:
-                    MessageBox.Show("Unknown key '" + key + "'", "TinyNvidiaUpdateChecker", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    message = "Unknown";
-                    value = null;
-                    break;
-
-            }
-
-            DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (dialogUpdates == DialogResult.Yes) {
-                setSetting(key, value[0]);
-            } else {
-                setSetting(key, value[1]);
-            }
-
         }
     }
 }
