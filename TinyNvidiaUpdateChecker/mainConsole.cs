@@ -89,10 +89,10 @@ namespace TinyNvidiaUpdateChecker
         private static bool debug = false;
 
         /// <summary>
-        /// Direction for configuration folder
+        /// Direction for configuration folder, blueprint: <local-appdata><author><project-name>
         /// </summary>
-        private static string dirToConfig = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Hawaii_Beach\TinyNvidiaUpdateChecker\";
-
+        private static string dirToConfig = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName + @"\");
+        
         private static string fullConfig = dirToConfig + "app.config";
 
 
