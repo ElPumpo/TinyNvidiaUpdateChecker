@@ -168,8 +168,8 @@ namespace TinyNvidiaUpdateChecker
             string key = "Check for Updates";
 
             while (set == false) {
-                
-                string val = SettingManager.readSetting(key);
+                string val = SettingManager.readSetting(key); // refresh value each time
+
                 if (val == "true") {
                     searchForUpdates();
                     set = true;
@@ -183,16 +183,16 @@ namespace TinyNvidiaUpdateChecker
             }
 
             gpuInfo();
-
+            offlineGPUDriverVersion = 1;
             if (onlineGPUDriverVersion == offlineGPUDriverVersion) {
-                Console.WriteLine("GPU drivers are up-to-date!");
+                Console.WriteLine("Your GPU drivers are up-to-date!");
             } else {
                 if (offlineGPUDriverVersion > onlineGPUDriverVersion) {
-                    Console.WriteLine("Current GPU driver is newer than remote!");}
+                    Console.WriteLine("Your current GPU driver is newer than remote!");}
                 if (onlineGPUDriverVersion < offlineGPUDriverVersion) {
-                    Console.WriteLine("GPU drivers are up-to-date!");
+                    Console.WriteLine("Your GPU drivers are up-to-date!");
                 } else {
-                    Console.WriteLine("There are new drivers to download!");
+                    Console.WriteLine("There are new drivers available to download!");
                     DialogResult dialog = MessageBox.Show("There is a new update available to download, do you want to download the update?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (dialog == DialogResult.Yes) {
@@ -215,10 +215,10 @@ namespace TinyNvidiaUpdateChecker
                             saveFileDialog1.Title = "Choose save file for GPU driver";
                             saveFileDialog1.FileName = driverName;
 
-                            string result = saveFileDialog1.ShowDialog().ToString(); // show dialog and get status (will wait for input)
+                            DialogResult result = saveFileDialog1.ShowDialog(); // show dialog and get status (will wait for input)
 
                             switch (result) {
-                                case "OK":
+                                case DialogResult.OK:
                                     savePath = saveFileDialog1.FileName.ToString();
                                     break;
 
@@ -321,7 +321,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (onlineVer > iOfflineVer) {
                 Console.WriteLine("There is a update available for TinyNvidiaUpdateChecker!");
-                DialogResult dialog = MessageBox.Show("There's a new client update available to download, do you want to be navigate to the GitHub download section?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                DialogResult dialog = MessageBox.Show("There is a new client update available to download, do you want to be navigate to the official GitHub download section?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (dialog == DialogResult.Yes) {
                     Process.Start("https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases");
@@ -473,6 +473,7 @@ namespace TinyNvidiaUpdateChecker
             int error = 0;
             string processURL = null;
             string confirmURL = null;
+            string gpuURL = null;
 
             // query local driver version
             try
@@ -495,8 +496,10 @@ namespace TinyNvidiaUpdateChecker
             /// if we're running a mobile or desktop GPU.
 
             // loop until value is selected by user
+            string key = "GPU Type";
+
             while (psID == 0 && pfID == 0) {
-                string val = SettingManager.readSetting("GPU Type");
+                string val = SettingManager.readSetting(key); // refresh value each time
 
                 // get correct gpu drivers
                 if (val == "desktop") {
@@ -507,14 +510,14 @@ namespace TinyNvidiaUpdateChecker
                     pfID = 758; // GTX 970M
                 } else {
                     // invalid value
-                    SettingManager.setupSetting("GPU Type");
+                    SettingManager.setupSetting(key);
                 }
             }
 
             // finish request
             try
             {
-                string gpuURL = "https://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0";
+                gpuURL = "https://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0";
 
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(gpuURL);
@@ -585,6 +588,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("processURL: " + processURL);
                 Console.WriteLine("confirmURL: " + confirmURL);
                 Console.WriteLine("downloadURL: " + downloadURL);
+                Console.WriteLine("gpuURL: " + gpuURL);
                 Console.WriteLine("offlineGPUDriverVersion: " + offlineGPUDriverVersion);
                 Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
             }
