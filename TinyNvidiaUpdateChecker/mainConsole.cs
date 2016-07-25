@@ -108,6 +108,7 @@ namespace TinyNvidiaUpdateChecker
             Console.Title = "TinyNvidiaUpdateChecker v" + offlineVer;
             string[] parms = Environment.GetCommandLineArgs();
             int isSet = 0;
+
             if (parms.Length > 1) {
                 
                 // go quiet mode
@@ -195,14 +196,46 @@ namespace TinyNvidiaUpdateChecker
                     DialogResult dialog = MessageBox.Show("There is a new update available to download, do you want to download the update?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (dialog == DialogResult.Yes) {
-
-                        WebClient downloadClient = new WebClient();
+                        
                         Console.WriteLine();
-                        Console.Write("Downloading driver file . . . ");
+
+                        //@todo error handling could be better:
+                        // isolate saveFileDialog errors with accually downloading GPU driver
+
+                        //@todo add status bar for download progress
 
                         try {
-                            savePath = Path.GetTempPath() + downloadURL.Split('/').Last();
+                            WebClient downloadClient = new WebClient();
+
+                            string driverName = downloadURL.Split('/').Last();
+
+                            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                            saveFileDialog1.Filter = "Executable|*.exe";
+                            saveFileDialog1.Title = "Choose save file for GPU driver";
+                            saveFileDialog1.FileName = driverName;
+
+                            string result = saveFileDialog1.ShowDialog().ToString();
+
+                            switch (result) {
+                                case "OK":
+                                    savePath = saveFileDialog1.FileName.ToString();
+                                    break;
+
+                                default:
+                                    // if something went wrong, fall back to temp folder
+                                    savePath = Path.GetTempPath() + driverName;
+                                    break;
+                            }
+
+                            if (debug == true)
+                            {
+                                Console.WriteLine("savePath: " + savePath);
+                                Console.WriteLine("result: " + result);
+                            }
+                            Console.Write("Downloading driver file . . . ");
+
                             downloadClient.DownloadFile(downloadURL, savePath);
+
                         } catch (Exception ex) {
                             Console.Write("ERROR!");
                             Console.WriteLine();
@@ -212,7 +245,7 @@ namespace TinyNvidiaUpdateChecker
 
                         Console.Write("OK!");
                         Console.WriteLine();
-                        Console.WriteLine("The downloaded file has been saved at " + savePath);
+                        Console.WriteLine("The downloaded file has been saved at: " + savePath);
 
                         DialogResult dialog2 = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
@@ -349,8 +382,8 @@ namespace TinyNvidiaUpdateChecker
             } else {
                 winVer = "Unknown";
                 Console.WriteLine("You're running a non-supported version of Windows; the application will determine itself.");
-                Console.WriteLine("OS: " + verOrg);
-                if(showUI == true) Console.ReadKey();
+                Console.WriteLine("verOrg: " + verOrg);
+                if (showUI == true) Console.ReadKey();
                 Environment.Exit(1);
             }
 
