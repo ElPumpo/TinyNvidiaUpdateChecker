@@ -92,6 +92,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
