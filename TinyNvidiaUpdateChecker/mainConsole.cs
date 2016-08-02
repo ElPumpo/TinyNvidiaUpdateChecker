@@ -105,7 +105,9 @@ namespace TinyNvidiaUpdateChecker
         [STAThread]
         private static void Main(string[] args)
         {
-            Console.Title = "TinyNvidiaUpdateChecker v" + offlineVer;
+            string message = "TinyNvidiaUpdateChecker v" + offlineVer;
+            LogManager.log(message, 1);
+            Console.Title = message;
 
             /// The command line argument handler does its work here,
             /// for a list of available arguments, use the '--help' argument.
@@ -206,7 +208,7 @@ namespace TinyNvidiaUpdateChecker
                         // isolate saveFileDialog errors with accually downloading GPU driver
 
                         // @todo add status bar for download progress
-
+                        bool error = false;
                         try {
                             WebClient downloadClient = new WebClient();
 
@@ -241,13 +243,18 @@ namespace TinyNvidiaUpdateChecker
                             downloadClient.DownloadFile(downloadURL, savePath);
 
                         } catch (Exception ex) {
+                            error = true;
                             Console.Write("ERROR!");
+                            LogManager.log(ex.Message, 2);
                             Console.WriteLine();
                             Console.WriteLine(ex.Message);
                             Console.WriteLine();
                         }
 
-                        Console.Write("OK!");
+                        if(error == false) {
+                            Console.Write("OK!");
+                        }
+                        
                         Console.WriteLine();
                         Console.WriteLine("The downloaded file has been saved at: " + savePath);
 
@@ -261,8 +268,10 @@ namespace TinyNvidiaUpdateChecker
             }
 
             Console.WriteLine();
+            
             Console.WriteLine("Job done! Press any key to exit.");
             if (showUI == true) Console.ReadKey();
+            LogManager.log("BYE!", 1);
             Environment.Exit(0);
         }
 
@@ -483,6 +492,12 @@ namespace TinyNvidiaUpdateChecker
             {
                 FileVersionInfo nvvsvcExe = FileVersionInfo.GetVersionInfo(Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\System32\nvvsvc.exe"); // Sysnative?
                 offlineGPUDriverVersion = Convert.ToInt32(nvvsvcExe.FileDescription.Substring(38).Trim().Replace(".", string.Empty));
+            } catch (FileNotFoundException) {
+                error = 1;
+                Console.Write("ERROR!");
+                Console.WriteLine();
+                Console.WriteLine("The required executable is not there! Are you sure you've at least installed NVIDIA GPU drivers once?");
+
             } catch (Exception ex) {
                 error = 1;
                 Console.Write("ERROR!");

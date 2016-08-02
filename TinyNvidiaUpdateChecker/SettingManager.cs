@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -38,7 +37,7 @@ namespace TinyNvidiaUpdateChecker
             string result = null;
 
             try {
-                Debug.WriteLine("Queue: key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'");
+                LogManager.log("key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'", 3);
 
                 if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
@@ -72,21 +71,17 @@ namespace TinyNvidiaUpdateChecker
                 var settings = configFile.AppSettings.Settings;
 
                 // check if already in config
-                if (settings[key] == null)
-                {
+                if (settings[key] == null) {
                     settings.Add(key, val);
-                }
-                else
-                {
+                } else {
                     settings[key].Value = val;
                 }
 
                 configFile.Save(ConfigurationSaveMode.Modified);
                 ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
 
-            }
-            catch (ConfigurationErrorsException ex)
-            {
+            } catch (ConfigurationErrorsException ex) {
+
                 // clean config file
                 if (File.Exists(mainConsole.fullConfig)) {
                     File.Delete(mainConsole.fullConfig);

@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Changes around config system, for example the key "Desktop GPU" has been renamed to "GPU Type".
 - Code 10% more bullet proof.
+- Updated HTMLAgilityPack to v1.4.9.5, and therefore upped .NET framework target to 4.5.
 
 ### Fixed
 - Repairing a config key does no longer skip the request.
