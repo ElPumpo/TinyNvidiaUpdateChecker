@@ -14,6 +14,7 @@ namespace TinyNvidiaUpdateChecker
 
             string logMessage = null;
             switch (level) {
+
                 // INFO
                 case 1:
                     logMessage = "[INFO] " + information;

@@ -289,6 +289,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Current configuration file is located at: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
                 Console.WriteLine();
             }
+            LogManager.log("ConfigDir: " + fullConfig, 1);
 
             // create config file
             if (!File.Exists(fullConfig)) {
@@ -322,6 +323,7 @@ namespace TinyNvidiaUpdateChecker
             } catch (Exception ex) {
                 error = 1;
                 Console.Write("ERROR!");
+                LogManager.log(ex.Message, 2);
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
             }
@@ -394,8 +396,11 @@ namespace TinyNvidiaUpdateChecker
 
             } else {
                 winVer = "Unknown";
-                Console.WriteLine("You're running a non-supported version of Windows; the application will determine itself.");
+                string message = "You're running a non-supported version of Windows; the application will determine itself.";
+
+                Console.WriteLine(message);
                 Console.WriteLine("verOrg: " + verOrg);
+                LogManager.log(message, 2);
                 if (showUI == true) Console.ReadKey();
                 Environment.Exit(1);
             }
@@ -406,7 +411,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("verOrg: " + verOrg);
                 Console.WriteLine();
             }
-            
+
+            LogManager.log("winVer: " + winVer, 1);
             
 
         }
@@ -474,6 +480,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("cultName: " + cultName);
                 Console.WriteLine();
             }
+            LogManager.log("langID: " + langID, 1);
         }
 
         /// <summary>
@@ -492,15 +499,17 @@ namespace TinyNvidiaUpdateChecker
             {
                 FileVersionInfo nvvsvcExe = FileVersionInfo.GetVersionInfo(Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\System32\nvvsvc.exe"); // Sysnative?
                 offlineGPUDriverVersion = Convert.ToInt32(nvvsvcExe.FileDescription.Substring(38).Trim().Replace(".", string.Empty));
-            } catch (FileNotFoundException) {
+            } catch (FileNotFoundException ex) {
                 error = 1;
                 Console.Write("ERROR!");
+                LogManager.log(ex.Message, 2);
                 Console.WriteLine();
                 Console.WriteLine("The required executable is not there! Are you sure you've at least installed NVIDIA GPU drivers once?");
 
             } catch (Exception ex) {
                 error = 1;
                 Console.Write("ERROR!");
+                LogManager.log(ex.Message, 2);
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
             }
@@ -614,7 +623,10 @@ namespace TinyNvidiaUpdateChecker
         private static void checkDll()
         {
             if (!File.Exists("HtmlAgilityPack.dll")) {
-                Console.WriteLine("The required binary cannot be found and the application will determinate itself. It must be put in the same folder as this executable.");
+                string message = "The required binary cannot be found and the application will determinate itself. It must be put in the same folder as this executable.";
+
+                Console.WriteLine(message);
+                LogManager.log(message, 2);
                 if (showUI == true) Console.ReadKey();
                 Environment.Exit(2);
             }
