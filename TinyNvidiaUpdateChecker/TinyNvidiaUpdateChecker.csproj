@@ -107,9 +107,6 @@
     <None Include="version" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CHANGELOG" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
