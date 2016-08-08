@@ -54,14 +54,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>TinyNvidiaUpdateChecker.mainConsole</StartupObject>
+    <StartupObject>TinyNvidiaUpdateChecker.MainConsole</StartupObject>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -73,11 +73,14 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LogManager.cs" />
-    <Compile Include="mainConsole.cs" />
+    <Compile Include="MainConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingManager.cs" />
   </ItemGroup>
@@ -94,14 +97,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
+    <None Include="Properties\app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="app.manifest">
+    <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
     </None>
     <None Include="LICENSE" />
-    <None Include="packages.config">
+    <None Include="Properties\packages.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="version" />

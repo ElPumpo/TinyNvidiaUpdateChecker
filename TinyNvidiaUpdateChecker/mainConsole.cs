@@ -10,7 +10,6 @@ using System.Globalization;
 using System.Reflection;
 using HtmlAgilityPack;
 
-
 namespace TinyNvidiaUpdateChecker
 {
 
@@ -32,7 +31,7 @@ namespace TinyNvidiaUpdateChecker
     along with this program.  If Not, see <http://www.gnu.org/licenses/>.
     */
 
-    class mainConsole
+    class MainConsole
     {
 
         /// <summary>
@@ -189,6 +188,8 @@ namespace TinyNvidiaUpdateChecker
 
             gpuInfo();
 
+            offlineGPUDriverVersion = 1;
+
             if (onlineGPUDriverVersion == offlineGPUDriverVersion) {
                 Console.WriteLine("Your GPU drivers are up-to-date!");
             } else {
@@ -208,6 +209,7 @@ namespace TinyNvidiaUpdateChecker
                         // isolate saveFileDialog errors with accually downloading GPU driver
 
                         // @todo add status bar for download progress
+
                         bool error = false;
                         try {
                             WebClient downloadClient = new WebClient();
@@ -215,16 +217,16 @@ namespace TinyNvidiaUpdateChecker
                             string driverName = downloadURL.Split('/').Last();
 
                             // set attributes
-                            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-                            saveFileDialog1.Filter = "Executable|*.exe";
-                            saveFileDialog1.Title = "Choose save file for GPU driver";
-                            saveFileDialog1.FileName = driverName;
+                            SaveFileDialog saveFileDialog = new SaveFileDialog();
+                            saveFileDialog.Filter = "Executable|*.exe";
+                            saveFileDialog.Title = "Choose save file for GPU driver";
+                            saveFileDialog.FileName = driverName;
 
-                            DialogResult result = saveFileDialog1.ShowDialog(); // show dialog and get status (will wait for input)
+                            DialogResult result = saveFileDialog.ShowDialog(); // show dialog and get status (will wait for input)
 
                             switch (result) {
                                 case DialogResult.OK:
-                                    savePath = saveFileDialog1.FileName.ToString();
+                                    savePath = saveFileDialog.FileName.ToString();
                                     break;
 
                                 default:
@@ -239,7 +241,7 @@ namespace TinyNvidiaUpdateChecker
                             }
 
                             Console.Write("Downloading driver file . . . ");
-
+                            
                             downloadClient.DownloadFile(downloadURL, savePath);
 
                         } catch (Exception ex) {
@@ -251,10 +253,12 @@ namespace TinyNvidiaUpdateChecker
                             Console.WriteLine();
                         }
 
-                        if(error == false) {
+                        if (error == false)
+                        {
                             Console.Write("OK!");
                         }
-                        
+
+
                         Console.WriteLine();
                         Console.WriteLine("The downloaded file has been saved at: " + savePath);
 
