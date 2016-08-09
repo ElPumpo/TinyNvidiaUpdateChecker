@@ -35,7 +35,7 @@ You may customize the application using the config file located at `%localappdat
 | Option | Restrictions | Effect |
 | ------ | ------------ |:------:|
 | Check for Updates | false or true | enables or disables searches for client updates |
-| Desktop GPU | false or true | if set to true the application will search for desktop GPU drivers, if set to false the application will search for mobile GPU drivers |
+| GPU Type | desktop or mobile | self-explanatory, select `desktop` if you're running a desktop system configuiration |
 
 #License
 TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
