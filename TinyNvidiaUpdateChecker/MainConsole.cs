@@ -529,7 +529,10 @@ namespace TinyNvidiaUpdateChecker
             while (psID == 0 && pfID == 0) {
                 string val = SettingManager.readSetting(key); // refresh value each time
 
-                // get correct gpu drivers
+                /// Get correct gpu drivers:
+                /// you do not have to choose the exact GPU,
+                /// looking at supported products, we see that the same driver package includes
+                /// drivers for the majority GPU family.
                 if (val == "desktop") {
                     psID = 98;  // GeForce 900-series
                     pfID = 756; // GTX 970
@@ -545,15 +548,12 @@ namespace TinyNvidiaUpdateChecker
             // finish request
             try
             {
-                gpuURL = "https://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0";
+                gpuURL = "http://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0";
 
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(gpuURL);
                 StreamReader reader = new StreamReader(stream);
-
-                // switch to secure protocol
-                processURL = "https://" + reader.ReadToEnd().Substring(7);
-
+                processURL = reader.ReadToEnd();
                 reader.Close();
                 stream.Close();
             } catch (Exception ex) {
@@ -581,7 +581,7 @@ namespace TinyNvidiaUpdateChecker
                 IEnumerable<HtmlNode> links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
                 foreach (var link in links) {
                     if (link.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/")) {
-                        confirmURL = "https://www.nvidia.com" + link.Attributes["href"].Value;
+                        confirmURL = "http://www.nvidia.com" + link.Attributes["href"].Value;
                     }
                 }
 
