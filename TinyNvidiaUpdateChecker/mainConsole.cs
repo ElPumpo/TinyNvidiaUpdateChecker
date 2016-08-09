@@ -188,8 +188,6 @@ namespace TinyNvidiaUpdateChecker
 
             gpuInfo();
 
-            offlineGPUDriverVersion = 1;
-
             if (onlineGPUDriverVersion == offlineGPUDriverVersion) {
                 Console.WriteLine("Your GPU drivers are up-to-date!");
             } else {
@@ -257,7 +255,6 @@ namespace TinyNvidiaUpdateChecker
                         {
                             Console.Write("OK!");
                         }
-
 
                         Console.WriteLine();
                         Console.WriteLine("The downloaded file has been saved at: " + savePath);
@@ -595,6 +592,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
             } catch (Exception ex) {
+                LogManager.log(ex.Message, 2);
                 if (error == 0) {
                     Console.Write("ERROR!");
                     Console.WriteLine();
