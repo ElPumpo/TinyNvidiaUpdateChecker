@@ -570,8 +570,8 @@ namespace TinyNvidiaUpdateChecker
                 // HTMLAgilityPack
                 // thanks to http://www.codeproject.com/Articles/691119/Html-Agility-Pack-Massive-information-extraction-f for a great article
 
-                HtmlWeb webClient = new HtmlWeb();
-                HtmlAgilityPack.HtmlDocument htmlDocument = webClient.Load(processURL);
+                HtmlWeb htmlWeb = new HtmlWeb();
+                HtmlAgilityPack.HtmlDocument htmlDocument = htmlWeb.Load(processURL);
 
                 // get version
                 HtmlNode tdVer = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdVersion");
@@ -586,11 +586,10 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 // get download link
-                htmlDocument = webClient.Load(confirmURL);
+                htmlDocument = htmlWeb.Load(confirmURL);
                 links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
                 foreach (var link in links) {
                     if (link.Attributes["href"].Value.Contains("download.nvidia")) {
-
                         downloadURL = link.Attributes["href"].Value;
                     }
                 }
