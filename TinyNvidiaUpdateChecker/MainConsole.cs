@@ -591,8 +591,7 @@ namespace TinyNvidiaUpdateChecker
                 foreach (var link in links) {
                     if (link.Attributes["href"].Value.Contains("download.nvidia")) {
 
-                        // switch to secure protocol
-                        downloadURL = "https://" + link.Attributes["href"].Value.Substring(7);
+                        downloadURL = link.Attributes["href"].Value;
                     }
                 }
 
@@ -616,8 +615,9 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("pfID: " + pfID);
                 Console.WriteLine("processURL: " + processURL);
                 Console.WriteLine("confirmURL: " + confirmURL);
-                Console.WriteLine("downloadURL: " + downloadURL);
                 Console.WriteLine("gpuURL: " + gpuURL);
+                Console.WriteLine("downloadURL: " + downloadURL);
+                
                 Console.WriteLine("offlineGPUDriverVersion: " + offlineGPUDriverVersion);
                 Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
             }
