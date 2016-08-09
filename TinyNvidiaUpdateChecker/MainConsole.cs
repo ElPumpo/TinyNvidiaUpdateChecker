@@ -550,7 +550,10 @@ namespace TinyNvidiaUpdateChecker
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(gpuURL);
                 StreamReader reader = new StreamReader(stream);
-                processURL = reader.ReadToEnd();
+
+                // switch to secure protocol
+                processURL = "https://" + reader.ReadToEnd().Substring(7);
+
                 reader.Close();
                 stream.Close();
             } catch (Exception ex) {
@@ -587,7 +590,9 @@ namespace TinyNvidiaUpdateChecker
                 links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
                 foreach (var link in links) {
                     if (link.Attributes["href"].Value.Contains("download.nvidia")) {
-                        downloadURL = link.Attributes["href"].Value;
+
+                        // switch to secure protocol
+                        downloadURL = "https://" + link.Attributes["href"].Value.Substring(7);
                     }
                 }
 
