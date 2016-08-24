@@ -37,7 +37,7 @@ namespace TinyNvidiaUpdateChecker
             string result = null;
 
             try {
-                LogManager.log("key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'", 3);
+                LogManager.log("key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'", LogManager.Level.SETTING);
 
                 if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
@@ -53,7 +53,7 @@ namespace TinyNvidiaUpdateChecker
             }
             catch (ConfigurationErrorsException ex) {
                 Console.WriteLine(ex.StackTrace);
-                LogManager.log(ex.Message, 2);
+                LogManager.log(ex.Message, LogManager.Level.ERROR);
                 Console.WriteLine();
             }
 
@@ -89,7 +89,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 Console.WriteLine(ex.StackTrace);
-                LogManager.log(ex.Message, 2);
+                LogManager.log(ex.Message, LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine("The config file has been wiped due to a possible syntax error, please run the application again and setup your values.");
                 if (MainConsole.showUI == true) Console.ReadKey();

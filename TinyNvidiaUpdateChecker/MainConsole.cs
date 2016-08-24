@@ -88,6 +88,11 @@ namespace TinyNvidiaUpdateChecker
         private static bool debug = false;
 
         /// <summary>
+        /// Force a download of GPU drivers
+        /// </summary>
+        private static bool forceDL = false;
+
+        /// <summary>
         /// Direction for configuration folder, blueprint: <local-appdata><author><project-name>
         /// </summary>
         private static string dirToConfig = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName);
@@ -105,12 +110,12 @@ namespace TinyNvidiaUpdateChecker
         private static void Main(string[] args)
         {
             string message = "TinyNvidiaUpdateChecker v" + offlineVer;
-            LogManager.log(message, 1);
+            LogManager.log(message, LogManager.Level.INFO);
             Console.Title = message;
 
             /// The command line argument handler does its work here,
             /// for a list of available arguments, use the '--help' argument.
-            
+
             string[] parms = Environment.GetCommandLineArgs();
             int isSet = 0;
 
@@ -120,12 +125,12 @@ namespace TinyNvidiaUpdateChecker
                 if (Array.IndexOf(parms, "--quiet") != -1) {
                     FreeConsole();
                     showUI = false;
-                    isSet = 1;
+                    isSet++;
                 }
 
                 // erase config
                 if (Array.IndexOf(parms, "--eraseConfig") != -1) {
-                    isSet = 1;
+                    isSet++;
                     if (File.Exists(fullConfig)) {
                         File.Delete(fullConfig);
                     }
@@ -133,13 +138,13 @@ namespace TinyNvidiaUpdateChecker
 
                 // enable debug
                 if (Array.IndexOf(parms, "--debug") != -1) {
-                    isSet = 1;
+                    isSet++;
                     debug = true;
                 }
 
                 // help menu
                 if (Array.IndexOf(parms, "--help") != -1) {
-                    isSet = 1;
+                    isSet++;
                     introMessage();
                     Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [--quiet] [--eraseConfig] [--debug] [--help]");
                     Console.WriteLine();
@@ -245,7 +250,7 @@ namespace TinyNvidiaUpdateChecker
                         } catch (Exception ex) {
                             error = true;
                             Console.Write("ERROR!");
-                            LogManager.log(ex.Message, 2);
+                            LogManager.log(ex.Message, LogManager.Level.ERROR);
                             Console.WriteLine();
                             Console.WriteLine(ex.Message);
                             Console.WriteLine();
@@ -272,7 +277,7 @@ namespace TinyNvidiaUpdateChecker
             
             Console.WriteLine("Job done! Press any key to exit.");
             if (showUI == true) Console.ReadKey();
-            LogManager.log("BYE!", 1);
+            LogManager.log("BYE!", LogManager.Level.INFO);
             Environment.Exit(0);
         }
 
@@ -290,7 +295,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Current configuration file is located at: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
                 Console.WriteLine();
             }
-            LogManager.log("ConfigDir: " + fullConfig, 1);
+            LogManager.log("ConfigDir: " + fullConfig, LogManager.Level.INFO);
 
             // create config file
             if (!File.Exists(fullConfig)) {
@@ -322,9 +327,9 @@ namespace TinyNvidiaUpdateChecker
                 onlineVer = Convert.ToInt32(tdVer.InnerText.Replace(".", string.Empty));
 
             } catch (Exception ex) {
-                error = 1;
+                error++;
                 Console.Write("ERROR!");
-                LogManager.log(ex.Message, 2);
+                LogManager.log(ex.Message, LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
             }
@@ -401,7 +406,7 @@ namespace TinyNvidiaUpdateChecker
 
                 Console.WriteLine(message);
                 Console.WriteLine("verOrg: " + verOrg);
-                LogManager.log(message, 2);
+                LogManager.log(message, LogManager.Level.ERROR);
                 if (showUI == true) Console.ReadKey();
                 Environment.Exit(1);
             }
@@ -413,7 +418,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
 
-            LogManager.log("winVer: " + winVer, 1);
+            LogManager.log("winVer: " + winVer, LogManager.Level.INFO);
             
 
         }
@@ -481,7 +486,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("cultName: " + cultName);
                 Console.WriteLine();
             }
-            LogManager.log("langID: " + langID, 1);
+            LogManager.log("langID: " + langID, LogManager.Level.INFO);
         }
 
         /// <summary>
@@ -501,16 +506,16 @@ namespace TinyNvidiaUpdateChecker
                 FileVersionInfo nvvsvcExe = FileVersionInfo.GetVersionInfo(Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\System32\nvvsvc.exe"); // Sysnative?
                 offlineGPUDriverVersion = Convert.ToInt32(nvvsvcExe.FileDescription.Substring(38).Trim().Replace(".", string.Empty));
             } catch (FileNotFoundException ex) {
-                error = 1;
+                error++;
                 Console.Write("ERROR!");
-                LogManager.log(ex.Message, 2);
+                LogManager.log(ex.Message, LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine("The required executable is not there! Are you sure you've at least installed NVIDIA GPU drivers once?");
 
             } catch (Exception ex) {
-                error = 1;
+                error++;
                 Console.Write("ERROR!");
-                LogManager.log(ex.Message, 2);
+                LogManager.log(ex.Message, LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
             }
@@ -560,7 +565,7 @@ namespace TinyNvidiaUpdateChecker
                 if (error == 0) {
                     Console.Write("ERROR!");
                     Console.WriteLine();
-                    error = 1;
+                    error++;
                 }
                 Console.WriteLine(ex.StackTrace);
             }
@@ -595,11 +600,11 @@ namespace TinyNvidiaUpdateChecker
                 }
 
             } catch (Exception ex) {
-                LogManager.log(ex.Message, 2);
+                LogManager.log(ex.Message, LogManager.Level.ERROR);
                 if (error == 0) {
                     Console.Write("ERROR!");
                     Console.WriteLine();
-                    error = 1;
+                    error++;
                 }
                 Console.WriteLine(ex.StackTrace);
             }
@@ -632,7 +637,7 @@ namespace TinyNvidiaUpdateChecker
                 string message = "The required binary cannot be found and the application will determinate itself. It must be put in the same folder as this executable.";
 
                 Console.WriteLine(message);
-                LogManager.log(message, 2);
+                LogManager.log(message, LogManager.Level.ERROR);
                 if (showUI == true) Console.ReadKey();
                 Environment.Exit(2);
             }
