@@ -106,6 +106,9 @@ namespace TinyNvidiaUpdateChecker
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool FreeConsole();
 
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+        static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out string pszPath);
+
         [STAThread]
         private static void Main(string[] args)
         {
@@ -142,15 +145,23 @@ namespace TinyNvidiaUpdateChecker
                     debug = true;
                 }
 
+                // force driver download
+                if (Array.IndexOf(parms, "--force-dl") != -1)
+                {
+                    isSet++;
+                    forceDL = true;
+                }
+
                 // help menu
                 if (Array.IndexOf(parms, "--help") != -1) {
                     isSet++;
                     introMessage();
-                    Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [--quiet] [--eraseConfig] [--debug] [--help]");
+                    Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [--quiet] [--eraseConfig] [--debug] [--force-dl] [--help]");
                     Console.WriteLine();
                     Console.WriteLine("--quiet        Run application quiet.");
                     Console.WriteLine("--eraseConfig  Erase local configuration file.");
                     Console.WriteLine("--debug        Enable debugging for extended information.");
+                    Console.WriteLine("--force-dl     Force download of drivers.");
                     Console.WriteLine("--help         Displays this message.");
                     Environment.Exit(0);
                 }
@@ -162,6 +173,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
             }
+
             if (showUI == true) AllocConsole();
 
             introMessage();
@@ -202,76 +214,11 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("Your GPU drivers are up-to-date!");
                 } else {
                     Console.WriteLine("There are new drivers available to download!");
-                    DialogResult dialog = MessageBox.Show("There is a new update available to download, do you want to download the update?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                    if (dialog == DialogResult.Yes) {
-                        
-                        Console.WriteLine();
-
-                        // @todo error handling could be better:
-                        // isolate saveFileDialog errors with accually downloading GPU driver
-
-                        // @todo add status bar for download progress
-
-                        bool error = false;
-                        try {
-                            WebClient downloadClient = new WebClient();
-
-                            string driverName = downloadURL.Split('/').Last();
-
-                            // set attributes
-                            SaveFileDialog saveFileDialog = new SaveFileDialog();
-                            saveFileDialog.Filter = "Executable|*.exe";
-                            saveFileDialog.Title = "Choose save file for GPU driver";
-                            saveFileDialog.FileName = driverName;
-
-                            DialogResult result = saveFileDialog.ShowDialog(); // show dialog and get status (will wait for input)
-
-                            switch (result) {
-                                case DialogResult.OK:
-                                    savePath = saveFileDialog.FileName.ToString();
-                                    break;
-
-                                default:
-                                    // if something went wrong, fall back to temp folder
-                                    savePath = Path.GetTempPath() + driverName;
-                                    break;
-                            }
-
-                            if (debug == true) {
-                                Console.WriteLine("savePath: " + savePath);
-                                Console.WriteLine("result: " + result);
-                            }
-
-                            Console.Write("Downloading driver file . . . ");
-                            
-                            downloadClient.DownloadFile(downloadURL, savePath);
-
-                        } catch (Exception ex) {
-                            error = true;
-                            Console.Write("ERROR!");
-                            LogManager.log(ex.Message, LogManager.Level.ERROR);
-                            Console.WriteLine();
-                            Console.WriteLine(ex.Message);
-                            Console.WriteLine();
-                        }
-
-                        if (error == false)
-                        {
-                            Console.Write("OK!");
-                        }
-
-                        Console.WriteLine();
-                        Console.WriteLine("The downloaded file has been saved at: " + savePath);
-
-                        DialogResult dialog2 = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                        if (dialog2 == DialogResult.Yes) {
-                            Process.Start(savePath);
-                        }
-                    }
+                    downloadDriver();
                 }
             }
+
+            if(forceDL == true) downloadDriver();
 
             Console.WriteLine();
             
@@ -656,6 +603,97 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine("This is free software, and you are welcome to redistribute it");
             Console.WriteLine("under certain conditions. Licensed under GPLv3.");
             Console.WriteLine();
+        }
+
+        private static void downloadDriver()
+        {
+            DialogResult dialog = MessageBox.Show("There is a new update available to download, do you want to download the update?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (dialog == DialogResult.Yes)
+            {
+
+                Console.WriteLine();
+
+                // @todo error handling could be better:
+                // isolate saveFileDialog errors with accually downloading GPU driver
+
+                // @todo add status bar for download progress
+                // @todo do the saveFileDialog in a loop
+
+                bool error = false;
+                try
+                {
+                    WebClient downloadClient = new WebClient();
+
+                    string driverName = downloadURL.Split('/').Last();
+
+                    // set attributes
+                    SaveFileDialog saveFileDialog = new SaveFileDialog();
+                    saveFileDialog.Filter = "Executable|*.exe";
+                    saveFileDialog.Title = "Choose save file for GPU driver";
+                    saveFileDialog.FileName = driverName;
+
+                    DialogResult result = saveFileDialog.ShowDialog(); // show dialog and get status (will wait for input)
+
+                    switch (result)
+                    {
+                        case DialogResult.OK:
+                            savePath = saveFileDialog.FileName.ToString();
+                            break;
+
+                        default:
+                            // if something went wrong, fall back to temp folder
+                            // savePath = Path.GetTempPath() + driverName;
+
+                            // if something went wrong, fall back to downloads folder
+                            savePath = getDownloadFolderPath() + driverName;
+                            break;
+                    }
+
+                    if (debug == true)
+                    {
+                        Console.WriteLine("savePath: " + savePath);
+                        Console.WriteLine("result: " + result);
+                    }
+
+                    Console.Write("Downloading driver file . . . ");
+
+                    downloadClient.DownloadFile(downloadURL, savePath);
+
+                }
+                catch (Exception ex)
+                {
+                    error = true;
+                    Console.Write("ERROR!");
+                    LogManager.log(ex.Message, LogManager.Level.ERROR);
+                    Console.WriteLine();
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine();
+                }
+
+                if (error == false)
+                {
+                    Console.Write("OK!");
+                }
+
+                Console.WriteLine();
+                Console.WriteLine("The downloaded file has been saved at: " + savePath);
+
+                DialogResult dialog2 = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (dialog2 == DialogResult.Yes)
+                {
+                    Process.Start(savePath);
+                }
+            }
+        }
+
+        private static string getDownloadFolderPath()
+        {
+            string downloadsPath = null;
+            SHGetKnownFolderPath(new Guid("374DE290-123F-4565-9164-39C4925E467B"), 0, IntPtr.Zero, out downloadsPath);
+
+            return downloadsPath + Path.DirectorySeparatorChar;
         }
     }
 }
