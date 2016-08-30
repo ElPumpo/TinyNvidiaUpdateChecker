@@ -319,6 +319,12 @@ namespace TinyNvidiaUpdateChecker
             /// It is only (like choosing GPU model - which I WONT fix) only used for statistics, there is NO seperate
             /// drivers depending on what build you're running. But TinyNvidiaUpdateChecker wasn't made to
             /// give NVIDIA the finger, so we'll at least return the correct OS.
+
+            // Windows 10 known "version" list:
+            // 1607: anniversary update
+            // 1511: november update
+            // 1507: original release
+
             if (verOrg.Contains("10.0")) {
                 int release = 0;
 
