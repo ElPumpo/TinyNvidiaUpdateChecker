@@ -311,8 +311,18 @@ namespace TinyNvidiaUpdateChecker
         {
             string verOrg = Environment.OSVersion.Version.ToString();
 
+            // Windows 10 AU
+            if (verOrg.Contains("10.0.14")) {
+                winVer = "10 AU";
+                if (Environment.Is64BitOperatingSystem == true) {
+                    osID = 73;
+                } else {
+                    osID = 72;
+                }
+            }
+
             // Windows 10
-            if (verOrg.Contains("10.0")) {
+            else if (verOrg.Contains("10.0")) {
                 winVer = "10";
                 if (Environment.Is64BitOperatingSystem == true) {
                     osID = 57;
