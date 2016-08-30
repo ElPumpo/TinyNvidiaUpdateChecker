@@ -9,6 +9,7 @@ using System.Linq;
 using System.Globalization;
 using System.Reflection;
 using HtmlAgilityPack;
+using Microsoft.Win32;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -310,48 +311,70 @@ namespace TinyNvidiaUpdateChecker
         private static void checkWinVer()
         {
             string verOrg = Environment.OSVersion.Version.ToString();
+            Boolean is64 = Environment.Is64BitOperatingSystem;
 
-            // Windows 10 AU
-            if (verOrg.Contains("10.0.14")) {
-                winVer = "10 AU";
-                if (Environment.Is64BitOperatingSystem == true) {
-                    osID = 73;
+            // Windows 10 + AU
+            /// After doing some research, it does not matter if you input 10 or 10+AU onto the NVIDIA website (for now - 2016-08-30).
+            /// It is only (like choosing GPU model - which I WONT fix) only used for statistics, there is NO seperate
+            /// drivers depending on what build you're running. But TinyNvidiaUpdateChecker wasn't made to
+            /// give NVIDIA the finger, so we'll at least return the correct OS.
+            if (verOrg.Contains("10.0")) {
+                int release = 0;
+
+                try {
+                    RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion");
+                    release = Convert.ToInt32(key.GetValue("ReleaseId")); // convert the "version" to a int
+                    key.Close();
+                } catch (Exception ex) {
+                    Console.WriteLine("ERROR!");
+                    LogManager.log(ex.Message, LogManager.Level.ERROR);
+                    Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine();
+                }
+
+                if (release >= 1607) {
+                    // AU release
+                    winVer = "10 AU";
+                    if (is64 == true) {
+                        osID = 73;
+                    } else {
+                        osID = 72;
+                    }
                 } else {
-                    osID = 72;
+                    // not AU
+                    winVer = "10";
+                    if (is64 == true) {
+                        osID = 57;
+                    } else {
+                        osID = 56;
+                    }
                 }
             }
 
-            // Windows 10
-            else if (verOrg.Contains("10.0")) {
-                winVer = "10";
-                if (Environment.Is64BitOperatingSystem == true) {
-                    osID = 57;
-                } else {
-                    osID = 56;
-                }
-            }
             // Windows 8.1
             else if (verOrg.Contains("6.3")) {
                 winVer = "8.1";
-                if (Environment.Is64BitOperatingSystem == true) {
+                if (is64 == true) {
                     osID = 41;
                 } else {
                     osID = 40;
                 }
             }
+
             // Windows 8
             else if (verOrg.Contains("6.2")) {
                 winVer = "8";
-                if (Environment.Is64BitOperatingSystem == true) {
+                if (is64 == true) {
                     osID = 41;
                 } else {
                     osID = 40;
                 }
             }
+
             // Windows 7
             else if (verOrg.Contains("6.1")) {
                 winVer = "7";
-                if (Environment.Is64BitOperatingSystem == true) {
+                if (is64 == true) {
                     osID = 41;
                 } else {
                     osID = 40;
@@ -374,9 +397,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("verOrg: " + verOrg);
                 Console.WriteLine();
             }
-
-            LogManager.log("winVer: " + winVer, LogManager.Level.INFO);
-            
 
         }
 
@@ -705,5 +725,6 @@ namespace TinyNvidiaUpdateChecker
 
             return downloadsPath + Path.DirectorySeparatorChar;
         }
+
     }
 }
