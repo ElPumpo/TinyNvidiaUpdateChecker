@@ -67,6 +67,7 @@ namespace TinyNvidiaUpdateChecker
 
         private static string downloadURL;
         private static string savePath;
+        private static string pdfURL;
 
         /// <summary>
         /// Local Windows version
@@ -559,11 +560,18 @@ namespace TinyNvidiaUpdateChecker
                 HtmlNode tdVer = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdVersion");
                 onlineGPUDriverVersion = Convert.ToInt32(tdVer.InnerHtml.Trim().Substring(0, 6).Replace(".", string.Empty));
 
-                // get driver URL
+                
                 IEnumerable<HtmlNode> links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
                 foreach (var link in links) {
+
+                    // get driver URL
                     if (link.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/")) {
                         confirmURL = "http://www.nvidia.com" + link.Attributes["href"].Value;
+                    }
+
+                    // get release notes URL
+                    if (link.Attributes["href"].Value.Contains("release-notes.pdf")) {
+                        pdfURL = link.Attributes["href"].Value;
                     }
                 }
 
@@ -598,7 +606,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("confirmURL: " + confirmURL);
                 Console.WriteLine("gpuURL: " + gpuURL);
                 Console.WriteLine("downloadURL: " + downloadURL);
-                
+                Console.WriteLine("pdfURL: " + pdfURL);
+
                 Console.WriteLine("offlineGPUDriverVersion: " + offlineGPUDriverVersion);
                 Console.WriteLine("onlineGPUDriverVersion:  " + onlineGPUDriverVersion);
             }
@@ -701,18 +710,20 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                 }
 
-                if (error == false)
-                {
+                if (error == false) {
                     Console.Write("OK!");
                 }
 
                 Console.WriteLine();
                 Console.WriteLine("The downloaded file has been saved at: " + savePath);
 
-                DialogResult dialog2 = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                dialog = MessageBox.Show("Do you want view the release PDF?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dialog == DialogResult.Yes) {
+                    Process.Start(pdfURL);
+                }
 
-                if (dialog2 == DialogResult.Yes)
-                {
+                dialog = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dialog == DialogResult.Yes) {
                     Process.Start(savePath);
                 }
             }
