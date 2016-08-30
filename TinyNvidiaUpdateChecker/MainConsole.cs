@@ -329,7 +329,16 @@ namespace TinyNvidiaUpdateChecker
                 int release = 0;
 
                 try {
-                    RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion");
+                    // different keys for different OS installs
+                    // TOOD: needs to be verified!
+                    string subKey = null;
+                    if(is64 == true) {
+                        subKey = @"SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion";
+                    } else {
+                        subKey = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
+                    }
+
+                    RegistryKey key = Registry.LocalMachine.OpenSubKey(subKey);
                     release = Convert.ToInt32(key.GetValue("ReleaseId")); // convert the "version" to a int
                     key.Close();
                 } catch (Exception ex) {
