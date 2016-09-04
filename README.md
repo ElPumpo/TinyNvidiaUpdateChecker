@@ -37,6 +37,13 @@ You may customize the application using the config file located at `%localappdat
 | Check for Updates | false or true | enables or disables searches for client updates |
 | GPU Type | desktop or mobile | self-explanatory, select `desktop` if you're running a desktop system configuiration |
 
+#Todo
+This application isn't perfect, it has multiple flaws and other stuff. Here is the to-do list:
+* Add support for Windows 10 action API
+* Develop GUI version
+* Improve error handling
+* Better local GPU driver version detection
+
 #License
 TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
 
