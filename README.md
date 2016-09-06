@@ -13,7 +13,7 @@ Not only that but GeForce Experience is really slow and I don't want to maunally
 Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
 Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 
-If you're forking this project don't worry about the dependencies as they are handled by NuGet.
+Don't forget to setup HTML Agility Pack when cloning the project. Download the libary using GuNet. Open up your Package Manager Console and type in `Install-Package HtmlAgilityPack`. This will setup the required files for the libary in order to work.
 
 #Requirements
 + Windows 10, 8.1, 8 or 7
