@@ -207,6 +207,8 @@ namespace TinyNvidiaUpdateChecker
 
             gpuInfo();
 
+            Boolean hasSelected = false;
+
             if (onlineGPUDriverVersion == offlineGPUDriverVersion) {
                 Console.WriteLine("Your GPU drivers are up-to-date!");
             } else {
@@ -216,11 +218,16 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("Your GPU drivers are up-to-date!");
                 } else {
                     Console.WriteLine("There are new drivers available to download!");
+                    hasSelected = true;
                     downloadDriver();
                 }
             }
 
-            if(forceDL == true) downloadDriver();
+            if (hasSelected == false)
+            {
+                if (forceDL == true) downloadDriver();
+            }
+            
 
             Console.WriteLine();
             
