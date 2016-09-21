@@ -376,9 +376,9 @@ namespace TinyNvidiaUpdateChecker
             else if (verOrg.Contains("6.2")) {
                 winVer = "8";
                 if (is64 == true) {
-                    osID = 41;
+                    osID = 28;
                 } else {
-                    osID = 40;
+                    osID = 27;
                 }
             }
 
@@ -386,9 +386,9 @@ namespace TinyNvidiaUpdateChecker
             else if (verOrg.Contains("6.1")) {
                 winVer = "7";
                 if (is64 == true) {
-                    osID = 41;
+                    osID = 19;
                 } else {
-                    osID = 40;
+                    osID = 18;
                 }
 
             } else {
