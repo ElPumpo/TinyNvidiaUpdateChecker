@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Added the argument "--force-dl" for a force download of gpu drivers even if the drivers are up-to-date.
 - Extended Windows 10 support.
-- Option to see release PDF.
+- Option to view release PDF.
 
 ### Changed
 - Some code has been moved around.
