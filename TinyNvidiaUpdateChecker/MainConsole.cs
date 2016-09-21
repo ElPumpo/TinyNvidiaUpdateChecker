@@ -320,23 +320,27 @@ namespace TinyNvidiaUpdateChecker
             /// drivers depending on what build you're running. But TinyNvidiaUpdateChecker wasn't made to
             /// give NVIDIA the finger, so we'll at least return the correct OS.
 
+            /// 2016-09-x UPDATE - IMPORTANT:
+            /// it seems like NVIDIA changed their website to what it used to be. What the hell?
+            /// The "Windows 10 AU" has been removed from the website. If you use the Win 10AU id you will not get the latest version!
+            /// I thought it has something to do with the WebClient class but apparently not.
+
             // Windows 10 known "version" list:
             // 1607: anniversary update
             // 1511: november update
             // 1507: original release
 
+            /*
             if (verOrg.Contains("10.0")) {
                 int release = 0;
 
                 try {
+
                     // different keys for different OS installs
-                    // TOOD: needs to be verified!
                     string subKey = null;
-                    if(is64 == true) {
-                        subKey = @"SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion";
-                    } else {
-                        subKey = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
-                    }
+                    subKey = is64
+                        ? @"SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion"
+                        : @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
 
                     RegistryKey key = Registry.LocalMachine.OpenSubKey(subKey);
                     release = Convert.ToInt32(key.GetValue("ReleaseId")); // convert the "version" to a int
@@ -347,23 +351,14 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine(ex.StackTrace);
                     Console.WriteLine();
                 }
+                */
 
-                if (release >= 1607) {
-                    // AU release
-                    winVer = "10 AU";
-                    if (is64 == true) {
-                        osID = 73;
-                    } else {
-                        osID = 72;
-                    }
+            if (verOrg.Contains("10.0")) {
+                winVer = "10";
+                if (is64 == true) {
+                    osID = 57;
                 } else {
-                    // not AU
-                    winVer = "10";
-                    if (is64 == true) {
-                        osID = 57;
-                    } else {
-                        osID = 56;
-                    }
+                    osID = 56;
                 }
             }
 
@@ -649,8 +644,8 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void introMessage()
         {
-            //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+            //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
             Console.WriteLine();
             Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
             Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
@@ -746,10 +741,10 @@ namespace TinyNvidiaUpdateChecker
 
         private static string getDownloadFolderPath()
         {
-            string downloadsPath = null;
-            SHGetKnownFolderPath(new Guid("374DE290-123F-4565-9164-39C4925E467B"), 0, IntPtr.Zero, out downloadsPath);
+            string downloadPath = null;
+            SHGetKnownFolderPath(new Guid("374DE290-123F-4565-9164-39C4925E467B"), 0, IntPtr.Zero, out downloadPath);
 
-            return downloadsPath + Path.DirectorySeparatorChar;
+            return downloadPath + Path.DirectorySeparatorChar;
         }
 
     }
