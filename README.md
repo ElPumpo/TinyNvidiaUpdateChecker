@@ -39,10 +39,10 @@ You may customize the application using the config file located at `%localappdat
 
 #Todo
 This application isn't perfect, it has multiple flaws and other stuff. Here is the to-do list:
-* Add support for Windows 10 action API
-* Develop GUI version
-* Improve error handling
-* Better local GPU driver version detection
+- [ ] Add support for Windows 10 action API (may not be possible)
+- [ ] Develop GUI version
+- [ ] Improve error handling
+- [ ] Better local GPU driver version detection
 
 #License
 TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
