@@ -1,6 +1,6 @@
-#TinyNvidiaUpdateChecker
+# TinyNvidiaUpdateChecker
 
-#About
+# About
 Tiny application which checks for NVIDIA GeForce GPU drivers, written in C-sharp (C#) for Windows
 
 Instead of using GeForce Experience you can use this tiny application which will be highly customizable, secure and easy to use.
@@ -9,19 +9,19 @@ It searches for NVIDIA GPU drivers exactly like GeForce Experience does but in a
 When you install GeForce Experience a lot of extra services are being installed without you knowing, and we have no clue what the executables does in the background when the application isn't even used.
 Not only that but GeForce Experience is really slow and I don't want to maunally go to their website to check for updates.
 
-#Download
+# Download
 Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
 Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 
 Don't forget to setup HTML Agility Pack when cloning the project. Download the libary using GuNet. Open up your Package Manager Console and type in `Install-Package HtmlAgilityPack`. This will setup the required files for the libary in order to work.
 
-#Requirements
+# Requirements
 + Windows 10, 8.1, 8 or 7
 + .NET framework 4.5
 + `HtmlAgilityPack.dll` in same folder as the executable
 + Stable internet connection
 
-#Command arguments
+# Command arguments
 | Argument   | Explanation |
 | ---------- |:-----------:|
 | --quiet | run quiet |
@@ -29,7 +29,7 @@ Don't forget to setup HTML Agility Pack when cloning the project. Download the l
 | --debug | turn debugging on |
 | --help | view help |
 
-#Configuration file
+# Configuration file
 You may customize the application using the config file located at `%localappdata%\Hawaii_Beach\TinyNvidiaUpdateChecker` and modify `app.config`
 
 | Option | Restrictions | Effect |
@@ -37,14 +37,16 @@ You may customize the application using the config file located at `%localappdat
 | Check for Updates | false or true | enables or disables searches for client updates |
 | GPU Type | desktop or mobile | self-explanatory, select `desktop` if you're running a desktop system configuiration |
 
-#Todo
+# Todo
 This application isn't perfect, it has multiple flaws and other stuff. Here is the to-do list:
 - [ ] Add support for Windows 10 action API (may not be possible)
 - [ ] Develop GUI version
 - [ ] Improve error handling
 - [ ] Better local GPU driver version detection
 
-#License
+# Legal
+
+### License
 TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
 
 Copyright (C) 2016 Hawaii_Beach
