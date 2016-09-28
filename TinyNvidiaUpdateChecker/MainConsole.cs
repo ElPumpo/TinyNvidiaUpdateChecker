@@ -741,7 +741,12 @@ namespace TinyNvidiaUpdateChecker
 
                 dialog = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialog == DialogResult.Yes) {
-                    Process.Start(savePath);
+                    try {
+                        Process.Start(savePath);
+                    } catch (Exception ex) {
+                        Console.WriteLine(ex.Message);
+                    }
+                    
                 }
             }
         }
