@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+The format is based on [Keep a Changelog](http://keepachangelog.com/) 
+and this project adheres to [Semantic Versioning](http://semver.org/).
+
 ## [Unreleased]
 ### Added
 - Added the argument "--force-dl" for a force download of gpu drivers even if the drivers are up-to-date.
@@ -10,6 +13,9 @@ All notable changes to this project will be documented in this file.
 - Some code has been moved around.
 - The default download folder is now the users Downloads folder instead of the temp folder.
 - A lot of minor code improvements.
+
+### Fixed
+- Some `Process.Start()` will no longer risk breaking the application.
 
 ## [1.3.0] - 2016-08-09
 ### Added
