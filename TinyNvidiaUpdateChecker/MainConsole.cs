@@ -9,7 +9,6 @@ using System.Linq;
 using System.Globalization;
 using System.Reflection;
 using HtmlAgilityPack;
-using Microsoft.Win32;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -362,7 +361,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (verOrg.Contains("10.0")) {
                 winVer = "10";
-                if (is64 == true) {
+                if (is64) {
                     osID = 57;
                 } else {
                     osID = 56;
@@ -372,7 +371,7 @@ namespace TinyNvidiaUpdateChecker
             // Windows 8.1
             else if (verOrg.Contains("6.3")) {
                 winVer = "8.1";
-                if (is64 == true) {
+                if (is64) {
                     osID = 41;
                 } else {
                     osID = 40;
@@ -382,7 +381,7 @@ namespace TinyNvidiaUpdateChecker
             // Windows 8
             else if (verOrg.Contains("6.2")) {
                 winVer = "8";
-                if (is64 == true) {
+                if (is64) {
                     osID = 28;
                 } else {
                     osID = 27;
@@ -392,7 +391,7 @@ namespace TinyNvidiaUpdateChecker
             // Windows 7
             else if (verOrg.Contains("6.1")) {
                 winVer = "7";
-                if (is64 == true) {
+                if (is64) {
                     osID = 19;
                 } else {
                     osID = 18;
@@ -698,7 +697,6 @@ namespace TinyNvidiaUpdateChecker
                             break;
 
                         default:
-                            // if something went wrong, fall back to temp folder
                             // savePath = Path.GetTempPath() + driverName;
 
                             // if something went wrong, fall back to downloads folder
