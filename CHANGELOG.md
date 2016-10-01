@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - A lot of minor code improvements.
 
 ### Fixed
-- Some `Process.Start()` will no longer risk breaking the application.
+- Some `Process.Start()` calls will no longer risk breaking the application.
 
 ## [1.3.0] - 2016-08-09
 ### Added
