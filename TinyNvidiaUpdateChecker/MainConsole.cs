@@ -652,8 +652,8 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void introMessage()
         {
-            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-            //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+            //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
             Console.WriteLine();
             Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
             Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
