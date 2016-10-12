@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Option to view release PDF.
 
 ### Changed
+- Command line argument handler has been improved, and the argument for erasing local config file has been changed to `--erase-config`.
 - Some code has been moved around.
 - The default download folder is now the users Downloads folder instead of the temp folder.
 - A lot of minor code improvements.
