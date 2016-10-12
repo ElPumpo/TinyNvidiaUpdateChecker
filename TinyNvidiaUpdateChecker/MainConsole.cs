@@ -117,67 +117,11 @@ namespace TinyNvidiaUpdateChecker
             LogManager.log(message, LogManager.Level.INFO);
             Console.Title = message;
 
-            /// The command line argument handler does its work here,
-            /// for a list of available arguments, use the '--help' argument.
+            introMessage();
 
-            string[] parms = Environment.GetCommandLineArgs();
-            int isSet = 0;
-
-            if (parms.Length > 1) {
-                
-                // go quiet mode
-                if (Array.IndexOf(parms, "--quiet") != -1) {
-                    FreeConsole();
-                    showUI = false;
-                    isSet++;
-                }
-
-                // erase config
-                if (Array.IndexOf(parms, "--eraseConfig") != -1) {
-                    isSet++;
-                    if (File.Exists(fullConfig)) {
-                        File.Delete(fullConfig);
-                    }
-                }
-
-                // enable debug
-                if (Array.IndexOf(parms, "--debug") != -1) {
-                    isSet++;
-                    debug = true;
-                }
-
-                // force driver download
-                if (Array.IndexOf(parms, "--force-dl") != -1)
-                {
-                    isSet++;
-                    forceDL = true;
-                }
-
-                // help menu
-                if (Array.IndexOf(parms, "--help") != -1) {
-                    isSet++;
-                    introMessage();
-                    Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [--quiet] [--eraseConfig] [--debug] [--force-dl] [--help]");
-                    Console.WriteLine();
-                    Console.WriteLine("--quiet        Run application quiet.");
-                    Console.WriteLine("--eraseConfig  Erase local configuration file.");
-                    Console.WriteLine("--debug        Enable debugging for extended information.");
-                    Console.WriteLine("--force-dl     Force download of drivers.");
-                    Console.WriteLine("--help         Displays this message.");
-                    Environment.Exit(0);
-                }
-
-                if (isSet == 0) {
-                    introMessage();
-                    Console.WriteLine("Unknown command, type --help for help.");
-                    Environment.Exit(1);
-                }
-
-            }
+            CheckArgs();
 
             if (showUI == true) AllocConsole();
-
-            introMessage();
 
             checkDll();
 
@@ -417,6 +361,64 @@ namespace TinyNvidiaUpdateChecker
 
         }
 
+        /// <summary>
+        /// Handles all the supported command line arguments
+        /// </summary>
+        private static void CheckArgs()
+        {
+            /// The command line argument handler does its work here,
+            /// for a list of available arguments, use the '--help' argument.
+
+            foreach (var arg in Environment.GetCommandLineArgs().Skip(1))
+            {
+                // no window
+                if (arg == "--quiet") {
+                    FreeConsole();
+                    showUI = false;
+                }
+
+                // erase config
+                else if (arg == "--erase-config") {
+                    if (File.Exists(fullConfig)) {
+                        try {
+                            File.Delete(fullConfig);
+                        } catch (Exception ex) {
+                            Console.WriteLine(ex.GetType().Name + " - Could not erase the config!");
+                        }
+                    }
+                }
+
+                // enable debugging
+                else if (arg == "--debug") {
+                    debug = true;
+                }
+
+                // force driver download
+                else if (arg == "--force-dl") {
+                    forceDL = true;
+                }
+
+                // help menu
+                else if (arg == "--help") {
+                    Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [--quiet] [--erase-config] [--debug] [--force-dl] [--help]");
+                    Console.WriteLine();
+                    Console.WriteLine("--quiet        Run application quiet.");
+                    Console.WriteLine("--erase-config Erase local configuration file.");
+                    Console.WriteLine("--debug        Enable debugging for extended information.");
+                    Console.WriteLine("--force-dl     Force download of drivers.");
+                    Console.WriteLine("--help         Displays this message.");
+                    Environment.Exit(0);
+                }
+
+                // unknown command, right?
+                else
+                {
+                    Console.WriteLine("Unknown command '" + arg + "', type --help for help.");
+                    Console.WriteLine();
+                }
+            }
+        }
+        
         /// <summary>
         /// Gets the local langauge used by operator and sets value 'langID'.
         /// </summary>
