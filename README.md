@@ -1,4 +1,4 @@
-# TinyNvidiaUpdateChecker
+-# TinyNvidiaUpdateChecker
 
 # About
 Tiny application which checks for NVIDIA GeForce GPU drivers, written in C-sharp (C#) for Windows
@@ -25,8 +25,9 @@ Don't forget to setup HTML Agility Pack when cloning the project. Download the l
 | Argument   | Explanation |
 | ---------- |:-----------:|
 | --quiet | run quiet |
-| --eraseConfig | erase local configuration file |
+| --erase-config | erase local configuration file |
 | --debug | turn debugging on |
+| --force-dl | force download of drivers |
 | --help | view help |
 
 # Configuration file
