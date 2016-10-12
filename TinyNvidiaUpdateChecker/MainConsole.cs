@@ -121,7 +121,16 @@ namespace TinyNvidiaUpdateChecker
 
             CheckArgs();
 
-            if (showUI == true) AllocConsole();
+            if (showUI == true)
+            {
+                AllocConsole();
+
+                // disable CTRL+C
+                Console.CancelKeyPress += (sender, e) =>
+                {
+                    e.Cancel = true;
+                };
+            }
 
             checkDll();
 
@@ -384,6 +393,7 @@ namespace TinyNvidiaUpdateChecker
                             File.Delete(fullConfig);
                         } catch (Exception ex) {
                             Console.WriteLine(ex.GetType().Name + " - Could not erase the config!");
+                            Console.WriteLine();
                         }
                     }
                 }
@@ -398,14 +408,22 @@ namespace TinyNvidiaUpdateChecker
                     forceDL = true;
                 }
 
+                // show version number
+                else if (arg == "--version")
+                {
+                    Console.WriteLine("Current version is " + offlineVer);
+                    Console.WriteLine();
+                }
+
                 // help menu
                 else if (arg == "--help") {
-                    Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [--quiet] [--erase-config] [--debug] [--force-dl] [--help]");
+                    Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [ARGS]");
                     Console.WriteLine();
                     Console.WriteLine("--quiet        Run application quiet.");
                     Console.WriteLine("--erase-config Erase local configuration file.");
                     Console.WriteLine("--debug        Enable debugging for extended information.");
                     Console.WriteLine("--force-dl     Force download of drivers.");
+                    Console.WriteLine("--version      View version number.");
                     Console.WriteLine("--help         Displays this message.");
                     Environment.Exit(0);
                 }
@@ -652,8 +670,8 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void introMessage()
         {
-            //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+            //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
             Console.WriteLine();
             Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
             Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
