@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.4.0] - 2016-10-12
 ### Added
 - Added the argument "--force-dl" for a force download of gpu drivers even if the drivers are up-to-date.
 - Option to view release PDF.
