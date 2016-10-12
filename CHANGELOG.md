@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.4.0] - 2016-10-12
+Long time no see, or that's what they say at least. I have been busy being a typical student, I am trying to keep up dev but only have so much spare time to spare programming. As you see, the versions have been spaced a lot. I haven't made the same amount of changes in the code either lately as I used to do (when I had a lot of free time), but that doesn't mean that I am abandoning this project.
+
+Might start pushing out beta versions if people are interested in that kind of stuff, thing is that I am really wondering if people are even using this application, so it might be for... nothing. And in that case, wouldn't this entire project be for nothing..? I don't have a clue of the userbase.
+
+Whatever, a new version out lads.
 ### Added
 - Added the argument "--force-dl" for a force download of gpu drivers even if the drivers are up-to-date.
 - Option to view release PDF.
