@@ -671,8 +671,8 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void introMessage()
         {
-            //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+            Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+            //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
             Console.WriteLine();
             Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
             Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
@@ -770,9 +770,14 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.WriteLine("The downloaded file has been saved at: " + savePath);
 
-                dialog = MessageBox.Show("Do you want view the release PDF?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (dialog == DialogResult.Yes) {
-                    Process.Start(pdfURL);
+                // is there release notes available?
+                if (pdfURL != null)
+                {
+                    dialog = MessageBox.Show("Do you want view the release PDF?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (dialog == DialogResult.Yes)
+                    {
+                        Process.Start(pdfURL);
+                    }
                 }
 
                 dialog = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
