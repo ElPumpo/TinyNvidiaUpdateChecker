@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.4.1] - 2016-10-23
 ### Added
 - Progress bar for driver download, credit goes to https://github.com/DanielSWolf.
+- Added a command argument, `--version` to get application version.
 
 ### Changed
 - Changed the target file to get the current driver cause v375.57 removed `nvvsvc.exe`.

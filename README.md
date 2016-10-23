@@ -16,7 +16,7 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency.
 Don't forget to setup HTML Agility Pack when cloning the project. Download the libary using GuNet. Open up your Package Manager Console and type in `Install-Package HtmlAgilityPack`. This will setup the required files for the libary in order to work.
 
 # Requirements
-+ Windows 10, 8.1, 8 or 7
++ Windows 10, 8.x or 7
 + .NET framework 4.5
 + `HtmlAgilityPack.dll` in same folder as the executable
 + Stable internet connection
@@ -28,6 +28,7 @@ Don't forget to setup HTML Agility Pack when cloning the project. Download the l
 | --erase-config | erase local configuration file |
 | --debug | turn debugging on |
 | --force-dl | force download of drivers |
+| --version | Current application version |
 | --help | view help |
 
 # Configuration file
@@ -40,10 +41,10 @@ You may customize the application using the config file located at `%localappdat
 
 # Todo
 This application isn't perfect, it has multiple flaws and other stuff. Here is the to-do list:
-- [ ] Develop GUI version
+- [ ] Port some stuff to a GUI
 - [ ] Improve error handling
-- [ ] Better local GPU driver version detection (might not be needed)
-- [ ] Add progress bar for driver download
+- [ ] Better local GPU driver version detection (Either `NvAPI` or through reading current driver mounted)
+- [x] Add progress bar for driver download
 
 # Legal
 
