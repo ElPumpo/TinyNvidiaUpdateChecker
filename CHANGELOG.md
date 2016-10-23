@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Changed the target file to get the current driver cause v375.57 removed `nvvsvc.exe`.
+- CTRL+C inputs are now ignored.
 
 ### Fixed
 - Fixed a issue related to using the `--quiet` command argument to run a silent window.
