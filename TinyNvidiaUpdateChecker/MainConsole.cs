@@ -9,6 +9,7 @@ using System.Linq;
 using System.Globalization;
 using System.Reflection;
 using HtmlAgilityPack;
+using System.Threading;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -100,7 +101,6 @@ namespace TinyNvidiaUpdateChecker
         
         public static string fullConfig = Path.Combine(dirToConfig, "app.config");
 
-
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AllocConsole();
 
@@ -117,9 +117,9 @@ namespace TinyNvidiaUpdateChecker
             LogManager.log(message, LogManager.Level.INFO);
             Console.Title = message;
 
-            introMessage();
-
             CheckArgs();
+
+            introMessage();
 
             if (showUI == true)
             {
@@ -417,6 +417,7 @@ namespace TinyNvidiaUpdateChecker
 
                 // help menu
                 else if (arg == "--help") {
+                    introMessage();
                     Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [ARGS]");
                     Console.WriteLine();
                     Console.WriteLine("--quiet        Run application quiet.");
@@ -517,8 +518,8 @@ namespace TinyNvidiaUpdateChecker
             // query local driver version
             try
             {
-                FileVersionInfo nvvsvcExe = FileVersionInfo.GetVersionInfo(Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\System32\nvvsvc.exe"); // Sysnative?
-                offlineGPUDriverVersion = Convert.ToInt32(nvvsvcExe.FileDescription.Substring(38).Trim().Replace(".", string.Empty));
+                FileVersionInfo nvidiaEXE = FileVersionInfo.GetVersionInfo(Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\System32\nvsvcr.dll"); // Sysnative? nvvsvc.exe
+                offlineGPUDriverVersion = Convert.ToInt32(nvidiaEXE.FileDescription.Substring(38).Trim().Replace(".", string.Empty));
             } catch (FileNotFoundException ex) {
                 error++;
                 Console.Write("ERROR!");
@@ -698,8 +699,6 @@ namespace TinyNvidiaUpdateChecker
                 bool error = false;
                 try
                 {
-                    WebClient downloadClient = new WebClient();
-
                     string driverName = downloadURL.Split('/').Last();
 
                     // set attributes
@@ -730,9 +729,25 @@ namespace TinyNvidiaUpdateChecker
                         Console.WriteLine("result: " + result);
                     }
 
-                    Console.Write("Downloading driver file . . . ");
+                    Console.Write("Downloading the driver . . . ");
 
-                    downloadClient.DownloadFile(downloadURL, savePath);
+                    using (WebClient webClient = new WebClient())
+                    {
+                        var notifier = new AutoResetEvent(false);
+                        var progress = new ProgressBar();
+
+                        webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
+                        {
+                            progress.Report((double)e.ProgressPercentage / 100);
+
+                            if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
+                        };
+
+                        webClient.DownloadFileAsync(new Uri(downloadURL), savePath);
+
+                        notifier.WaitOne(); // sync with the above
+                        progress.Dispose(); // get rid of the progress bar
+                    }
 
                 }
                 catch (Exception ex)
@@ -745,10 +760,13 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                 }
 
-                if (error == false) {
+                if (error == false)
+                {
                     Console.Write("OK!");
+                    Console.WriteLine();
                 }
 
+                
                 Console.WriteLine();
                 Console.WriteLine("The downloaded file has been saved at: " + savePath);
 
