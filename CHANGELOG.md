@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.1] - 2016-10-23
+### Added
+- Progress bar for driver download, credit goes to https://github.com/DanielSWolf.
+
+### Changed
+- Changed the target file to get the current driver cause v375.57 removed `nvvsvc.exe`.
+
+### Fixed
+- Fixed a issue related to using the `--quiet` command argument to run a silent window.
+
+
 ## [1.4.0] - 2016-10-12
 Long time no see, or that's what they say at least. I have been busy being a typical student, I am trying to keep up dev but only have so much spare time to spare programming. As you see, the versions have been spaced a lot. I haven't made the same amount of changes in the code either lately as I used to do (when I had a lot of free time), but that doesn't mean that I am abandoning this project.
 
