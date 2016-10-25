@@ -523,14 +523,14 @@ namespace TinyNvidiaUpdateChecker
             } catch (FileNotFoundException ex) {
                 error++;
                 Console.Write("ERROR!");
-                LogManager.log(ex.Message, LogManager.Level.ERROR);
+                LogManager.log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine("The required executable is not there! Are you sure you've at least installed NVIDIA GPU drivers once?");
 
             } catch (Exception ex) {
                 error++;
                 Console.Write("ERROR!");
-                LogManager.log(ex.Message, LogManager.Level.ERROR);
+                LogManager.log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
             }
