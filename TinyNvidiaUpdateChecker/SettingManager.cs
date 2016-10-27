@@ -53,7 +53,7 @@ namespace TinyNvidiaUpdateChecker
             }
             catch (ConfigurationErrorsException ex) {
                 Console.WriteLine(ex.StackTrace);
-                LogManager.log(ex.Message, LogManager.Level.ERROR);
+                LogManager.log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
             }
 
@@ -85,11 +85,17 @@ namespace TinyNvidiaUpdateChecker
 
                 // clean config file
                 if (File.Exists(MainConsole.fullConfig)) {
-                    File.Delete(MainConsole.fullConfig);
+
+                    try {
+                        File.Delete(MainConsole.fullConfig);
+                    } catch (Exception e) {
+                        Console.WriteLine(e.StackTrace);
+                    }
+                    LogManager.log("Wiped config!", LogManager.Level.INFO);
                 }
 
                 Console.WriteLine(ex.StackTrace);
-                LogManager.log(ex.Message, LogManager.Level.ERROR);
+                LogManager.log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine("The config file has been wiped due to a possible syntax error, please run the application again and setup your values.");
                 if (MainConsole.showUI == true) Console.ReadKey();

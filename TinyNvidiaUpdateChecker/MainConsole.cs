@@ -117,7 +117,7 @@ namespace TinyNvidiaUpdateChecker
             LogManager.log(message, LogManager.Level.INFO);
             Console.Title = message;
 
-            CheckArgs();
+            CheckArgs(args);
 
             introMessage();
 
@@ -373,13 +373,14 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Handles all the supported command line arguments
         /// </summary>
-        private static void CheckArgs()
+        private static void CheckArgs(string[] theArgs)
         {
             /// The command line argument handler does its work here,
             /// for a list of available arguments, use the '--help' argument.
 
-            foreach (var arg in Environment.GetCommandLineArgs().Skip(1))
+            foreach (var arg in theArgs)
             {
+
                 // no window
                 if (arg == "--quiet") {
                     FreeConsole();
@@ -434,6 +435,11 @@ namespace TinyNvidiaUpdateChecker
                 {
                     Console.WriteLine("Unknown command '" + arg + "', type --help for help.");
                     Console.WriteLine();
+                }
+
+                // show the args if debug mode
+                if(debug) {
+                    Console.WriteLine("Arg: " + arg);
                 }
             }
         }
@@ -523,14 +529,14 @@ namespace TinyNvidiaUpdateChecker
             } catch (FileNotFoundException ex) {
                 error++;
                 Console.Write("ERROR!");
-                LogManager.log(ex.Message, LogManager.Level.ERROR);
+                LogManager.log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine("The required executable is not there! Are you sure you've at least installed NVIDIA GPU drivers once?");
 
             } catch (Exception ex) {
                 error++;
                 Console.Write("ERROR!");
-                LogManager.log(ex.Message, LogManager.Level.ERROR);
+                LogManager.log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
             }
