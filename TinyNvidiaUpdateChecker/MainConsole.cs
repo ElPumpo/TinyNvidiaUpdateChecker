@@ -546,7 +546,7 @@ namespace TinyNvidiaUpdateChecker
             // loop until value is selected by user
             string key = "GPU Type";
 
-            while (psID == 0 && pfID == 0) {
+            while (psID == 0 & pfID == 0) {
                 string val = SettingManager.readSetting(key); // refresh value each time
 
                 /// Get correct gpu drivers:
