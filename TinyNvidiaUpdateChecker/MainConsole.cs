@@ -208,7 +208,6 @@ namespace TinyNvidiaUpdateChecker
             // create config file
             if (!File.Exists(fullConfig)) {
                 Console.WriteLine("Generating configuration file, this only happenes once.");
-                Console.WriteLine("The configuration file is located at: " + dirToConfig);
 
                 SettingManager.setupSetting("Check for Updates");
                 SettingManager.setupSetting("GPU Type");
