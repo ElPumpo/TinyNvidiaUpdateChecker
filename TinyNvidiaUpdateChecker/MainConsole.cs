@@ -192,7 +192,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Initialize configuration manager
         /// </summary>
-        public static void configInit()
+        private static void configInit()
         {
             // powered by the .NET framework "Settings" function
 
