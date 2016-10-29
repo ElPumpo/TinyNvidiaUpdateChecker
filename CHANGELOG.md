@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Changed
+- Values fetched from the nvidia website now run trough a `.Trim()` method.
+
+### Removed
+- Removed old, unused code.
+
+### Fixed
+- Trying to open the .pdf release notes when no pdf reader is available will no longer crash the application.
+
 ## [1.4.1] - 2016-10-23
 ### Added
 - Progress bar for driver download, credit goes to https://github.com/DanielSWolf.
