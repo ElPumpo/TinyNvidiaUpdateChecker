@@ -272,7 +272,7 @@ namespace TinyNvidiaUpdateChecker
             string verOrg = Environment.OSVersion.Version.ToString();
             Boolean is64 = Environment.Is64BitOperatingSystem;
 
-            // Windows 10 + AU
+            // Windows 10
             /// After doing some research, it does not matter if you input 10 or 10+AU onto the NVIDIA website (for now - 2016-08-30).
             /// It is only (like choosing GPU model - which I WONT fix) only used for statistics, there is NO seperate
             /// drivers depending on what build you're running. But TinyNvidiaUpdateChecker wasn't made to
@@ -287,29 +287,6 @@ namespace TinyNvidiaUpdateChecker
             // 1607: anniversary update
             // 1511: november update
             // 1507: original release
-
-            /*
-            if (verOrg.Contains("10.0")) {
-                int release = 0;
-
-                try {
-
-                    // different keys for different OS installs
-                    string subKey = null;
-                    subKey = is64
-                        ? @"SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion"
-                        : @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
-
-                    RegistryKey key = Registry.LocalMachine.OpenSubKey(subKey);
-                    release = Convert.ToInt32(key.GetValue("ReleaseId")); // convert the "version" to a int
-                    key.Close();
-                } catch (Exception ex) {
-                    Console.WriteLine("ERROR!");
-                    LogManager.log(ex.Message, LogManager.Level.ERROR);
-                    Console.WriteLine(ex.StackTrace);
-                    Console.WriteLine();
-                }
-                */
 
             if (verOrg.Contains("10.0")) {
                 winVer = "10";
@@ -392,7 +369,7 @@ namespace TinyNvidiaUpdateChecker
                         try {
                             File.Delete(fullConfig);
                         } catch (Exception ex) {
-                            Console.WriteLine(ex.GetType().Name + " - Could not erase the config!");
+                            Console.WriteLine(ex.GetType().Name + " - could not erase the config!");
                             Console.WriteLine();
                         }
                     }
@@ -608,12 +585,12 @@ namespace TinyNvidiaUpdateChecker
 
                     // get driver URL
                     if (link.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/")) {
-                        confirmURL = "http://www.nvidia.com" + link.Attributes["href"].Value;
+                        confirmURL = "http://www.nvidia.com" + link.Attributes["href"].Value.Trim();
                     }
 
                     // get release notes URL
                     if (link.Attributes["href"].Value.Contains("release-notes.pdf")) {
-                        pdfURL = link.Attributes["href"].Value;
+                        pdfURL = link.Attributes["href"].Value.Trim();
                     }
                 }
 
@@ -622,7 +599,7 @@ namespace TinyNvidiaUpdateChecker
                 links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
                 foreach (var link in links) {
                     if (link.Attributes["href"].Value.Contains("download.nvidia")) {
-                        downloadURL = link.Attributes["href"].Value;
+                        downloadURL = link.Attributes["href"].Value.Trim();
                     }
                 }
 
@@ -761,7 +738,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.Write("ERROR!");
                     LogManager.log(ex.Message, LogManager.Level.ERROR);
                     Console.WriteLine();
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                     Console.WriteLine();
                 }
 
@@ -781,7 +758,17 @@ namespace TinyNvidiaUpdateChecker
                     dialog = MessageBox.Show("Do you want view the release PDF?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (dialog == DialogResult.Yes)
                     {
-                        Process.Start(pdfURL);
+
+                        try {
+                            Process.Start(pdfURL);
+                        }
+                        catch (InvalidOperationException ex) {
+                            // maybe open in online pdf reader?
+                            Console.WriteLine(ex.GetType().Name + " - there is no application installed to handle .pdf files!");
+                        }
+                        catch (Exception ex) {
+                            Console.WriteLine(ex.StackTrace);
+                        }
                     }
                 }
 
@@ -790,7 +777,7 @@ namespace TinyNvidiaUpdateChecker
                     try {
                         Process.Start(savePath);
                     } catch (Exception ex) {
-                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.StackTrace);
                     }
                     
                 }
