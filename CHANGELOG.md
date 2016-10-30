@@ -5,14 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+Started focusing on cleaning up code that doesn't make sence, more to come.
+### Added
+- Added a last resort release notes link creator if none is displayed on Nvidias' website.
+
 ### Changed
-- Values fetched from the nvidia website now run trough a `.Trim()` method.
+- Values fetched from the nvidia website now run trough a `.Trim()` method for various reasons.
+- A lot of cleanup and minor changes, for example all version numbers are now strings and not ints - it was a pain to read them and is now much better.
 
 ### Removed
 - Removed old, unused code.
 
 ### Fixed
 - Trying to open the .pdf release notes when no pdf reader is available will no longer crash the application.
+- Fixed so that nothing happens before the intro, for example using the `--version` argument - and possible overlaps.
 
 ## [1.4.1] - 2016-10-23
 ### Added
