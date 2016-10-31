@@ -516,16 +516,9 @@ namespace TinyNvidiaUpdateChecker
             {
                 FileVersionInfo nvidiaEXE = FileVersionInfo.GetVersionInfo(Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\System32\nvsvcr.dll"); // Sysnative? nvvsvc.exe
                 OfflineGPUVersion = nvidiaEXE.FileDescription.Substring(38).Trim();
-                
-            } catch (FileNotFoundException ex) {
-                error++;
-                Console.Write("ERROR!");
-                LogManager.log(ex.ToString(), LogManager.Level.ERROR);
-                Console.WriteLine();
-                Console.WriteLine("The required file is not there! Are you sure you've at least installed NVIDIA GPU drivers once?");
-
             } catch (Exception ex) {
                 error++;
+                OfflineGPUVersion = "000.00";
                 Console.Write("ERROR!");
                 LogManager.log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
