@@ -377,7 +377,7 @@ namespace TinyNvidiaUpdateChecker
                             File.Delete(fullConfig);
                         } catch (Exception ex) {
                             RunIntro();
-                            Console.WriteLine(ex.GetType().Name + " - could not erase the config!");
+                            Console.WriteLine(ex.StackTrace);
                             Console.WriteLine();
                         }
                     }
