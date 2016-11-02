@@ -233,8 +233,8 @@ namespace TinyNvidiaUpdateChecker
             int error = 0;
             try
             {
-                HtmlWeb webClient = new HtmlWeb();
-                HtmlAgilityPack.HtmlDocument htmlDocument = webClient.Load(serverURL);
+                HtmlWeb htmlWeb = new HtmlWeb();
+                HtmlAgilityPack.HtmlDocument htmlDocument = htmlWeb.Load(serverURL);
 
                 // get version
                 HtmlNode tdVer = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "currentVersion");
@@ -242,6 +242,7 @@ namespace TinyNvidiaUpdateChecker
 
             } catch (Exception ex) {
                 error++;
+                onlineVer = "0.0.0";
                 Console.Write("ERROR!");
                 LogManager.log(ex.Message, LogManager.Level.ERROR);
                 Console.WriteLine();
@@ -612,6 +613,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
             } catch (Exception ex) {
+                OnlineGPUVersion = "000.00";
                 LogManager.log(ex.Message, LogManager.Level.ERROR);
                 if (error == 0) {
                     Console.Write("ERROR!");
@@ -703,7 +705,7 @@ namespace TinyNvidiaUpdateChecker
                         Console.WriteLine("savePath: " + savePath);
                         Console.WriteLine("result: " + result);
                     }
-
+                    
                     Console.Write("Downloading the driver . . . ");
                     
                     using (WebClient webClient = new WebClient())
