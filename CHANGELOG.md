@@ -10,7 +10,7 @@ Started focusing on cleaning up code that doesn't make sence, more to come.
 - Added a last resort release notes link creator if none is displayed on Nvidias' website.
 
 ### Changed
-- Values fetched from the nvidia website now run trough a `.Trim()` method for various reasons.
+- Values fetched from the nvidia website now run through the `.Trim()` method for various reasons.
 - A lot of cleanup and minor changes, for example all version numbers are now strings and not ints - it was a pain to read them and is now much better.
 
 ### Removed
