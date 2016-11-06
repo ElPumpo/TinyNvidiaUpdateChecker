@@ -506,7 +506,7 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void gpuInfo()
         {
-            Console.Write("Looking up GPU information . . . ");
+            Console.Write("Retrieving GPU information . . . ");
             int error = 0;
             string processURL = null;
             string confirmURL = null;
@@ -557,8 +557,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // finish request
-            try
-            {
+            try {
                 gpuURL = "http://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0";
 
                 WebClient client = new WebClient();
@@ -660,7 +659,7 @@ namespace TinyNvidiaUpdateChecker
 
         private static void downloadDriver()
         {
-            DialogResult dialog = MessageBox.Show("There is a new update available to download, do you want to download the update?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult dialog = MessageBox.Show("There is new gpu drivers up for download, do you want to download them now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (dialog == DialogResult.Yes)
             {
