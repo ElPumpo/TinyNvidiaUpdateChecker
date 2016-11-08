@@ -670,7 +670,18 @@ namespace TinyNvidiaUpdateChecker
 
         private static void downloadDriver()
         {
-            DialogResult dialog = MessageBox.Show("There is new gpu drivers up for download released " + (DateTime.Now - releaseDate).Days + " day(s) ago, do you want to download them now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            int DateDiff = (DateTime.Now - releaseDate).Days; // how many days between the two dates
+            string message = null;
+
+            if (DateDiff == 1) {
+                message = DateDiff + " day ago";
+            } else if (DateDiff < 1) {
+                message = "today";
+            } else {
+                message = DateDiff + " days ago";
+            }
+            
+            DialogResult dialog = MessageBox.Show("There is new gpu drivers up for download, do you want to download them now?" + Environment.NewLine + Environment.NewLine + "Driver version: " + OnlineGPUVersion + Environment.NewLine + "Driver released: " + message + " (" + releaseDate.ToShortDateString() + ")", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (dialog == DialogResult.Yes)
             {
