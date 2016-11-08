@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 Started focusing on cleaning up code that doesn't make sence, more to come.
 ### Added
 - Added a last resort release notes link creator if none is displayed on Nvidias' website.
+- A date has been added when a new update is available to show how long ago the latest driver was released.
 
 ### Changed
 - Values fetched from the nvidia website now run through the `.Trim()` method for various reasons.
