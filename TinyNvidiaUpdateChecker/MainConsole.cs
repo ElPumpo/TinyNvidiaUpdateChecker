@@ -645,7 +645,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("gpuURL: " + gpuURL);
                 Console.WriteLine("downloadURL: " + downloadURL);
                 Console.WriteLine("pdfURL: " + pdfURL);
-                Console.WriteLine("releaseDate: " + releaseDate);
+                Console.WriteLine("releaseDate: " + releaseDate.ToShortDateString());
 
                 Console.WriteLine("OfflineGPUVersion: " + OfflineGPUVersion);
                 Console.WriteLine("OnlineGPUVersion:  " + OnlineGPUVersion);
