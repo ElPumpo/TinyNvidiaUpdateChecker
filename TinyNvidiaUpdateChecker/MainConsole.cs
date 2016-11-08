@@ -68,6 +68,7 @@ namespace TinyNvidiaUpdateChecker
         private static string downloadURL;
         private static string savePath;
         private static string pdfURL;
+        private static DateTime releaseDate;
 
         /// <summary>
         /// Local Windows version
@@ -587,8 +588,21 @@ namespace TinyNvidiaUpdateChecker
                 HtmlNode tdVer = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdVersion");
                 OnlineGPUVersion = tdVer.InnerHtml.Trim().Substring(0, 6);
 
+                // get release date
+                HtmlNode tdReleaseDate = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdReleaseDate");
+                var dates = tdReleaseDate.InnerHtml.Trim().Replace(".", string.Empty);
+
+                var year = Convert.ToInt32(dates.Remove(4));
+                var month = Convert.ToInt32(dates.Remove(6));
+                var day = Convert.ToInt32(dates);
+
+                LogManager.log(year.ToString() + month.ToString() + day.ToString(), LogManager.Level.INFO);
+                // var month = 07;
+                //var day = 31;
+
+                releaseDate = new DateTime(year, month, day);
                 
-                IEnumerable<HtmlNode> links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
+                IEnumerable <HtmlNode> links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
                 foreach (var link in links) {
 
                     // get driver URL
@@ -635,6 +649,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("gpuURL: " + gpuURL);
                 Console.WriteLine("downloadURL: " + downloadURL);
                 Console.WriteLine("pdfURL: " + pdfURL);
+                Console.WriteLine("releaseDate: " + releaseDate);
 
                 Console.WriteLine("OfflineGPUVersion: " + OfflineGPUVersion);
                 Console.WriteLine("OnlineGPUVersion:  " + OnlineGPUVersion);
