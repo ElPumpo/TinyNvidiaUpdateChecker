@@ -592,13 +592,9 @@ namespace TinyNvidiaUpdateChecker
                 HtmlNode tdReleaseDate = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdReleaseDate");
                 var dates = tdReleaseDate.InnerHtml.Trim().Replace(".", string.Empty);
 
-                var year = Convert.ToInt32(dates.Remove(4));
-                var month = Convert.ToInt32(dates.Remove(6));
-                var day = Convert.ToInt32(dates);
-
-                LogManager.log(year.ToString() + month.ToString() + day.ToString(), LogManager.Level.INFO);
-                // var month = 07;
-                //var day = 31;
+                var year = Convert.ToInt32(dates.Substring(0, 4));
+                var month = Convert.ToInt32(dates.Substring(4, 2));
+                var day = Convert.ToInt32(dates.Substring(6));
 
                 releaseDate = new DateTime(year, month, day);
                 
@@ -674,7 +670,7 @@ namespace TinyNvidiaUpdateChecker
 
         private static void downloadDriver()
         {
-            DialogResult dialog = MessageBox.Show("There is new gpu drivers up for download, do you want to download them now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult dialog = MessageBox.Show("There is new gpu drivers up for download released " + (DateTime.Now - releaseDate).Days + " day(s) ago, do you want to download them now?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (dialog == DialogResult.Yes)
             {
