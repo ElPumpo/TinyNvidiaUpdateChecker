@@ -610,6 +610,16 @@ namespace TinyNvidiaUpdateChecker
                     if (link.Attributes["href"].Value.Contains("release-notes.pdf")) {
                         pdfURL = link.Attributes["href"].Value.Trim();
                     }
+
+                    if (pdfURL == null) {
+                        if (psID == 98) { // if desktop
+                            pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-desktop-release-notes.pdf";
+                        } else {
+                            pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-notebook-release-notes.pdf";
+                        }
+                        LogManager.log("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.", LogManager.Level.INFO);
+                    }
+                    
                 }
 
                 // get download link
@@ -638,17 +648,16 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (debug == true) {
-                Console.WriteLine("psID: " + psID);
-                Console.WriteLine("pfID: " + pfID);
+                Console.WriteLine("gpuURL: " + gpuURL);
                 Console.WriteLine("processURL: " + processURL);
                 Console.WriteLine("confirmURL: " + confirmURL);
-                Console.WriteLine("gpuURL: " + gpuURL);
                 Console.WriteLine("downloadURL: " + downloadURL);
                 Console.WriteLine("pdfURL: " + pdfURL);
                 Console.WriteLine("releaseDate: " + releaseDate.ToShortDateString());
-
                 Console.WriteLine("OfflineGPUVersion: " + OfflineGPUVersion);
                 Console.WriteLine("OnlineGPUVersion:  " + OnlineGPUVersion);
+                Console.WriteLine("psID: " + psID);
+                Console.WriteLine("pfID: " + pfID);
             }
 
         }
@@ -697,7 +706,7 @@ namespace TinyNvidiaUpdateChecker
                 bool error = false;
                 try
                 {
-                    string driverName = downloadURL.Split('/').Last();
+                    string driverName = downloadURL.Split('/').Last(); // retrives file name from url
 
                     // set attributes
                     SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -721,8 +730,7 @@ namespace TinyNvidiaUpdateChecker
                             break;
                     }
 
-                    if (debug == true)
-                    {
+                    if (debug == true) {
                         Console.WriteLine("savePath: " + savePath);
                         Console.WriteLine("result: " + result);
                     }
@@ -767,16 +775,6 @@ namespace TinyNvidiaUpdateChecker
                 
                 Console.WriteLine();
                 Console.WriteLine("The downloaded file has been saved at: " + savePath);
-
-                // craft pdf link, last resort
-                if (pdfURL == null) {
-                    if(downloadURL.Contains("desktop")) {
-                        pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-desktop-release-notes.pdf";
-                    } else {
-                        pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-notebook-release-notes.pdf";
-                    }
-                    Console.WriteLine("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.");
-                }
 
                 dialog = MessageBox.Show("Do you want view the release PDF?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialog == DialogResult.Yes) {
