@@ -1,6 +1,4 @@
 # TinyNvidiaUpdateChecker
-
-# About
 Tiny application which checks for NVIDIA GeForce GPU drivers, written in C-sharp (C#) for Windows
 
 Instead of using GeForce Experience you can use this tiny application which will be highly customizable, secure and easy to use.
