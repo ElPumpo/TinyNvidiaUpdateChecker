@@ -40,7 +40,7 @@ Might start pushing out beta versions if people are interested in that kind of s
 
 Whatever, a new version out lads.
 ### Added
-- Added the argument "--force-dl" for a force download of gpu drivers even if the drivers are up-to-date.
+- Added the argument `--force-dl` for a force download of gpu drivers even if the drivers are up-to-date.
 - Option to view release PDF.
 
 ### Changed
@@ -58,7 +58,7 @@ Whatever, a new version out lads.
 - Basic documentation started.
 
 ### Changed
-- Changes around config system, for example the key "Desktop GPU" has been renamed to "GPU Type".
+- Changes around config system, for example the key `Desktop GPU` has been renamed to `GPU Type`.
 - Code 10% more bullet proof.
 - Updated HTMLAgilityPack to v1.4.9.5, and therefore upped .NET framework target to 4.5.
 - All released builds are now set to the "Release" build type in VS for better performance.
@@ -70,11 +70,11 @@ Whatever, a new version out lads.
 ### Added
 - Missing author in assembly information.
 - Support for mobile NVIDIA GPUs.
-- New argument - "--eraseConfig", erases configuration file.
+- New argument - `--eraseConfig`, erases configuration file.
 
 ### Changed
 - Minor cleanup and improvements.
-- Complete re-write of config system, had a great time doing so and had to be done - old system was wanky. Moved to '.xml' format powered by the .NET framework.
+- Complete re-write of config system, had a great time doing so and had to be done - old system was wanky. Moved to `.xml` format powered by the .NET framework.
 - Now following the Semantic Versioning 2.0.0 standard, http://semver.org/spec/v2.0.0.html.
 - Improved update system.
 - Improved command line argument handler.
@@ -87,8 +87,8 @@ Whatever, a new version out lads.
 - Check for required DLL file.
 - Basic documentation.
 - Language specific downloads.
-- "--debug" command line argument used for debugging purposes.
-- "--?" command line argument as help menu.
+- `--debug` command line argument used for debugging purposes.
+- `--?` command line argument as help menu.
 
 ### Changed
 - Major cleanup / improved code.
@@ -123,7 +123,7 @@ The application is finally in version 1! Everything seems to work fine so I deci
 
 ### Fixed
 - Windows version detector fixed.
-- Fixed using "-quiet" command line argument where application would not end.
+- Fixed using `-quiet` command line argument where application would not end.
 
 ## [0.1.0.0] - 2016-05-14 [YANKED]
 Initial public release.
