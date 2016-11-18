@@ -610,16 +610,16 @@ namespace TinyNvidiaUpdateChecker
                     if (link.Attributes["href"].Value.Contains("release-notes.pdf")) {
                         pdfURL = link.Attributes["href"].Value.Trim();
                     }
-
-                    if (pdfURL == null) {
-                        if (psID == 98) { // if desktop
-                            pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-desktop-release-notes.pdf";
-                        } else {
-                            pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-notebook-release-notes.pdf";
-                        }
-                        LogManager.log("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.", LogManager.Level.INFO);
-                    }
                     
+                }
+
+                if (pdfURL == null) {
+                    if (psID == 98) { // if desktop
+                        pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-desktop-release-notes.pdf";
+                    } else {
+                        pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-notebook-release-notes.pdf";
+                    }
+                    LogManager.log("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.", LogManager.Level.INFO);
                 }
 
                 // get download link
