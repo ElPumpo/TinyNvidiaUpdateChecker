@@ -127,6 +127,12 @@ namespace TinyNvidiaUpdateChecker
                     value = new string[] { "desktop", "mobile" };
                     break;
 
+                // desc
+                case "Show Driver Description":
+                    message = "Do you want to see the driver description? (BETA)";
+                    value = new string[] { "true", "false" };
+                    break;
+
                 default:
                     MessageBox.Show("Unknown key '" + key + "'", "TinyNvidiaUpdateChecker", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     message = "Unknown";

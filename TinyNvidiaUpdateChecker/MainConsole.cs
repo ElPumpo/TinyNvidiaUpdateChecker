@@ -69,6 +69,7 @@ namespace TinyNvidiaUpdateChecker
         private static string savePath;
         private static string pdfURL;
         private static DateTime releaseDate;
+        private static string releaseDesc;
 
         /// <summary>
         /// Local Windows version
@@ -219,6 +220,7 @@ namespace TinyNvidiaUpdateChecker
 
                 SettingManager.setupSetting("Check for Updates");
                 SettingManager.setupSetting("GPU Type");
+                SettingManager.setupSetting("Show Driver Description");
 
                 Console.WriteLine();
             }
@@ -622,6 +624,12 @@ namespace TinyNvidiaUpdateChecker
                     LogManager.log("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.", LogManager.Level.INFO);
                 }
 
+
+                // get driver desc
+                releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerHtml.Trim();
+                releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".");
+
+
                 // get download link
                 htmlDocument = htmlWeb.Load(confirmURL);
                 links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
@@ -680,20 +688,41 @@ namespace TinyNvidiaUpdateChecker
         private static void downloadDriver()
         {
             int DateDiff = (DateTime.Now - releaseDate).Days; // how many days between the two dates
-            string message = null;
+            string theDate = null;
 
             if (DateDiff == 1) {
-                message = DateDiff + " day ago";
+                theDate = DateDiff + " day ago";
             } else if (DateDiff < 1) {
-                message = "today";
+                theDate = "today";
             } else {
-                message = DateDiff + " days ago";
+                theDate = DateDiff + " days ago";
             }
-            
-            DialogResult dialog = MessageBox.Show("There is new gpu drivers up for download, do you want to download them now?" + Environment.NewLine + Environment.NewLine + "Driver version: " + OnlineGPUVersion + Environment.NewLine + "Driver released: " + message + " (" + releaseDate.ToShortDateString() + ")", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if (dialog == DialogResult.Yes)
-            {
+            var message = "There is new gpu drivers up for download, do you want to download them now?" + Environment.NewLine + Environment.NewLine;
+
+            string key = "Show Driver Description";
+            string val = null;
+
+            // loop
+            while (val != "true" & val != "false") {
+                val = SettingManager.readSetting(key); // refresh value each time
+
+                if (val == "true") {
+                    message = message + "Description: " + releaseDesc + Environment.NewLine;
+                } else if (val == "false") {
+                    break;
+                } else {
+                    // invalid value
+                    SettingManager.setupSetting(key);
+                }
+            }
+
+            message = message + "Driver version: " + OnlineGPUVersion + Environment.NewLine +
+                        "Driver released: " + theDate + " (" + releaseDate.ToShortDateString() + ")";
+
+            DialogResult dialog = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (dialog == DialogResult.Yes) {
 
                 Console.WriteLine();
 
