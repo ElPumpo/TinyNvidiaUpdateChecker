@@ -25,11 +25,14 @@ namespace TinyNvidiaUpdateChecker
 
     public class HtmlToText
     {
+        /// <summary>
+        /// Credit goes to the HTML Agility Pack demo code
+        /// </summary>
         public HtmlToText()
         {
         }
 
-        public static string Convert(string path)
+        private static string Convert(string path)
         {
             HtmlDocument doc = new HtmlDocument();
             doc.Load(path);
@@ -40,6 +43,9 @@ namespace TinyNvidiaUpdateChecker
             return sw.ToString();
         }
 
+        /// <summary>
+        /// Converts HTML code to basic text
+        /// </summary>
         public static string ConvertHtml(string html)
         {
             HtmlDocument doc = new HtmlDocument();
@@ -59,7 +65,7 @@ namespace TinyNvidiaUpdateChecker
             }
         }
 
-        public static void ConvertTo(HtmlNode node, TextWriter outText)
+        private static void ConvertTo(HtmlNode node, TextWriter outText)
         {
             string html;
             switch (node.NodeType)
