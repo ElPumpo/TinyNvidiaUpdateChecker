@@ -627,7 +627,7 @@ namespace TinyNvidiaUpdateChecker
 
                 // get driver desc
                 releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerHtml.Trim();
-                releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".");
+                releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".").Trim();
 
 
                 // get download link
@@ -717,7 +717,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            message = message + "Driver version: " + OnlineGPUVersion + Environment.NewLine +
+            message = message + "Driver version: " + OnlineGPUVersion + " (you're running " + OfflineGPUVersion + ")" + Environment.NewLine +
                         "Driver released: " + theDate + " (" + releaseDate.ToShortDateString() + ")";
 
             DialogResult dialog = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
