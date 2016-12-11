@@ -737,26 +737,28 @@ namespace TinyNvidiaUpdateChecker
                 {
                     string driverName = downloadURL.Split('/').Last(); // retrives file name from url
 
-                    // set attributes
-                    SaveFileDialog saveFileDialog = new SaveFileDialog();
-                    saveFileDialog.Filter = "Executable|*.exe";
-                    saveFileDialog.Title = "Choose save file for GPU driver";
-                    saveFileDialog.FileName = driverName;
+                    DialogResult result;
 
-                    DialogResult result = saveFileDialog.ShowDialog(); // show dialog and get status (will wait for input)
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
+                        saveFileDialog.Filter = "Executable|*.exe";
+                        saveFileDialog.Title = "Choose save file for GPU driver";
+                        saveFileDialog.FileName = driverName;
 
-                    switch (result)
-                    {
-                        case DialogResult.OK:
-                            savePath = saveFileDialog.FileName.ToString();
-                            break;
+                        result = saveFileDialog.ShowDialog(); // show dialog and get status (will wait for input)
 
-                        default:
-                            // savePath = Path.GetTempPath() + driverName;
+                        switch (result)
+                        {
+                            case DialogResult.OK:
+                                savePath = saveFileDialog.FileName.ToString();
+                                break;
 
-                            // if something went wrong, fall back to downloads folder
-                            savePath = getDownloadFolderPath() + driverName;
-                            break;
+                            default:
+                                // savePath = Path.GetTempPath() + driverName;
+
+                                // if something went wrong, fall back to downloads folder
+                                savePath = getDownloadFolderPath() + driverName;
+                                break;
+                        }
                     }
 
                     if (debug == true) {
