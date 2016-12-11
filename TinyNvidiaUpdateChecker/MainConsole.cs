@@ -627,7 +627,7 @@ namespace TinyNvidiaUpdateChecker
 
                 // get driver desc
                 releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerHtml.Trim();
-                releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".");
+                releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".").Trim();
 
 
                 // get download link
@@ -685,6 +685,9 @@ namespace TinyNvidiaUpdateChecker
             }
         }
 
+        /// <summary>
+        /// Downloads the driver and some other stuff
+        /// </summary>
         private static void downloadDriver()
         {
             int DateDiff = (DateTime.Now - releaseDate).Days; // how many days between the two dates
@@ -717,7 +720,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            message = message + "Driver version: " + OnlineGPUVersion + Environment.NewLine +
+            message = message + "Driver version: " + OnlineGPUVersion + " (you're running " + OfflineGPUVersion + ")" + Environment.NewLine +
                         "Driver released: " + theDate + " (" + releaseDate.ToShortDateString() + ")";
 
             DialogResult dialog = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -829,6 +832,9 @@ namespace TinyNvidiaUpdateChecker
             }
         }
 
+        /// <summary>
+        /// Returnes the current users' download folder
+        /// </summary>
         private static string getDownloadFolderPath()
         {
             string downloadPath = null;
@@ -838,14 +844,14 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// Intro with legal message for cleanup at the top.
+        /// Intro with legal message, moved to recude lines that ultimately does the same thing.
         /// </summary>
         private static void RunIntro()
         {
             if(!HasIntro) {
                 HasIntro = true;
-                //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+                //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                 Console.WriteLine();
                 Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
