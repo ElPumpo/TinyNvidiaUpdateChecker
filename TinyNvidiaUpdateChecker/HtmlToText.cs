@@ -7,7 +7,7 @@ namespace TinyNvidiaUpdateChecker
 
     /*
     TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
-    Copyright (C) 2016 Hawaii_Beach
+    Copyright (C) 2016-2017 Hawaii_Beach
 
     This program Is free software: you can redistribute it And/Or modify
     it under the terms Of the GNU General Public License As published by

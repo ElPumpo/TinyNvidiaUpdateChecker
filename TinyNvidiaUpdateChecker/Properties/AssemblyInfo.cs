@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Hawaii_Beach")]
 [assembly: AssemblyProduct("TinyNvidiaUpdateChecker")]
-[assembly: AssemblyCopyright("Copyright © Hawaii_Beach 2016")]
+[assembly: AssemblyCopyright("Copyright © Hawaii_Beach 2016-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

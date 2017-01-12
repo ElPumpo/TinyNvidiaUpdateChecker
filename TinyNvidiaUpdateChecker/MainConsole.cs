@@ -16,7 +16,7 @@ namespace TinyNvidiaUpdateChecker
 
     /*
     TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
-    Copyright (C) 2016 Hawaii_Beach
+    Copyright (C) 2016-2017 Hawaii_Beach
 
     This program Is free software: you can redistribute it And/Or modify
     it under the terms Of the GNU General Public License As published by
@@ -358,10 +358,11 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// Handles all the supported command line arguments </summary>
+        /// Handles the command line arguments </summary>
         /// <param name="theArgs"> Command line arguments in. Turned out that Environment.GetCommandLineArgs() wasn't any good.</param>
         private static void CheckArgs(string[] theArgs)
         {
+
             /// The command line argument handler does its work here,
             /// for a list of available arguments, use the '--help' argument.
 
@@ -369,13 +370,13 @@ namespace TinyNvidiaUpdateChecker
             {
 
                 // no window
-                if (arg == "--quiet") {
+                if (arg.ToLower() == "--quiet") {
                     FreeConsole();
                     showUI = false;
                 }
 
                 // erase config
-                else if (arg == "--erase-config") {
+                else if (arg.ToLower() == "--erase-config") {
                     if (File.Exists(fullConfig)) {
                         try {
                             File.Delete(fullConfig);
@@ -388,17 +389,17 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 // enable debugging
-                else if (arg == "--debug") {
+                else if (arg.ToLower() == "--debug") {
                     debug = true;
                 }
 
                 // force driver download
-                else if (arg == "--force-dl") {
+                else if (arg.ToLower() == "--force-dl") {
                     forceDL = true;
                 }
 
                 // show version number
-                else if (arg == "--version")
+                else if (arg.ToLower() == "--version")
                 {
                     RunIntro();
                     Console.WriteLine("Current version is " + offlineVer);
@@ -406,7 +407,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 // help menu
-                else if (arg == "--help") {
+                else if (arg.ToLower() == "--help") {
                     RunIntro();
                     Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [ARGS]");
                     Console.WriteLine();
