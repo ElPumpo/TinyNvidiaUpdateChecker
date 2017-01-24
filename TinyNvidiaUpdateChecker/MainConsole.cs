@@ -10,6 +10,8 @@ using System.Globalization;
 using System.Reflection;
 using HtmlAgilityPack;
 using System.Threading;
+using System.Configuration;
+using System.Management;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -207,6 +209,7 @@ namespace TinyNvidiaUpdateChecker
 
             // set config dir
             AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", fullConfig);
+            ResetConfigMechanism();
 
             if (debug == true) {
                 Console.WriteLine("Current configuration file is located at: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
@@ -221,6 +224,7 @@ namespace TinyNvidiaUpdateChecker
                 SettingManager.setupSetting("Check for Updates");
                 SettingManager.setupSetting("GPU Type");
                 SettingManager.setupSetting("Show Driver Description");
+                SettingManager.setupSetting("GPU Name");
 
                 Console.WriteLine();
             }
@@ -519,8 +523,30 @@ namespace TinyNvidiaUpdateChecker
             // query local driver version
             try
             {
-                FileVersionInfo nvidiaEXE = FileVersionInfo.GetVersionInfo(Environment.GetFolderPath(Environment.SpecialFolder.Windows) + @"\System32\nvsvcr.dll"); // Sysnative? nvvsvc.exe
-                OfflineGPUVersion = nvidiaEXE.FileDescription.Substring(38).Trim();
+                string gpuName = null;
+                while (gpuName == null) {
+                    gpuName = SettingManager.readSetting("GPU Name");
+
+                    if(!string.IsNullOrEmpty(gpuName)) {
+                        break;
+                    } else {
+                        SettingManager.setupSetting("GPU Name"); // invalid value
+                    }
+
+                }
+
+                ManagementObjectSearcher objectSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
+
+                foreach (ManagementObject obj in objectSearcher.Get()) {
+                    if(obj["Description"].ToString() == gpuName) {
+                        OfflineGPUVersion = obj["DriverVersion"].ToString().Replace(".", String.Empty).Substring(5);
+                        OfflineGPUVersion = OfflineGPUVersion.Substring(0, 3) + "." + OfflineGPUVersion.Substring(3); // add dot
+                        break;
+                    }
+                  
+                }
+            
+
             } catch (Exception ex) {
                 error++;
                 OfflineGPUVersion = "000.00";
@@ -854,7 +880,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
                 //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                 Console.WriteLine();
-                Console.WriteLine("Copyright (C) 2016 Hawaii_Beach");
+                Console.WriteLine("Copyright (C) 2016-2017 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
                 Console.WriteLine("This is free software, and you are welcome to redistribute it");
                 Console.WriteLine("under certain conditions. Licensed under GPLv3.");
@@ -862,6 +888,28 @@ namespace TinyNvidiaUpdateChecker
             } else {
                 LogManager.log("Intro has already been run!", LogManager.Level.INFO);
             }
+        }
+
+        /// <summary>
+        /// Credit goes to Daniel Hilgarth for the weird bug fix I'm experiencing on my dev station, call after setting config dir.
+        /// </summary>
+        private static void ResetConfigMechanism()
+        {
+            typeof(ConfigurationManager)
+            .GetField("s_initState", BindingFlags.NonPublic | BindingFlags.Static)
+            .SetValue(null, 0);
+
+            typeof(ConfigurationManager)
+            .GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static)
+            .SetValue(null, null);
+
+            typeof(ConfigurationManager)
+            .Assembly.GetTypes()
+            .Where(x => x.FullName ==
+               "System.Configuration.ClientConfigPaths")
+            .First()
+            .GetField("s_current", BindingFlags.NonPublic | BindingFlags.Static)
+            .SetValue(null, null);
         }
 
     }

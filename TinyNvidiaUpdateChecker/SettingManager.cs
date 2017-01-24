@@ -111,6 +111,7 @@ namespace TinyNvidiaUpdateChecker
         {
             string message = null;
             string[] value = null;
+            Boolean special = false;
 
             switch (key)
             {
@@ -119,18 +120,28 @@ namespace TinyNvidiaUpdateChecker
                 case "Check for Updates":
                     message = "Do you want to search for client updates?";
                     value = new string[] { "true", "false" };
+                    special = false;
                     break;
 
-                // gpu
+                // gpu type
                 case "GPU Type":
                     message = "If you're running a desktop GPU select Yes, if you're running a mobile GPU select No.";
                     value = new string[] { "desktop", "mobile" };
+                    special = false;
                     break;
 
                 // desc
                 case "Show Driver Description":
                     message = "Do you want to see the driver description? (BETA)";
                     value = new string[] { "true", "false" };
+                    special = false;
+                    break;
+
+                // the gpu
+                case "GPU Name":
+                    message = "GPU Name";
+                    value = new string[] { SelectGPU.getGPU() };
+                    special = true;
                     break;
 
                 default:
@@ -140,15 +151,15 @@ namespace TinyNvidiaUpdateChecker
                     break;
 
             }
-
-            DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (dialogUpdates == DialogResult.Yes)
-            {
+            if(special) {
                 setSetting(key, value[0]);
-            }
-            else
-            {
-                setSetting(key, value[1]);
+            } else {
+                DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dialogUpdates == DialogResult.Yes) {
+                    setSetting(key, value[0]);
+                } else {
+                    setSetting(key, value[1]);
+                }
             }
 
         }

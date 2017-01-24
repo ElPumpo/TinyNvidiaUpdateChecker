@@ -75,6 +75,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -84,6 +85,12 @@
     <Compile Include="MainConsole.cs" />
     <Compile Include="ProgressBar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectGPU.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectGPU.Designer.cs">
+      <DependentUpon>SelectGPU.cs</DependentUpon>
+    </Compile>
     <Compile Include="SettingManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +120,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SelectGPU.resx">
+      <DependentUpon>SelectGPU.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

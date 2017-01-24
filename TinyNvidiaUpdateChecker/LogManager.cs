@@ -34,10 +34,6 @@ namespace TinyNvidiaUpdateChecker
         [STAThread]
         public static void log(string information, LogManager.Level level)
         {
-            /// Without this line under, if using Debug.WriteLine in multiple classes the settings will be unable to be read. They will be returned as null and the application will fall to its knees.
-            /// Looking at AppDomain.CurrentDomain.SetupInformation.ConfigurationFile, it seems that the config path isn't set, trying to set it here too solves the issue. For now...
-            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", MainConsole.fullConfig);
-
 
             string logMessage = null;
             switch (level) {
