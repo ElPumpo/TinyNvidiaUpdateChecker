@@ -19,7 +19,7 @@ Don't forget to setup HTML Agility Pack when cloning the project. Download the l
 + `HtmlAgilityPack.dll` in same folder as the executable
 + Stable internet connection
 
-# Command arguments
+# Command line arguments
 | Argument   | Explanation |
 | ---------- |:-----------:|
 | --quiet | run quiet |
