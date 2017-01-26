@@ -168,7 +168,7 @@ namespace TinyNvidiaUpdateChecker
 
             gpuInfo();
 
-            Boolean hasSelected = false;
+            bool hasSelected = false;
             int iOffline = Convert.ToInt32(OfflineGPUVersion.Replace(".", string.Empty));
             int iOnline = Convert.ToInt32(OnlineGPUVersion.Replace(".", string.Empty));
 
@@ -524,14 +524,9 @@ namespace TinyNvidiaUpdateChecker
             try
             {
                 string gpuName = null;
-                while (gpuName == null) {
+                while (string.IsNullOrEmpty(gpuName)) {
+                    SettingManager.setupSetting("GPU Name");
                     gpuName = SettingManager.readSetting("GPU Name");
-
-                    if(!string.IsNullOrEmpty(gpuName)) {
-                        break;
-                    } else {
-                        SettingManager.setupSetting("GPU Name"); // invalid value
-                    }
 
                 }
 

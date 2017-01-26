@@ -49,7 +49,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // select the first NVIDIA gpu automaticlly, as a recommended choice. NEAT
-            foreach(string item in GPUBox.Items) {
+            foreach (string item in GPUBox.Items) {
                 if(item.Contains("NVIDIA")) {
                     GPUBox.SelectedItem = item;
                     break;
