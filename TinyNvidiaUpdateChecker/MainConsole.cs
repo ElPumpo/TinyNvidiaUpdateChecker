@@ -619,13 +619,40 @@ namespace TinyNvidiaUpdateChecker
 
                 // get release date
                 HtmlNode tdReleaseDate = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdReleaseDate");
-                var dates = tdReleaseDate.InnerHtml.Trim().Replace(".", string.Empty);
+                var dates = tdReleaseDate.InnerHtml.Trim();
 
-                var year = Convert.ToInt32(dates.Substring(0, 4));
-                var month = Convert.ToInt32(dates.Substring(4, 2));
-                var day = Convert.ToInt32(dates.Substring(6));
+                // not the best code, but does the job, might come back to cleanup in the future
+                int status = 0;
+                int year = 0;
+                int month = 0;
+                int day = 0;
 
-                releaseDate = new DateTime(year, month, day);
+                foreach (var substring in dates.Split('.')) {
+                    status++; // goes up starting from 1, being the year, followed by month than day.
+                    switch(status) {
+
+                        // year
+                        case 1:
+                            year = Convert.ToInt32(substring);
+                            break;
+
+                        // month
+                        case 2:
+                            month = Convert.ToInt32(substring);
+                            break;
+
+                        // day
+                        case 3:
+                            day = Convert.ToInt32(substring);
+                            break;
+
+                        default:
+                            LogManager.log("The status: '" + status + "' is not a known status!", LogManager.Level.ERROR);
+                            break;
+                    }
+                }            
+
+                releaseDate = new DateTime(year, month, day); // follows the ISOL 
                 
                 IEnumerable <HtmlNode> links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
                 foreach (var link in links) {
@@ -663,6 +690,7 @@ namespace TinyNvidiaUpdateChecker
                 foreach (var link in links) {
                     if (link.Attributes["href"].Value.Contains("download.nvidia")) {
                         downloadURL = link.Attributes["href"].Value.Trim();
+                        break; // don't need to keep search after we've found what we searched for
                     }
                 }
 
