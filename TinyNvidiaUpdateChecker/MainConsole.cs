@@ -367,7 +367,7 @@ namespace TinyNvidiaUpdateChecker
         private static void CheckArgs(string[] theArgs)
         {
 
-            /// The command line argument handler does its work here,
+            /// The command line argument handler does it's work here,
             /// for a list of available arguments, use the '--help' argument.
 
             foreach (var arg in theArgs)
@@ -537,9 +537,10 @@ namespace TinyNvidiaUpdateChecker
 
                 ManagementObjectSearcher objectSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
 
+                // TODO: this is not the optimal code
                 foreach (ManagementObject obj in objectSearcher.Get()) {
                     if(obj["Description"].ToString() == gpuName) {
-                        OfflineGPUVersion = obj["DriverVersion"].ToString().Replace(".", String.Empty).Substring(5);
+                        OfflineGPUVersion = obj["DriverVersion"].ToString().Replace(".", string.Empty).Substring(5);
                         OfflineGPUVersion = OfflineGPUVersion.Substring(0, 3) + "." + OfflineGPUVersion.Substring(3); // add dot
                         break;
                     }
@@ -652,8 +653,8 @@ namespace TinyNvidiaUpdateChecker
                     }
                 }            
 
-                releaseDate = new DateTime(year, month, day); // follows the ISOL 
-                
+                releaseDate = new DateTime(year, month, day); // follows the ISO 8601 standard 
+
                 IEnumerable <HtmlNode> links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
                 foreach (var link in links) {
 
@@ -751,7 +752,7 @@ namespace TinyNvidiaUpdateChecker
             if (DateDiff == 1) {
                 theDate = DateDiff + " day ago";
             } else if (DateDiff < 1) {
-                theDate = "today";
+                theDate = "today"; // we only have the date and not time :/
             } else {
                 theDate = DateDiff + " days ago";
             }
@@ -888,7 +889,7 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// Returnes the current users' download folder
+        /// Returnes the current user's download folder
         /// </summary>
         private static string getDownloadFolderPath()
         {

@@ -32,10 +32,10 @@ namespace TinyNvidiaUpdateChecker
         }
 
         private void SelectGPU_Load(object sender, EventArgs e) {
-            fetchGPU();
+            updateList();
         }
 
-        private void fetchGPU() {
+        private void updateList() {
 
             string description = null;
             foreach (ManagementObject managementObject in new ManagementObjectSearcher("SELECT * FROM Win32_VideoController").Get()) {

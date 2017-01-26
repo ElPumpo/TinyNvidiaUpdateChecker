@@ -49,7 +49,7 @@
             this.GPUBox.ItemHeight = 16;
             this.GPUBox.Location = new System.Drawing.Point(12, 12);
             this.GPUBox.Name = "GPUBox";
-            this.GPUBox.Size = new System.Drawing.Size(232, 84);
+            this.GPUBox.Size = new System.Drawing.Size(239, 84);
             this.GPUBox.TabIndex = 2;
             // 
             // label1
@@ -65,14 +65,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(256, 134);
+            this.ClientSize = new System.Drawing.Size(263, 137);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.GPUBox);
             this.Controls.Add(this.SelectBtn);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "SelectGPU";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Select GPU";
+            this.Text = "TinyNvidiaUpdateChecker - GPU";
             this.Load += new System.EventHandler(this.SelectGPU_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

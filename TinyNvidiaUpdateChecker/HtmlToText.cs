@@ -79,7 +79,7 @@ namespace TinyNvidiaUpdateChecker
                     break;
 
                 case HtmlNodeType.Text:
-                    // script and style must not be output
+                    // script and style must not be output, also don't want titles (strong)
                     string parentName = node.ParentNode.Name;
                     if ((parentName == "script") || (parentName == "style") || (parentName == "strong"))
                         break;
