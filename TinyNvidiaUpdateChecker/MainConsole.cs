@@ -525,9 +525,10 @@ namespace TinyNvidiaUpdateChecker
             {
                 string gpuName = null;
                 while (string.IsNullOrEmpty(gpuName)) {
-                    SettingManager.setupSetting("GPU Name");
                     gpuName = SettingManager.readSetting("GPU Name");
-
+                    if (string.IsNullOrEmpty(gpuName)) {
+                        SettingManager.setupSetting("GPU Name");
+                    }
                 }
 
                 ManagementObjectSearcher objectSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
