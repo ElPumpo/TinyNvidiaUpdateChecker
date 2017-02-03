@@ -763,7 +763,7 @@ namespace TinyNvidiaUpdateChecker
                 val = SettingManager.readSetting(key); // refresh value each time
 
                 if (val == "true") {
-                    message = message + "Description: " + releaseDesc + Environment.NewLine;
+                    message = message + "Description: " + Environment.NewLine + releaseDesc + Environment.NewLine;
                 } else if (val == "false") {
                     break;
                 } else {
