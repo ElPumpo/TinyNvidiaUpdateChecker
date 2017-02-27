@@ -36,6 +36,8 @@ You may customize the application using the config file located at `%localappdat
 | ------ | ------------ |:------:|
 | Check for Updates | false or true | enables or disables searches for client updates |
 | GPU Type | desktop or mobile | self-explanatory, select `desktop` if you're running a desktop system configuiration |
+| Show Driver Description | false or true | Enables showing the driver description of drivers, which is in a beta state |
+| GPU Name | n/a | sets the gpu to be fetched |
 
 # Legal
 
