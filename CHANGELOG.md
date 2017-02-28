@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.6.0] - 2017-02-03
 ### Added
 - Added fetching driver description.
-- Added a new way to fetch current GPU version, by getting the GPU information provided by `Win32_VideoController`. No longer based on files which is a improvement.
+- Added a new way to fetch current GPU version, by getting the GPU information provided by `Win32_VideoController`. No longer based on files which is an improvement.
 
 ### Fixed
 - Fixed a bug where the config wasn't set correctly in the development enviroment.
