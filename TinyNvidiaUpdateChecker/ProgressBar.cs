@@ -24,7 +24,7 @@ namespace TinyNvidiaUpdateChecker
     */
 
     /// <summary>
-    /// An ASCII progress bar
+    /// An ASCII alike progress bar
     /// By DanielSWolf, https://gist.github.com/DanielSWolf/0ab6a96899cc5377bf54
     /// Licensed under the MIT license, https://opensource.org/licenses/MIT
     /// </summary>
