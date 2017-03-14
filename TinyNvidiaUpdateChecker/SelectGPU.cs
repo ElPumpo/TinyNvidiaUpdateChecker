@@ -32,10 +32,11 @@ namespace TinyNvidiaUpdateChecker
         }
 
         private void SelectGPU_Load(object sender, EventArgs e) {
-            updateList();
+            updateList(false);
         }
 
-        private void updateList() {
+        private void updateList(bool showNonRecommended) {
+            GPUBox.Items.Clear();
 
             string description = null;
             foreach (ManagementObject managementObject in new ManagementObjectSearcher("SELECT * FROM Win32_VideoController").Get()) {
@@ -44,7 +45,15 @@ namespace TinyNvidiaUpdateChecker
 
                 // if the graphics card isn't a ghost
                 if(description != null) {
-                    GPUBox.Items.Add(description);
+                    if(!showNonRecommended)
+                    {
+                        if(!description.Contains("NVÌDIA")) {
+                        } else {
+                            GPUBox.Items.Add(description);
+                        }
+                    } else {
+                        GPUBox.Items.Add(description);
+                    }
                 }
             }
 
@@ -79,5 +88,19 @@ namespace TinyNvidiaUpdateChecker
             return finalGPU; // return final value
         }
 
+        private void NonRecBox_CheckedChanged(object sender, EventArgs e)
+        {
+            switch(NonRecBox.CheckState)
+            {
+                case CheckState.Checked:
+                    updateList(true);
+                    break;
+
+                case CheckState.Unchecked:
+                    updateList(false);
+                    break;
+            }
+            
+        }
     }
 }
