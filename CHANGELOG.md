@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- Added hiding un-supported GPUs in the SelectGPU form which is enabled by default.
+
 ## [1.6.0] - 2017-02-03
 ### Added
 - Added fetching driver description.
