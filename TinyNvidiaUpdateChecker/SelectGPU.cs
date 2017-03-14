@@ -45,10 +45,8 @@ namespace TinyNvidiaUpdateChecker
 
                 // if the graphics card isn't a ghost
                 if(description != null) {
-                    if(!showNonRecommended)
-                    {
-                        if(!description.Contains("NVÌDIA")) {
-                        } else {
+                    if(!showNonRecommended) {
+                        if(description.Contains("NVIDIA")) {
                             GPUBox.Items.Add(description);
                         }
                     } else {
