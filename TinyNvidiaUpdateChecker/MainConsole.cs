@@ -273,7 +273,7 @@ namespace TinyNvidiaUpdateChecker
             if (debug == true)
             {
                 Console.WriteLine("offlineVer: " + offlineVer);
-                Console.WriteLine("onlineVer: " + onlineVer);
+                Console.WriteLine("onlineVer:  " + onlineVer);
             }
             Console.WriteLine();
         }
@@ -354,7 +354,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (debug == true) {
                 Console.WriteLine("winVer: " + winVer);
-                Console.WriteLine("osID: " + osID.ToString());
+                Console.WriteLine("osID:   " + osID.ToString());
                 Console.WriteLine("verOrg: " + verOrg);
                 Console.WriteLine();
             }
@@ -502,7 +502,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (debug == true) {
-                Console.WriteLine("langID: " + langID);
+                Console.WriteLine("langID:   " + langID);
                 Console.WriteLine("cultName: " + cultName);
                 Console.WriteLine();
             }
@@ -625,7 +625,7 @@ namespace TinyNvidiaUpdateChecker
                 int day = 0;
 
                 foreach (var substring in dates.Split('.')) {
-                    status++; // goes up starting from 1, being the year, followed by month than day.
+                    status++; // goes up starting from 1, being the year, followed by month then day.
                     switch(status) {
 
                         // year
@@ -708,16 +708,17 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (debug == true) {
-                Console.WriteLine("gpuURL: " + gpuURL);
-                Console.WriteLine("processURL: " + processURL);
-                Console.WriteLine("confirmURL: " + confirmURL);
+                Console.WriteLine("gpuURL:      " + gpuURL);
+                Console.WriteLine("processURL:  " + processURL);
+                Console.WriteLine("confirmURL:  " + confirmURL);
                 Console.WriteLine("downloadURL: " + downloadURL);
-                Console.WriteLine("pdfURL: " + pdfURL);
+                Console.WriteLine("pdfURL:      " + pdfURL);
                 Console.WriteLine("releaseDate: " + releaseDate.ToShortDateString());
+
+                Console.WriteLine("psID:        " + psID);
+                Console.WriteLine("pfID:        " + pfID);
                 Console.WriteLine("OfflineGPUVersion: " + OfflineGPUVersion);
                 Console.WriteLine("OnlineGPUVersion:  " + OnlineGPUVersion);
-                Console.WriteLine("psID: " + psID);
-                Console.WriteLine("pfID: " + pfID);
             }
 
         }
