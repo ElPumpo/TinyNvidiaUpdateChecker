@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added hiding un-supported GPUs in the SelectGPU form which is enabled by default.
 
+### Changed
+- Improved the driver description fetcher and the download message box.
+
 ## [1.6.0] - 2017-02-03
 ### Added
 - Added fetching driver description.
