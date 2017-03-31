@@ -25,6 +25,9 @@ namespace TinyNvidiaUpdateChecker
 
     public class HtmlToText
     {
+        private static int tries = 0;
+        private static int maxTries = 0;
+
         /// <summary>
         /// Credit goes to the HTML Agility Pack demo code
         /// </summary>
@@ -48,6 +51,13 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         public static string ConvertHtml(string html)
         {
+            tries = 0; // reset
+            if(SettingManager.readSetting("GPU Type") == "mobile") {
+                maxTries = 7;
+            } else {
+                maxTries = 2;
+            }
+
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(html);
 
@@ -59,8 +69,7 @@ namespace TinyNvidiaUpdateChecker
 
         private static void ConvertContentTo(HtmlNode node, TextWriter outText)
         {
-            foreach (HtmlNode subnode in node.ChildNodes)
-            {
+            foreach (HtmlNode subnode in node.ChildNodes) {
                 ConvertTo(subnode, outText);
             }
         }
@@ -68,8 +77,7 @@ namespace TinyNvidiaUpdateChecker
         private static void ConvertTo(HtmlNode node, TextWriter outText)
         {
             string html;
-            switch (node.NodeType)
-            {
+            switch (node.NodeType) {
                 case HtmlNodeType.Comment:
                     // don't output comments
                     break;
@@ -92,15 +100,13 @@ namespace TinyNvidiaUpdateChecker
                         break;
 
                     // check the text is meaningful and not a bunch of whitespaces
-                    if (html.Trim().Length > 0)
-                    {
+                    if (html.Trim().Length > 0) {
                         outText.Write(HtmlEntity.DeEntitize(html));
                     }
                     break;
 
                 case HtmlNodeType.Element:
-                    switch (node.Name)
-                    {
+                    switch (node.Name) {
                         // treat paragraphs as crlf
                         case "p":
                             outText.Write("\r\n");
@@ -108,12 +114,14 @@ namespace TinyNvidiaUpdateChecker
                         
                         // respect NewLine aswell
                         case "br":
-                            outText.Write(Environment.NewLine);
+                            if(tries < maxTries) { // set max tries
+                                tries++;
+                                outText.Write(Environment.NewLine);
+                            }
                             break;
                     }
 
-                    if (node.HasChildNodes)
-                    {
+                    if (node.HasChildNodes) {
                         ConvertContentTo(node, outText);
                     }
                     break;

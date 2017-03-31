@@ -678,7 +678,7 @@ namespace TinyNvidiaUpdateChecker
 
                 // get driver desc
                 releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerHtml.Trim();
-                releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".").Trim();
+                releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".");
 
 
                 // get download link
@@ -753,7 +753,7 @@ namespace TinyNvidiaUpdateChecker
                 theDate = DateDiff + " days ago";
             }
 
-            var message = "There is new gpu drivers up for download, do you want to download them now?" + Environment.NewLine + Environment.NewLine;
+            var message = "Graphics card drivers are available, do you want to update now?" + Environment.NewLine + Environment.NewLine;
 
             string key = "Show Driver Description";
             string val = null;
@@ -763,7 +763,7 @@ namespace TinyNvidiaUpdateChecker
                 val = SettingManager.readSetting(key); // refresh value each time
 
                 if (val == "true") {
-                    message = message + "Description: " + releaseDesc + Environment.NewLine;
+                    message = message + "Description: " + releaseDesc + Environment.NewLine + Environment.NewLine;
                 } else if (val == "false") {
                     break;
                 } else {
