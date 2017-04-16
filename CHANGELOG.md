@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Fixed a bug where the config wasn't set correctly in the development enviroment.
-- Fixed the date fetched from the NVIDIA servers, with a improved system.
+- Fixed the date fetched from the NVIDIA servers, with an much improved system.
 
 ## [1.5.0] - 2016-11-16
 Started focusing on cleaning up code that doesn't make sence, more to come.
@@ -142,4 +142,4 @@ The application is finally in version 1! Everything seems to work fine so I deci
 - Fixed using `-quiet` command line argument where application would not end.
 
 ## [0.1.0.0] - 2016-05-14 [YANKED]
-Initial public release.
+Initial public release. Was yanked after the release of v0.2.0.0 because of the missing license (which is in the changelog for v0.2.0.0).

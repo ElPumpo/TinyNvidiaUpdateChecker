@@ -9,9 +9,10 @@ Not only that but GeForce Experience is really slow and I don't want to maunally
 
 # Download
 Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
-Don't forget to download `HtmlAgilityPack.dll` which is a dependency, it must be in the same folder as the executable.
+Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be in the executing directory.
 
-For forkers: [HTML Agility Pack](https://www.nuget.org/packages/HtmlAgilityPack) will automatically install when attempting to debug the project (make sure you're running the latest version of VS2015+U3), or you may manually install it by doing the following: Open up your Package Manager Console and type in `Install-Package HtmlAgilityPack`.
+### Forkers
+[HTML Agility Pack](https://www.nuget.org/packages/HtmlAgilityPack) will automatically install when attempting to debug the project (make sure you're running the latest version of VS2015+U3), or you may manually install it by doing the following: Open up your Package Manager Console and type in `Install-Package HtmlAgilityPack`.
 
 # Requirements
 + Windows 10, 8.x or 7
