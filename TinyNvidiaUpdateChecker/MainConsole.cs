@@ -169,7 +169,14 @@ namespace TinyNvidiaUpdateChecker
             gpuInfo();
 
             bool hasSelected = false;
-            int iOffline = Convert.ToInt32(OfflineGPUVersion.Replace(".", string.Empty));
+            int iOffline = 0;
+            try {
+                iOffline = Convert.ToInt32(OfflineGPUVersion.Replace(".", string.Empty));
+            } catch(Exception ex) {
+                OfflineGPUVersion = "Unknown";
+                Console.WriteLine(ex);
+            }
+            
             int iOnline = Convert.ToInt32(OnlineGPUVersion.Replace(".", string.Empty));
 
             if (iOnline == iOffline) {
@@ -674,7 +681,6 @@ namespace TinyNvidiaUpdateChecker
                     }
                     LogManager.log("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.", LogManager.Level.INFO);
                 }
-
 
                 // get driver desc
                 releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerHtml.Trim();

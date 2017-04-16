@@ -64,6 +64,7 @@ namespace TinyNvidiaUpdateChecker
             StringWriter sw = new StringWriter();
             ConvertTo(doc.DocumentNode, sw);
             sw.Flush();
+
             return sw.ToString();
         }
 
