@@ -12,6 +12,7 @@ using HtmlAgilityPack;
 using System.Threading;
 using System.Configuration;
 using System.Management;
+using Microsoft.Win32;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -69,6 +70,7 @@ namespace TinyNvidiaUpdateChecker
 
         private static string downloadURL;
         private static string savePath;
+        private static string driverName;
         private static string pdfURL;
         private static DateTime releaseDate;
         private static string releaseDesc;
@@ -546,6 +548,9 @@ namespace TinyNvidiaUpdateChecker
                         OfflineGPUVersion = obj["DriverVersion"].ToString().Replace(".", string.Empty).Substring(5);
                         OfflineGPUVersion = OfflineGPUVersion.Substring(0, 3) + "." + OfflineGPUVersion.Substring(3); // add dot
                         break;
+                    } else
+                    {
+                       // gpu not found
                     }
                   
                 }
@@ -742,6 +747,17 @@ namespace TinyNvidiaUpdateChecker
                 if (showUI == true) Console.ReadKey();
                 Environment.Exit(2);
             }
+
+            try {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
+                    LogManager.log("WinRAR path: " + key.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);
+                }
+            } catch (Exception ex) {
+                Console.WriteLine("Doesn't seem like WinRAR is installed, and is required! The application will now determinate itself - " + ex.ToString());
+                if (showUI == true) Console.ReadKey();
+                Environment.Exit(2);
+            }
+
         }
 
         /// <summary>
@@ -791,34 +807,29 @@ namespace TinyNvidiaUpdateChecker
                 // @todo error handling could be better:
                 // isolate saveFileDialog errors with accually downloading GPU driver
 
-                // @todo add status bar for download progress
                 // @todo do the saveFileDialog in a loop
 
                 bool error = false;
-                try
-                {
-                    string driverName = downloadURL.Split('/').Last(); // retrives file name from url
+                driverName = downloadURL.Split('/').Last(); // retrives file name from url
+
+                try {
 
                     DialogResult result;
+                    using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog()) {
 
-                    using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
-                        saveFileDialog.Filter = "Executable|*.exe";
-                        saveFileDialog.Title = "Choose save file for GPU driver";
-                        saveFileDialog.FileName = driverName;
+                        folderBrowserDialog.Description = "Where do you want to save the drivers?";
 
-                        result = saveFileDialog.ShowDialog(); // show dialog and get status (will wait for input)
-
-                        switch (result)
-                        {
+                        result = folderBrowserDialog.ShowDialog(); // show dialog and get status (will wait for input)
+                        switch (result) {
                             case DialogResult.OK:
-                                savePath = saveFileDialog.FileName.ToString();
+                                savePath = folderBrowserDialog.SelectedPath.ToString();
                                 break;
 
                             default:
                                 // savePath = Path.GetTempPath() + driverName;
 
                                 // if something went wrong, fall back to downloads folder
-                                savePath = getDownloadFolderPath() + driverName;
+                                savePath = getDownloadFolderPath();
                                 break;
                         }
                     }
@@ -827,25 +838,31 @@ namespace TinyNvidiaUpdateChecker
                         Console.WriteLine("savePath: " + savePath);
                         Console.WriteLine("result: " + result);
                     }
-                    
+
+                    // don't download driver if it already exists
                     Console.Write("Downloading the driver . . . ");
-                    
-                    using (WebClient webClient = new WebClient())
-                    {
-                        var notifier = new AutoResetEvent(false);
-                        var progress = new ProgressBar();
+                    if (!File.Exists(savePath + @"\" + driverName)) {
 
-                        webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
+
+                        using (WebClient webClient = new WebClient())
                         {
-                            progress.Report((double)e.ProgressPercentage / 100);
+                            var notifier = new AutoResetEvent(false);
+                            var progress = new ProgressBar();
 
-                            if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
-                        };
+                            webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
+                            {
+                                progress.Report((double)e.ProgressPercentage / 100);
 
-                        webClient.DownloadFileAsync(new Uri(downloadURL), savePath);
+                                if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
+                            };
 
-                        notifier.WaitOne(); // sync with the above
-                        progress.Dispose(); // get rid of the progress bar
+                            webClient.DownloadFileAsync(new Uri(downloadURL), savePath + @"\" + driverName);
+
+                            notifier.WaitOne(); // sync with the above
+                            progress.Dispose(); // get rid of the progress bar
+                        }
+                    } else {
+                        LogManager.log("Driver is already downloaded", LogManager.Level.INFO);
                     }
 
                 }
@@ -867,7 +884,6 @@ namespace TinyNvidiaUpdateChecker
 
                 
                 Console.WriteLine();
-                Console.WriteLine("The downloaded file has been saved at: " + savePath);
 
                 dialog = MessageBox.Show("Do you want view the release PDF?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialog == DialogResult.Yes) {
@@ -879,16 +895,60 @@ namespace TinyNvidiaUpdateChecker
                     }
                 }
 
+                makeInstaller();
+
                 dialog = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialog == DialogResult.Yes) {
                     try {
-                        Process.Start(savePath);
+                        Process.Start(savePath + @"\setup.exe");
                     } catch (Exception ex) {
                         Console.WriteLine(ex.StackTrace);
                     }
                     
                 }
             }
+        }
+
+        /// <summary>
+        /// Remove telementry and only extract basic drivers
+        /// </summary>
+        private static void makeInstaller()
+        {
+            Console.Write("Making installer . . . ");
+
+            // get winrar path
+            string rarPath = null;
+
+            try {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
+                    rarPath = key.GetValue("InstallLocation").ToString();
+                }
+            } catch (Exception ex) {
+                Console.Write("ERROR!");
+                Console.WriteLine();
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine();
+            }
+
+            string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
+
+            File.WriteAllLines(savePath + @"\" + "inclList.txt", filesToExtract);
+
+            using (Process WinRAR = new Process()) {
+                WinRAR.StartInfo.FileName = rarPath + "winrar.exe";
+                WinRAR.StartInfo.WorkingDirectory = savePath;
+                WinRAR.StartInfo.Arguments = "X " + savePath + @"\" + driverName + @" -N@""inclList.txt""";
+                WinRAR.Start();
+                WinRAR.WaitForExit();
+            }
+
+            Console.Write("OK!");
+            Console.WriteLine();
+
+            if (debug) {
+                Console.WriteLine("rarPath: " + rarPath);
+            }
+
         }
 
         /// <summary>
