@@ -894,9 +894,6 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("savePath: " + savePath);
                 }
 
-
-                Console.WriteLine();
-
                 dialog = MessageBox.Show("Do you want view the release PDF?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialog == DialogResult.Yes) {
                     try {
@@ -945,6 +942,7 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void MakeInstaller()
         {
+            Console.WriteLine();
             Console.Write("Making installer . . . ");
 
             // get winrar path
