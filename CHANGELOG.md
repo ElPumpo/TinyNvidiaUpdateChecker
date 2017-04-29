@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Improved the driver description fetcher and the download message box.
 - Now following the [CA1709](https://msdn.microsoft.com/en-us/library/ms182240.aspx) standard by Microsoft, and "migrated" to VS2017.
 
+### Removed
+- CTRL-C is no longer ignored.
+
 ## [1.6.0] - 2017-02-03
 ### Added
 - Added fetching driver description.
