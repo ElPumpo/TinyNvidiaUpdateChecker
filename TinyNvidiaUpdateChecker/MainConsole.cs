@@ -198,7 +198,6 @@ namespace TinyNvidiaUpdateChecker
             {
                 if (forceDL == true) DownloadDriver();
             }
-
             
             Console.WriteLine("Job done! Press any key to exit.");
             if (showUI == true) Console.ReadKey();
