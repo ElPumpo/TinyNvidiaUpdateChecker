@@ -19,7 +19,7 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be
 + .NET framework 4.5
 + `HtmlAgilityPack.dll` in same folder as the executable
 + Stable internet connection
-+ WinRAR (if using minimal installer method)
++ [WinRAR](http://www.rarlab.com/) (if using minimal installer method)
 
 # Command line arguments
 | Argument   | Explanation |
