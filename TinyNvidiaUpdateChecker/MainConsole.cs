@@ -980,7 +980,6 @@ namespace TinyNvidiaUpdateChecker
 
             if (debug) {
                 Console.WriteLine("rarPath: " + rarPath);
-                Console.WriteLine();
             }
 
         }
