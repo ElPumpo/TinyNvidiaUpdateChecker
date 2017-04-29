@@ -12,13 +12,14 @@ Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecke
 Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be in the executing directory.
 
 ### Forkers
-[HTML Agility Pack](https://www.nuget.org/packages/HtmlAgilityPack) will automatically install when attempting to debug the project (make sure you're running the latest version of VS2015+U3), or you may manually install it by doing the following: Open up your Package Manager Console and type in `Install-Package HtmlAgilityPack`.
+[HTML Agility Pack](https://www.nuget.org/packages/HtmlAgilityPack) will automatically install when attempting to debug the project (make sure you're running the latest version of VS2017), or you may manually install it by doing the following: Open up your Package Manager Console and type in `Install-Package HtmlAgilityPack`.
 
 # Requirements
 + Windows 10, 8.x or 7
 + .NET framework 4.5
 + `HtmlAgilityPack.dll` in same folder as the executable
 + Stable internet connection
++ WinRAR (if using minimal installer method)
 
 # Command line arguments
 | Argument   | Explanation |
@@ -39,6 +40,7 @@ You may customize the application using the config file located at `%localappdat
 | GPU Type | desktop or mobile | self-explanatory, select `desktop` if you're running a desktop system configuiration |
 | Show Driver Description | false or true | Enables showing the driver description of drivers, which is in a beta state |
 | GPU Name | n/a | sets the gpu to be fetched |
+| Minimal install | false or true | switch for the minimal installer |
 
 # Legal
 
