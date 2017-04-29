@@ -739,23 +739,41 @@ namespace TinyNvidiaUpdateChecker
         private static void CheckDependencies()
         {
             if (!File.Exists("HtmlAgilityPack.dll")) {
-                string message = "The required binary cannot be found and the application will determinate itself. It must be put in the same folder as this executable.";
 
-                Console.WriteLine(message);
-                LogManager.log(message, LogManager.Level.ERROR);
+                Console.WriteLine("The required binary cannot be found and the application will determinate itself. It must be put in the same folder as this executable.");
                 if (showUI == true) Console.ReadKey();
                 Environment.Exit(2);
             }
 
-            try {
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
-                    LogManager.log("WinRAR path: " + key.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);
+            string val = null;
+            string key = "Minimal install";
+            bool checkWinRar = false;
+
+            // loop
+            while (val != "true" & val != "false")
+            {
+                val = SettingManager.readSetting(key); // refresh value each time
+                if (val == "true") {
+                    checkWinRar = true;
+                } else if (val == "false") {
+                    break;
+                } else {
+                    // invalid value
+                    SettingManager.setupSetting(key);
                 }
-            } catch (Exception ex) {
-                Console.WriteLine("Doesn't seem like WinRAR is installed, and is required! The application will now determinate itself - " + ex.ToString());
-                if (showUI == true) Console.ReadKey();
-                Environment.Exit(2);
             }
+            if(checkWinRar) {
+                try {
+                    using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
+                        LogManager.log("WinRAR path: " + regKey.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);
+                    }
+                } catch (Exception ex) {
+                    Console.WriteLine("Doesn't seem like WinRAR is installed, and is required! The application will now determinate itself - " + ex.ToString());
+                    if (showUI == true) Console.ReadKey();
+                    Environment.Exit(2);
+                }
+            }
+
 
         }
 
