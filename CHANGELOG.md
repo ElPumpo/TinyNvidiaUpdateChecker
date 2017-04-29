@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.7.0] 2017-04-29
 ### Added
 - Added hiding un-supported GPUs in the SelectGPU form which is enabled by default.
 - Option to create a minimal installer of the drivers, so we don't install telemetry and other things we don't need. Requires WinRAR for now.
