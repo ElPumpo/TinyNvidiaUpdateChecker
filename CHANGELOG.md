@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Added hiding un-supported GPUs in the SelectGPU form which is enabled by default.
+- Option to create a minimal installer of the drivers, so we don't install telemetry and other things we don't need. Requires WinRAR for now.
 
 ### Changed
 - Improved the driver description fetcher and the download message box.
+- Now following the [CA1709](https://msdn.microsoft.com/en-us/library/ms182240.aspx) standard by Microsoft, and "migrated" to VS2017.
 
 ## [1.6.0] - 2017-02-03
 ### Added
