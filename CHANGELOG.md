@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added hiding un-supported GPUs in the SelectGPU form which is enabled by default.
 - Option to create a minimal installer of the drivers, so we don't install telemetry and other things we don't need. Requires WinRAR for now.
+- No longer downloads driver if it exists.
 
 ### Changed
 - Improved the driver description fetcher and the download message box.
