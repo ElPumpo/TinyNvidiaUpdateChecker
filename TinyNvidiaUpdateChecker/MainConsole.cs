@@ -135,21 +135,20 @@ namespace TinyNvidiaUpdateChecker
             if (showUI == true)
             {
                 AllocConsole();
-
-                // disable CTRL+C
+                /* disable CTRL+C
                 Console.CancelKeyPress += (sender, e) =>
                 {
                     e.Cancel = true;
                 };
+                */
             }
+            ConfigInit();
 
-            checkDll();
+            CheckDependencies();
 
-            configInit();
+            CheckWinVer();
 
-            checkWinVer();
-
-            getLanguage();
+            GetLanguage();
             
             bool set = false;
             string key = "Check for Updates";
@@ -158,7 +157,7 @@ namespace TinyNvidiaUpdateChecker
                 string val = SettingManager.readSetting(key); // refresh value each time
 
                 if (val == "true") {
-                    searchForUpdates();
+                    SearchForUpdates();
                     set = true;
                 } else if (val == "false") {
                     set = true; // leave loophole
@@ -168,7 +167,7 @@ namespace TinyNvidiaUpdateChecker
                 }   
             }
 
-            gpuInfo();
+            GpuInfo();
 
             bool hasSelected = false;
             int iOffline = 0;
@@ -191,13 +190,13 @@ namespace TinyNvidiaUpdateChecker
                 } else {
                     Console.WriteLine("There are new drivers available to download!");
                     hasSelected = true;
-                    downloadDriver();
+                    DownloadDriver();
                 }
             }
 
             if (hasSelected == false)
             {
-                if (forceDL == true) downloadDriver();
+                if (forceDL == true) DownloadDriver();
             }
             
 
@@ -212,7 +211,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Initialize configuration manager
         /// </summary>
-        private static void configInit()
+        private static void ConfigInit()
         {
             // powered by the .NET framework "Settings" function
 
@@ -234,6 +233,7 @@ namespace TinyNvidiaUpdateChecker
                 SettingManager.setupSetting("GPU Type");
                 SettingManager.setupSetting("Show Driver Description");
                 SettingManager.setupSetting("GPU Name");
+                SettingManager.setupSetting("Minimal install");
 
                 Console.WriteLine();
             }
@@ -243,7 +243,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Search for client updates
         /// </summary>
-        private static void searchForUpdates()
+        private static void SearchForUpdates()
         {
             Console.Write("Searching for Updates . . . ");
             int error = 0;
@@ -290,8 +290,8 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Gets the current Windows version and sets important value 'osID'.
         /// </summary>
-        /// <seealso cref="gpuInfo"> Used here, decides OS and OS architecture.</seealso>
-        private static void checkWinVer()
+        /// <seealso cref="GpuInfo"> Used here, decides OS and OS architecture.</seealso>
+        private static void CheckWinVer()
         {
             string verOrg = Environment.OSVersion.Version.ToString();
             Boolean is64 = Environment.Is64BitOperatingSystem;
@@ -455,8 +455,8 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Gets the local langauge used by operator and sets value 'langID'.
         /// </summary>
-        /// <seealso cref="gpuInfo"> Used here, decides driver download language and possibly download server.</seealso>
-        private static void getLanguage()
+        /// <seealso cref="GpuInfo"> Used here, decides driver download language and possibly download server.</seealso>
+        private static void GetLanguage()
         {
             string cultName = CultureInfo.CurrentCulture.ToString(); // https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx - http://www.lingoes.net/en/translator/langcode.htm
 
@@ -521,7 +521,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// A lot of things going on inside: gets current gpu driver, fetches latest gpu driver from NVIDIA server and fetches download link for latest drivers.
         /// </summary>
-        private static void gpuInfo()
+        private static void GpuInfo()
         {
             Console.Write("Retrieving GPU information . . . ");
             int error = 0;
@@ -548,8 +548,7 @@ namespace TinyNvidiaUpdateChecker
                         OfflineGPUVersion = obj["DriverVersion"].ToString().Replace(".", string.Empty).Substring(5);
                         OfflineGPUVersion = OfflineGPUVersion.Substring(0, 3) + "." + OfflineGPUVersion.Substring(3); // add dot
                         break;
-                    } else
-                    {
+                    } else {
                        // gpu not found
                     }
                   
@@ -735,9 +734,9 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// Nothing important, just a check if the required dll is placed correctly.
+        /// Check if dependencies are all OK
         /// </summary>
-        private static void checkDll()
+        private static void CheckDependencies()
         {
             if (!File.Exists("HtmlAgilityPack.dll")) {
                 string message = "The required binary cannot be found and the application will determinate itself. It must be put in the same folder as this executable.";
@@ -763,7 +762,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Downloads the driver and some other stuff
         /// </summary>
-        private static void downloadDriver()
+        private static void DownloadDriver()
         {
             int DateDiff = (DateTime.Now - releaseDate).Days; // how many days between the two dates
             string theDate = null;
@@ -829,7 +828,7 @@ namespace TinyNvidiaUpdateChecker
                                 // savePath = Path.GetTempPath() + driverName;
 
                                 // if something went wrong, fall back to downloads folder
-                                savePath = getDownloadFolderPath();
+                                savePath = GetDownloadFolderPath();
                                 break;
                         }
                     }
@@ -895,12 +894,31 @@ namespace TinyNvidiaUpdateChecker
                     }
                 }
 
-                makeInstaller();
+                val = null; // reset value
+                key = "Minimal install";
+                // loop
+                while (val != "true" & val != "false") {
+                    val = SettingManager.readSetting(key); // refresh value each time
+                    if (val == "true") {
+                        MakeInstaller();
+                    } else if (val == "false") {
+                        break;
+                    } else {
+                        // invalid value
+                        SettingManager.setupSetting(key);
+                    }
+                }
 
                 dialog = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialog == DialogResult.Yes) {
                     try {
-                        Process.Start(savePath + @"\setup.exe");
+                        if(val == "true") {
+                            // extracted
+                            Process.Start(savePath + @"\setup.exe");
+                        } else {
+                            Process.Start(savePath + @"\" + driverName);
+                        }
+                        
                     } catch (Exception ex) {
                         Console.WriteLine(ex.StackTrace);
                     }
@@ -912,7 +930,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Remove telementry and only extract basic drivers
         /// </summary>
-        private static void makeInstaller()
+        private static void MakeInstaller()
         {
             Console.Write("Making installer . . . ");
 
@@ -954,7 +972,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Returnes the current user's download folder
         /// </summary>
-        private static string getDownloadFolderPath()
+        private static string GetDownloadFolderPath()
         {
             string downloadPath = null;
             SHGetKnownFolderPath(new Guid("374DE290-123F-4565-9164-39C4925E467B"), 0, IntPtr.Zero, out downloadPath);
@@ -969,8 +987,8 @@ namespace TinyNvidiaUpdateChecker
         {
             if(!HasIntro) {
                 HasIntro = true;
-                // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+                // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                 Console.WriteLine();
                 Console.WriteLine("Copyright (C) 2016-2017 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");

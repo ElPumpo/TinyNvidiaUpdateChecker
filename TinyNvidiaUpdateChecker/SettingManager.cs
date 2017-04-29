@@ -144,10 +144,19 @@ namespace TinyNvidiaUpdateChecker
                     special = true;
                     break;
 
+
+                // minimal installer maker
+                case "Minimal install":
+                    message = "Do you want to perform a minimal install of the drivers? This will remove telemetry and other things you won't need, but requires WinRAR installed.";
+                    value = new string[] { "true", "false" };
+                    special = false;
+                    break;
+
                 default:
                     MessageBox.Show("Unknown key '" + key + "'", "TinyNvidiaUpdateChecker", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     message = "Unknown";
                     value = null;
+                    special = false;
                     break;
 
             }
