@@ -70,7 +70,7 @@ namespace TinyNvidiaUpdateChecker
 
         private static string downloadURL;
         private static string savePath;
-        private static string driverName;
+        private static string driverFileName;
         private static string pdfURL;
         private static DateTime releaseDate;
         private static string releaseDesc;
@@ -198,9 +198,7 @@ namespace TinyNvidiaUpdateChecker
             {
                 if (forceDL == true) DownloadDriver();
             }
-            
 
-            Console.WriteLine();
             
             Console.WriteLine("Job done! Press any key to exit.");
             if (showUI == true) Console.ReadKey();
@@ -767,10 +765,17 @@ namespace TinyNvidiaUpdateChecker
                     using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
                         LogManager.log("WinRAR path: " + regKey.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);
                     }
-                } catch (Exception ex) {
-                    Console.WriteLine("Doesn't seem like WinRAR is installed, and is required! The application will now determinate itself - " + ex.ToString());
-                    if (showUI == true) Console.ReadKey();
-                    Environment.Exit(2);
+                } catch (Exception) {
+                    Console.WriteLine("Doesn't seem like WinRAR is installed, and is required!");
+                    DialogResult dialogUpdates = MessageBox.Show("Since WinRAR couldn't be found, do you want to disable it and use the traditional way?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (dialogUpdates == DialogResult.Yes) {
+                        SettingManager.setSetting(key, "false");
+                    } else {
+                        Console.WriteLine("The application will determinate itself");
+                        if (showUI == true) Console.ReadKey();
+                        Environment.Exit(2);
+                    }
+
                 }
             }
 
@@ -821,13 +826,8 @@ namespace TinyNvidiaUpdateChecker
 
                 Console.WriteLine();
 
-                // @todo error handling could be better:
-                // isolate saveFileDialog errors with accually downloading GPU driver
-
-                // @todo do the saveFileDialog in a loop
-
                 bool error = false;
-                driverName = downloadURL.Split('/').Last(); // retrives file name from url
+                driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
 
                 try {
 
@@ -843,11 +843,8 @@ namespace TinyNvidiaUpdateChecker
                                 break;
 
                             default:
-                                // savePath = Path.GetTempPath() + driverName;
-
-                                // if something went wrong, fall back to downloads folder
-                                savePath = GetDownloadFolderPath();
-                                break;
+                                Console.WriteLine("User closed dialog!");
+                                return;
                         }
                     }
 
@@ -858,7 +855,7 @@ namespace TinyNvidiaUpdateChecker
 
                     // don't download driver if it already exists
                     Console.Write("Downloading the driver . . . ");
-                    if (!File.Exists(savePath + @"\" + driverName)) {
+                    if (!File.Exists(savePath + @"\" + driverFileName)) {
 
 
                         using (WebClient webClient = new WebClient())
@@ -873,7 +870,7 @@ namespace TinyNvidiaUpdateChecker
                                 if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
                             };
 
-                            webClient.DownloadFileAsync(new Uri(downloadURL), savePath + @"\" + driverName);
+                            webClient.DownloadFileAsync(new Uri(downloadURL), savePath + @"\" + driverFileName);
 
                             notifier.WaitOne(); // sync with the above
                             progress.Dispose(); // get rid of the progress bar
@@ -934,7 +931,7 @@ namespace TinyNvidiaUpdateChecker
                             // extracted
                             Process.Start(savePath + @"\setup.exe");
                         } else {
-                            Process.Start(savePath + @"\" + driverName);
+                            Process.Start(savePath + @"\" + driverFileName);
                         }
                         
                     } catch (Exception ex) {
@@ -973,7 +970,7 @@ namespace TinyNvidiaUpdateChecker
             using (Process WinRAR = new Process()) {
                 WinRAR.StartInfo.FileName = rarPath + "winrar.exe";
                 WinRAR.StartInfo.WorkingDirectory = savePath;
-                WinRAR.StartInfo.Arguments = "X " + savePath + @"\" + driverName + @" -N@""inclList.txt""";
+                WinRAR.StartInfo.Arguments = "X " + savePath + @"\" + driverFileName + @" -N@""inclList.txt""";
                 WinRAR.Start();
                 WinRAR.WaitForExit();
             }
@@ -985,17 +982,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("rarPath: " + rarPath);
             }
 
-        }
-
-        /// <summary>
-        /// Returnes the current user's download folder
-        /// </summary>
-        private static string GetDownloadFolderPath()
-        {
-            string downloadPath = null;
-            SHGetKnownFolderPath(new Guid("374DE290-123F-4565-9164-39C4925E467B"), 0, IntPtr.Zero, out downloadPath);
-
-            return downloadPath + Path.DirectorySeparatorChar;
         }
 
         /// <summary>
