@@ -132,8 +132,7 @@ namespace TinyNvidiaUpdateChecker
 
             RunIntro(); // will run intro if no args needs to output stuff
 
-            if (showUI == true)
-            {
+            if (showUI == true) {
                 AllocConsole();
                 /* disable CTRL+C
                 Console.CancelKeyPress += (sender, e) =>
@@ -142,6 +141,7 @@ namespace TinyNvidiaUpdateChecker
                 };
                 */
             }
+
             ConfigInit();
 
             CheckDependencies();
@@ -847,18 +847,11 @@ namespace TinyNvidiaUpdateChecker
                         }
                     }
 
-                    if (debug == true) {
-                        Console.WriteLine("savePath: " + savePath);
-                        Console.WriteLine("result: " + result);
-                    }
-
                     // don't download driver if it already exists
                     Console.Write("Downloading the driver . . . ");
                     if (!File.Exists(savePath + @"\" + driverFileName)) {
 
-
-                        using (WebClient webClient = new WebClient())
-                        {
+                        using (WebClient webClient = new WebClient()) {
                             var notifier = new AutoResetEvent(false);
                             var progress = new ProgressBar();
 
@@ -895,7 +888,12 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                 }
 
-                
+
+                if (debug == true) {
+                    Console.WriteLine("savePath: " + savePath);
+                }
+
+
                 Console.WriteLine();
 
                 dialog = MessageBox.Show("Do you want view the release PDF?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -966,10 +964,12 @@ namespace TinyNvidiaUpdateChecker
 
             File.WriteAllLines(savePath + @"\" + "inclList.txt", filesToExtract);
 
+            string fullDriverPath = @"""" + savePath + @"\" + driverFileName + @"""";
             using (Process WinRAR = new Process()) {
                 WinRAR.StartInfo.FileName = rarPath + "winrar.exe";
                 WinRAR.StartInfo.WorkingDirectory = savePath;
-                WinRAR.StartInfo.Arguments = "X " + savePath + @"\" + driverFileName + @" -N@""inclList.txt""";
+                WinRAR.StartInfo.Arguments = "X " + fullDriverPath  + @" -N@""inclList.txt""";
+                WinRAR.StartInfo.UseShellExecute = false;
                 WinRAR.Start();
                 WinRAR.WaitForExit();
             }
@@ -979,6 +979,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (debug) {
                 Console.WriteLine("rarPath: " + rarPath);
+                Console.WriteLine();
             }
 
         }
@@ -990,8 +991,8 @@ namespace TinyNvidiaUpdateChecker
         {
             if(!HasIntro) {
                 HasIntro = true;
-                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-                // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+                // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                 Console.WriteLine();
                 Console.WriteLine("Copyright (C) 2016-2017 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
