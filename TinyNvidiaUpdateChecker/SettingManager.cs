@@ -32,12 +32,12 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Reads setting from configuration file, and adds if requested key / value is missing - returns a string.</summary>
         /// <param name="key"> Config key to read value from.</param>
-        public static string readSetting(string key)
+        public static string ReadSetting(string key)
         {
             string result = null;
 
             try {
-                LogManager.log("key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'", LogManager.Level.SETTING);
+                LogManager.Log("key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'", LogManager.Level.SETTING);
 
                 if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
@@ -46,14 +46,14 @@ namespace TinyNvidiaUpdateChecker
                     // error reading key
                     Console.WriteLine();
                     Console.WriteLine("Error reading configuration file, attempting to repair key '" + key + "' . . .");
-                    setupSetting(key);
+                    SetupSetting(key);
 
                     result = ConfigurationManager.AppSettings[key];
                 }
             }
             catch (ConfigurationErrorsException ex) {
                 Console.WriteLine(ex.StackTrace);
-                LogManager.log(ex.ToString(), LogManager.Level.ERROR);
+                LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
             }
 
@@ -64,7 +64,7 @@ namespace TinyNvidiaUpdateChecker
         /// Set / update setting in configuration.</summary>
         /// <param name="key"> Requested key name.</param>
         /// <param name="val"> Requested value.</param>
-        public static void setSetting(string key, string val)
+        public static void SetSetting(string key, string val)
         {
             try
             {
@@ -91,11 +91,11 @@ namespace TinyNvidiaUpdateChecker
                     } catch (Exception e) {
                         Console.WriteLine(e.StackTrace);
                     }
-                    LogManager.log("Wiped config!", LogManager.Level.INFO);
+                    LogManager.Log("Wiped config!", LogManager.Level.INFO);
                 }
 
                 Console.WriteLine(ex.StackTrace);
-                LogManager.log(ex.ToString(), LogManager.Level.ERROR);
+                LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine("The config file has been wiped due to a possible syntax error, please run the application again and setup your values.");
                 if (MainConsole.showUI == true) Console.ReadKey();
@@ -106,8 +106,8 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Ask operator for setting value, not to be confused with setSetting. Only called from setSetting.</summary>
         /// <param name="key"> Requested key name.</param>
-        /// <seealso cref="setSetting(string, string)"> Where settings are made.</seealso>
-        public static void setupSetting(string key)
+        /// <seealso cref="SetSetting(string, string)"> Where settings are made.</seealso>
+        public static void SetupSetting(string key)
         {
             string message = null;
             string[] value = null;
@@ -161,16 +161,17 @@ namespace TinyNvidiaUpdateChecker
 
             }
             if(special) {
-                setSetting(key, value[0]);
+                SetSetting(key, value[0]);
             } else {
                 DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialogUpdates == DialogResult.Yes) {
-                    setSetting(key, value[0]);
+                    SetSetting(key, value[0]);
                 } else {
-                    setSetting(key, value[1]);
+                    SetSetting(key, value[1]);
                 }
             }
 
         }
+
     }
 }

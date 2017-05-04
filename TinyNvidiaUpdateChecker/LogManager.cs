@@ -32,7 +32,7 @@ namespace TinyNvidiaUpdateChecker
         }
 
         [STAThread]
-        public static void log(string information, LogManager.Level level)
+        public static void Log(string information, LogManager.Level level)
         {
 
             string logMessage = null;

@@ -125,7 +125,7 @@ namespace TinyNvidiaUpdateChecker
         private static void Main(string[] args)
         {
             string message = "TinyNvidiaUpdateChecker v" + offlineVer;
-            LogManager.log(message, LogManager.Level.INFO);
+            LogManager.Log(message, LogManager.Level.INFO);
             Console.Title = message;
 
             CheckArgs(args);
@@ -154,7 +154,7 @@ namespace TinyNvidiaUpdateChecker
             string key = "Check for Updates";
 
             while (set == false) {
-                string val = SettingManager.readSetting(key); // refresh value each time
+                string val = SettingManager.ReadSetting(key); // refresh value each time
 
                 if (val == "true") {
                     SearchForUpdates();
@@ -163,7 +163,7 @@ namespace TinyNvidiaUpdateChecker
                     set = true; // leave loophole
                 } else {
                     // invalid value
-                    SettingManager.setupSetting(key);
+                    SettingManager.SetupSetting(key);
                 }   
             }
 
@@ -202,7 +202,7 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
             Console.WriteLine("Job done! Press any key to exit.");
             if (showUI == true) Console.ReadKey();
-            LogManager.log("BYE!", LogManager.Level.INFO);
+            LogManager.Log("BYE!", LogManager.Level.INFO);
             Environment.Exit(0);
         }
 
@@ -221,17 +221,17 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Current configuration file is located at: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
                 Console.WriteLine();
             }
-            LogManager.log("ConfigDir: " + fullConfig, LogManager.Level.INFO);
+            LogManager.Log("ConfigDir: " + fullConfig, LogManager.Level.INFO);
 
             // create config file
             if (!File.Exists(fullConfig)) {
                 Console.WriteLine("Generating configuration file, this only happenes once.");
 
-                SettingManager.setupSetting("Check for Updates");
-                SettingManager.setupSetting("GPU Type");
-                SettingManager.setupSetting("Show Driver Description");
-                SettingManager.setupSetting("GPU Name");
-                SettingManager.setupSetting("Minimal install");
+                SettingManager.SetupSetting("Check for Updates");
+                SettingManager.SetupSetting("GPU Type");
+                SettingManager.SetupSetting("Show Driver Description");
+                SettingManager.SetupSetting("GPU Name");
+                SettingManager.SetupSetting("Minimal install");
 
                 Console.WriteLine();
             }
@@ -258,7 +258,7 @@ namespace TinyNvidiaUpdateChecker
                 error++;
                 onlineVer = "0.0.0";
                 Console.Write("ERROR!");
-                LogManager.log(ex.Message, LogManager.Level.ERROR);
+                LogManager.Log(ex.Message, LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
             }
@@ -354,7 +354,7 @@ namespace TinyNvidiaUpdateChecker
 
                 Console.WriteLine(message);
                 Console.WriteLine("verOrg: " + verOrg);
-                LogManager.log(message, LogManager.Level.ERROR);
+                LogManager.Log(message, LogManager.Level.ERROR);
                 if (showUI == true) Console.ReadKey();
                 Environment.Exit(1);
             }
@@ -513,7 +513,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("cultName: " + cultName);
                 Console.WriteLine();
             }
-            LogManager.log("langID: " + langID, LogManager.Level.INFO);
+            LogManager.Log("langID: " + langID, LogManager.Level.INFO);
         }
 
         /// <summary>
@@ -532,9 +532,9 @@ namespace TinyNvidiaUpdateChecker
             {
                 string gpuName = null;
                 while (string.IsNullOrEmpty(gpuName)) {
-                    gpuName = SettingManager.readSetting("GPU Name");
+                    gpuName = SettingManager.ReadSetting("GPU Name");
                     if (string.IsNullOrEmpty(gpuName)) {
-                        SettingManager.setupSetting("GPU Name");
+                        SettingManager.SetupSetting("GPU Name");
                     }
                 }
 
@@ -557,7 +557,7 @@ namespace TinyNvidiaUpdateChecker
                 error++;
                 OfflineGPUVersion = "000.00";
                 Console.Write("ERROR!");
-                LogManager.log(ex.ToString(), LogManager.Level.ERROR);
+                LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
             }
@@ -574,7 +574,7 @@ namespace TinyNvidiaUpdateChecker
             string key = "GPU Type";
 
             while (psID == 0 & pfID == 0) {
-                string val = SettingManager.readSetting(key); // refresh value each time
+                string val = SettingManager.ReadSetting(key); // refresh value each time
 
                 /// Get correct gpu drivers:
                 /// you do not have to choose the exact GPU,
@@ -588,7 +588,7 @@ namespace TinyNvidiaUpdateChecker
                     pfID = 758; // GTX 970M
                 } else {
                     // invalid value
-                    SettingManager.setupSetting(key);
+                    SettingManager.SetupSetting(key);
                 }
             }
 
@@ -653,7 +653,7 @@ namespace TinyNvidiaUpdateChecker
                             break;
 
                         default:
-                            LogManager.log("The status: '" + status + "' is not a known status!", LogManager.Level.ERROR);
+                            LogManager.Log("The status: '" + status + "' is not a known status!", LogManager.Level.ERROR);
                             break;
                     }
                 }            
@@ -681,7 +681,7 @@ namespace TinyNvidiaUpdateChecker
                     } else {
                         pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-notebook-release-notes.pdf";
                     }
-                    LogManager.log("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.", LogManager.Level.INFO);
+                    LogManager.Log("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.", LogManager.Level.INFO);
                 }
 
                 // get driver desc
@@ -701,7 +701,7 @@ namespace TinyNvidiaUpdateChecker
 
             } catch (Exception ex) {
                 OnlineGPUVersion = "000.00";
-                LogManager.log(ex.Message, LogManager.Level.ERROR);
+                LogManager.Log(ex.Message, LogManager.Level.ERROR);
                 if (error == 0) {
                     Console.Write("ERROR!");
                     Console.WriteLine();
@@ -722,9 +722,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("downloadURL: " + downloadURL);
                 Console.WriteLine("pdfURL:      " + pdfURL);
                 Console.WriteLine("releaseDate: " + releaseDate.ToShortDateString());
-
-                Console.WriteLine("psID:        " + psID);
-                Console.WriteLine("pfID:        " + pfID);
                 Console.WriteLine("OfflineGPUVersion: " + OfflineGPUVersion);
                 Console.WriteLine("OnlineGPUVersion:  " + OnlineGPUVersion);
             }
@@ -750,26 +747,26 @@ namespace TinyNvidiaUpdateChecker
             // loop
             while (val != "true" & val != "false")
             {
-                val = SettingManager.readSetting(key); // refresh value each time
+                val = SettingManager.ReadSetting(key); // refresh value each time
                 if (val == "true") {
                     checkWinRar = true;
                 } else if (val == "false") {
                     break;
                 } else {
                     // invalid value
-                    SettingManager.setupSetting(key);
+                    SettingManager.SetupSetting(key);
                 }
             }
             if(checkWinRar) {
                 try {
                     using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
-                        LogManager.log("WinRAR path: " + regKey.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);
+                        LogManager.Log("WinRAR path: " + regKey.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);
                     }
                 } catch (Exception) {
                     Console.WriteLine("Doesn't seem like WinRAR is installed, and is required!");
                     DialogResult dialogUpdates = MessageBox.Show("Since WinRAR couldn't be found, do you want to disable it and use the traditional way?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (dialogUpdates == DialogResult.Yes) {
-                        SettingManager.setSetting(key, "false");
+                        SettingManager.SetSetting(key, "false");
                     } else {
                         Console.WriteLine("The application will determinate itself");
                         if (showUI == true) Console.ReadKey();
@@ -805,7 +802,7 @@ namespace TinyNvidiaUpdateChecker
 
             // loop
             while (val != "true" & val != "false") {
-                val = SettingManager.readSetting(key); // refresh value each time
+                val = SettingManager.ReadSetting(key); // refresh value each time
 
                 if (val == "true") {
                     message = message + "Description: " + releaseDesc + Environment.NewLine + Environment.NewLine;
@@ -813,7 +810,7 @@ namespace TinyNvidiaUpdateChecker
                     break;
                 } else {
                     // invalid value
-                    SettingManager.setupSetting(key);
+                    SettingManager.SetupSetting(key);
                 }
             }
 
@@ -834,7 +831,26 @@ namespace TinyNvidiaUpdateChecker
                     DialogResult result;
                     using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog()) {
 
-                        folderBrowserDialog.Description = "Where do you want to save the drivers?";
+                        message = "Where do you want to save the drivers?";
+
+                        key = "Minimal install";
+                        val = null; // reset value
+
+                        // loop
+                        while (val != "true" & val != "false") {
+                            val = SettingManager.ReadSetting(key); // refresh value each time
+                            if (val == "true") {
+                                message = message + Environment.NewLine + "You should select a empty folder, or create a new one because it will extract many files.";
+                            }
+                            else if (val == "false") {
+                                break;
+                            } else {
+                                // invalid value
+                                SettingManager.SetupSetting(key);
+                            }
+                        }
+
+                        folderBrowserDialog.Description = message;
 
                         result = folderBrowserDialog.ShowDialog(); // show dialog and get status (will wait for input)
                         switch (result) {
@@ -869,7 +885,7 @@ namespace TinyNvidiaUpdateChecker
                             progress.Dispose(); // get rid of the progress bar
                         }
                     } else {
-                        LogManager.log("Driver is already downloaded", LogManager.Level.INFO);
+                        LogManager.Log("Driver is already downloaded", LogManager.Level.INFO);
                     }
 
                 }
@@ -877,7 +893,7 @@ namespace TinyNvidiaUpdateChecker
                 {
                     error = true;
                     Console.Write("ERROR!");
-                    LogManager.log(ex.Message, LogManager.Level.ERROR);
+                    LogManager.Log(ex.Message, LogManager.Level.ERROR);
                     Console.WriteLine();
                     Console.WriteLine(ex.StackTrace);
                     Console.WriteLine();
@@ -904,18 +920,18 @@ namespace TinyNvidiaUpdateChecker
                     }
                 }
 
-                val = null; // reset value
                 key = "Minimal install";
+                val = null; // reset value
                 // loop
                 while (val != "true" & val != "false") {
-                    val = SettingManager.readSetting(key); // refresh value each time
+                    val = SettingManager.ReadSetting(key); // refresh value each time
                     if (val == "true") {
                         MakeInstaller();
                     } else if (val == "false") {
                         break;
                     } else {
                         // invalid value
-                        SettingManager.setupSetting(key);
+                        SettingManager.SetupSetting(key);
                     }
                 }
 
@@ -998,7 +1014,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("under certain conditions. Licensed under GPLv3.");
                 Console.WriteLine();
             } else {
-                LogManager.log("Intro has already been run!", LogManager.Level.INFO);
+                LogManager.Log("Intro has already been run!", LogManager.Level.INFO);
             }
         }
 

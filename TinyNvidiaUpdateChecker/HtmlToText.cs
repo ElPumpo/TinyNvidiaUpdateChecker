@@ -52,7 +52,7 @@ namespace TinyNvidiaUpdateChecker
         public static string ConvertHtml(string html)
         {
             tries = 0; // reset
-            if(SettingManager.readSetting("GPU Type") == "mobile") {
+            if(SettingManager.ReadSetting("GPU Type") == "mobile") {
                 maxTries = 7;
             } else {
                 maxTries = 2;
