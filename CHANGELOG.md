@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- Inform user to select a empty folder if using the minimal installer.
+
+### Changed
+- Method renames to match [CA1709](https://msdn.microsoft.com/en-us/library/ms182240.aspx).
+
 ## [1.7.0] - 2017-04-29
 ### Added
 - Added hiding un-supported GPUs in the SelectGPU form which is enabled by default.
