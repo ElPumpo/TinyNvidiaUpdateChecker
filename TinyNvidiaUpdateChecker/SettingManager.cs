@@ -84,10 +84,10 @@ namespace TinyNvidiaUpdateChecker
             } catch (ConfigurationErrorsException ex) {
 
                 // clean config file
-                if (File.Exists(MainConsole.fullConfig)) {
+                if (File.Exists(MainConsole.configFile)) {
 
                     try {
-                        File.Delete(MainConsole.fullConfig);
+                        File.Delete(MainConsole.configFile);
                     } catch (Exception e) {
                         Console.WriteLine(e.StackTrace);
                     }

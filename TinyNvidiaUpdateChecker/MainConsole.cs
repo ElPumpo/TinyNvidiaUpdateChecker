@@ -103,14 +103,14 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Direction for configuration folder, blueprint: <local-appdata><author><project-name>
         /// </summary>
-        private static string dirToConfig = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName);
+        private static string configDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName);
         
-        public static string fullConfig = Path.Combine(dirToConfig, "app.config");
+        public static string configFile = Path.Combine(configDir, "app.config");
 
         /// <summary>
         /// Has the intro been displayed? Because we do not want to display the intro multiple times.
         /// </summary>
-        private static bool HasIntro = false;
+        private static bool hasRunIntro = false;
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AllocConsole();
@@ -134,12 +134,6 @@ namespace TinyNvidiaUpdateChecker
 
             if (showUI == true) {
                 AllocConsole();
-                /* disable CTRL+C
-                Console.CancelKeyPress += (sender, e) =>
-                {
-                    e.Cancel = true;
-                };
-                */
             }
 
             ConfigInit();
@@ -150,17 +144,17 @@ namespace TinyNvidiaUpdateChecker
 
             GetLanguage();
             
-            bool set = false;
+            string val = null;
             string key = "Check for Updates";
 
-            while (set == false) {
-                string val = SettingManager.ReadSetting(key); // refresh value each time
+            while (val != "true" & val != "false") {
+                val = SettingManager.ReadSetting(key); // refresh value each time
 
                 if (val == "true") {
                     SearchForUpdates();
-                    set = true;
+                    break;
                 } else if (val == "false") {
-                    set = true; // leave loophole
+                    break;
                 } else {
                     // invalid value
                     SettingManager.SetupSetting(key);
@@ -214,17 +208,17 @@ namespace TinyNvidiaUpdateChecker
             // powered by the .NET framework "Settings" function
 
             // set config dir
-            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", fullConfig);
+            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFile);
             ResetConfigMechanism();
 
             if (debug == true) {
-                Console.WriteLine("Current configuration file is located at: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+                Console.WriteLine("configFile: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
                 Console.WriteLine();
             }
-            LogManager.Log("ConfigDir: " + fullConfig, LogManager.Level.INFO);
+            LogManager.Log("configFile: " + configFile, LogManager.Level.INFO);
 
             // create config file
-            if (!File.Exists(fullConfig)) {
+            if (!File.Exists(configFile)) {
                 Console.WriteLine("Generating configuration file, this only happenes once.");
 
                 SettingManager.SetupSetting("Check for Updates");
@@ -245,8 +239,8 @@ namespace TinyNvidiaUpdateChecker
         {
             Console.Write("Searching for Updates . . . ");
             int error = 0;
-            try
-            {
+
+            try {
                 HtmlWeb htmlWeb = new HtmlWeb();
                 HtmlAgilityPack.HtmlDocument htmlDocument = htmlWeb.Load(serverURL);
 
@@ -293,22 +287,6 @@ namespace TinyNvidiaUpdateChecker
         {
             string verOrg = Environment.OSVersion.Version.ToString();
             Boolean is64 = Environment.Is64BitOperatingSystem;
-
-            // Windows 10
-            /// After doing some research, it does not matter if you input 10 or 10+AU onto the NVIDIA website (for now - 2016-08-30).
-            /// It is only (like choosing GPU model - which I WONT fix) only used for statistics, there is NO seperate
-            /// drivers depending on what build you're running. But TinyNvidiaUpdateChecker wasn't made to
-            /// give NVIDIA the finger, so we'll at least return the correct OS.
-
-            /// 2016-09-x UPDATE - IMPORTANT:
-            /// it seems like NVIDIA changed their website to what it used to be. What the hell?
-            /// The "Windows 10 AU" has been removed from the website. If you use the Win 10AU id you will not get the latest version!
-            /// I thought it has something to do with the WebClient class but apparently not.
-
-            // Windows 10 known "version" list:
-            // 1607: anniversary update
-            // 1511: november update
-            // 1507: original release
 
             if (verOrg.Contains("10.0")) {
                 winVer = "10";
@@ -388,9 +366,9 @@ namespace TinyNvidiaUpdateChecker
 
                 // erase config
                 else if (arg.ToLower() == "--erase-config") {
-                    if (File.Exists(fullConfig)) {
+                    if (File.Exists(configFile)) {
                         try {
-                            File.Delete(fullConfig);
+                            File.Delete(configFile);
                         } catch (Exception ex) {
                             RunIntro();
                             Console.WriteLine(ex.StackTrace);
@@ -1003,8 +981,8 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void RunIntro()
         {
-            if(!HasIntro) {
-                HasIntro = true;
+            if(!hasRunIntro) {
+                hasRunIntro = true;
                 // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
                 Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                 Console.WriteLine();
