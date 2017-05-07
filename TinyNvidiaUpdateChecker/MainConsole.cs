@@ -806,34 +806,33 @@ namespace TinyNvidiaUpdateChecker
 
                 try {
 
-                    DialogResult result;
-                    using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog()) {
+                    message = "Where do you want to save the drivers?";
 
-                        message = "Where do you want to save the drivers?";
+                    key = "Minimal install";
+                    val = null; // reset value
 
-                        key = "Minimal install";
-                        val = null; // reset value
-
-                        // loop
-                        while (val != "true" & val != "false") {
-                            val = SettingManager.ReadSetting(key); // refresh value each time
-                            if (val == "true") {
-                                message = message + Environment.NewLine + "You should select a empty folder, or create a new one because it will extract many files.";
-                            }
-                            else if (val == "false") {
-                                break;
-                            } else {
-                                // invalid value
-                                SettingManager.SetupSetting(key);
-                            }
+                    // loop
+                    while (val != "true" & val != "false") {
+                        val = SettingManager.ReadSetting(key); // refresh value each time
+                        if (val == "true") {
+                            message = message + " You should select a empty folder, or create a new one because it will extract many files.";
+                        } else if (val == "false") {
+                            break;
+                        } else {
+                            // invalid value
+                            SettingManager.SetupSetting(key);
                         }
+                    }
 
-                        folderBrowserDialog.Description = message;
+                    DialogResult result;
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
+                        saveFileDialog.Title = message;
+                        saveFileDialog.FileName = "Save here";
 
-                        result = folderBrowserDialog.ShowDialog(); // show dialog and get status (will wait for input)
+                        result = saveFileDialog.ShowDialog(); // show dialog and get status (will wait for input)
                         switch (result) {
                             case DialogResult.OK:
-                                savePath = folderBrowserDialog.SelectedPath.ToString();
+                                savePath = Path.GetDirectoryName(saveFileDialog.FileName);
                                 break;
 
                             default:
