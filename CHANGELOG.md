@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Inform user to select a empty folder if using the minimal installer.
 
 ### Changed
+- Went back to using the `SaveFileDialog`.
 - Method renames to match [CA1709](https://msdn.microsoft.com/en-us/library/ms182240.aspx).
+- A lot of cleanup.
 
 ## [1.7.0] - 2017-04-29
 ### Added
