@@ -976,7 +976,7 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// Intro with legal message, moved to recude lines that ultimately does the same thing.
+        /// Intro with legal message, moved to reduce lines that ultimately does the same thing.
         /// </summary>
         private static void RunIntro()
         {
