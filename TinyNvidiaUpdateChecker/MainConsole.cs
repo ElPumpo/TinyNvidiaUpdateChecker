@@ -118,9 +118,6 @@ namespace TinyNvidiaUpdateChecker
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool FreeConsole();
 
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-        static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out string pszPath);
-
         [STAThread]
         private static void Main(string[] args)
         {
@@ -438,46 +435,46 @@ namespace TinyNvidiaUpdateChecker
 
             switch (cultName)
             {
-                case "en-US":
+                case "en-US":  // English - United States
                     langID = 1;
                     break;
-                case "en-GB":
+                case "en-GB":  // English - United Kingdom
                     langID = 2;
                     break;
-                case "zh-CHS":
+                case "zh-CHS": // Chinese (Simplified)
                     langID = 5;
                     break;
-                case "zh-CHT":
+                case "zh-CHT": // Chinese (Traditional)
                     langID = 6;
                     break;
-                case "ja-JP":
+                case "ja-JP":  // Japanese - Japan
                     langID = 7;
                     break;
-                case "ko-KR":
+                case "ko-KR":  // Korean - Korea
                     langID = 8;
                     break;
-                case "de-DE":
+                case "de-DE":  // German - Germany
                     langID = 9;
                     break;
-                case "es-ES":
+                case "es-ES":  // Spanish - Spain
                     langID = 10;
                     break;
-                case "fr-FR":
+                case "fr-FR":  // French - France
                     langID = 12;
                     break;
-                case "it-IT":
+                case "it-IT":  // Italian - Italy 
                     langID = 13;
                     break;
-                case "pl-PL":
+                case "pl-PL":  // Polish - Poland
                     langID = 14;
                     break;
-                case "pt-BR":
+                case "pt-BR":  // Portuguese - Brazil
                     langID = 15;
                     break;
-                case "ru-RU":
+                case "ru-RU":  // Russian - Russia
                     langID = 16;
                     break;
-                case "tr-TR":
+                case "tr-TR":  // Turkish - Turkey
                     langID = 19;
                     break;
                 default:
