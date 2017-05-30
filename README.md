@@ -5,6 +5,7 @@ Instead of using GeForce Experience you can use this tiny application which is c
 It searches for NVIDIA GPU drivers exactly like GeForce Experience does but in a lightweight (and open source) solution. 
 
 When you install GeForce Experience a lot of extra services are being installed without you knowing, and we have no clue what the executables does in the background when the application isn't even used.
+
 NVIDIAs drivers also come with telemetry which this application can remove from the installer, but requries WinRAR in order to extract the self-extracting archive, and will only extract the core GPU drivers. (no Physics, HD Audio, Geforce Experience, 3D drivers, etc).
 
 # Download
