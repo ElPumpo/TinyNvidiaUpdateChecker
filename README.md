@@ -1,11 +1,12 @@
 # TinyNvidiaUpdateChecker
 Tiny application which checks for NVIDIA GeForce GPU drivers, written in C-sharp (C#) for Windows
 
-Instead of using GeForce Experience you can use this tiny application which will be highly customizable, secure and easy to use.
-It searches for NVIDIA GPU drivers exactly like GeForce Experience does but in a lightweight (and open source) application. 
+Instead of using GeForce Experience you can use this tiny application which is customizable, secure and very easy to use.
+It searches for NVIDIA GPU drivers exactly like GeForce Experience does but in a lightweight (and open source) solution. 
 
 When you install GeForce Experience a lot of extra services are being installed without you knowing, and we have no clue what the executables does in the background when the application isn't even used.
-Not only that but GeForce Experience is really slow and I don't want to maunally go to their website to check for updates.
+
+NVIDIAs drivers also come with telemetry which this application can remove from the installer, but requries WinRAR in order to extract the self-extracting archive, and will only extract the core GPU drivers. (no Physics, HD Audio, Geforce Experience, 3D drivers, etc).
 
 # Download
 Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
