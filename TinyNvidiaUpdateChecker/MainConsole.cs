@@ -812,7 +812,7 @@ namespace TinyNvidiaUpdateChecker
                     while (val != "true" & val != "false") {
                         val = SettingManager.ReadSetting(key); // refresh value each time
                         if (val == "true") {
-                            message = message + " You should select a empty folder, or create a new one because it will extract many files.";
+                            message = message + " (you should select a empty folder)";
                         } else if (val == "false") {
                             break;
                         } else {
