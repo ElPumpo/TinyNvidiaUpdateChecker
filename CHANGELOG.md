@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Inform user to select a empty folder if using the minimal installer.
+- Automatic download of `HtmlAgilityPack.dll` if not found.
+- Network connection check.
 
 ### Changed
 - Went back to using the `SaveFileDialog`.
