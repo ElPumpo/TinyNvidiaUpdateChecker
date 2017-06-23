@@ -13,6 +13,7 @@ using System.Threading;
 using System.Configuration;
 using System.Management;
 using Microsoft.Win32;
+using System.Net.NetworkInformation;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -708,11 +709,41 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void CheckDependencies()
         {
+
+            // Check internet connection
+            Console.Write("Searching for a network connection . . . ");
+            switch (NetworkInterface.GetIsNetworkAvailable()) {
+                case true:
+                    Console.Write("OK!");
+                    Console.WriteLine();
+                    break;
+
+                default:
+                    Console.Write("ERROR!");
+                    Console.WriteLine();
+                    Console.WriteLine("No network connection was found, the application will now determinate!");
+                    if (showUI == true) Console.ReadKey();
+                    Environment.Exit(2);
+                    break;
+            }
+
             if (!File.Exists("HtmlAgilityPack.dll")) {
 
-                Console.WriteLine("The required binary cannot be found and the application will determinate itself. It must be put in the same folder as this executable.");
-                if (showUI == true) Console.ReadKey();
-                Environment.Exit(2);
+                Console.Write("Attempting to download HtmlAgilityPack.dll . . . ");
+
+                try {
+                    using (WebClient webClient = new WebClient()) {
+                        webClient.DownloadFile("https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/download/v" + offlineVer + "/HtmlAgilityPack.dll", "HtmlAgilityPack.dll");
+                    }
+                    Console.Write("OK!");
+                    Console.WriteLine();
+                } catch (Exception ex) {
+                    Console.Write("ERROR!");
+                    Console.WriteLine();
+                    Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine();
+                }
+
             }
 
             string val = null;
@@ -751,6 +782,8 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
+
+            Console.WriteLine();
 
         }
 
