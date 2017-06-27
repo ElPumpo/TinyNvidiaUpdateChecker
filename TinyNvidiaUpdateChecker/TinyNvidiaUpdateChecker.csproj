@@ -84,6 +84,12 @@
     <Compile Include="LogManager.cs" />
     <Compile Include="MainConsole.cs" />
     <Compile Include="ProgressBar.cs" />
+    <Compile Include="DownloaderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DownloaderForm.Designer.cs">
+      <DependentUpon>DownloaderForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectGPU.cs">
       <SubType>Form</SubType>
@@ -123,6 +129,9 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DownloaderForm.resx">
+      <DependentUpon>DownloaderForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SelectGPU.resx">
       <DependentUpon>SelectGPU.cs</DependentUpon>
     </EmbeddedResource>

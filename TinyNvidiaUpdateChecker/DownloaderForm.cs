@@ -1,0 +1,38 @@
+﻿using System;
+using System.ComponentModel;
+using System.Net;
+using System.Windows.Forms;
+
+namespace TinyNvidiaUpdateChecker
+{
+    public partial class DownloaderForm : Form {
+
+        private Boolean isDownloadComplete = false;
+
+        public DownloaderForm() {
+            InitializeComponent();
+        }
+
+        public void DownloadFile(Uri downloadURL, string savePath)
+        {
+            isDownloadComplete = false;
+            using (WebClient webClient = new WebClient()) {
+
+                webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
+                    progressBar1.Value = e.ProgressPercentage;
+                };
+                
+                
+                webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
+                    isDownloadComplete = true;
+                };
+                
+                webClient.DownloadFileAsync(downloadURL, savePath); // begin download
+
+                while(!isDownloadComplete) {
+                    Application.DoEvents(); // causes high CPU usage!
+                }
+            }
+        }
+    }
+}
