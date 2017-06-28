@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Inform user to select a empty folder if using the minimal installer.
 - Automatic download of `HtmlAgilityPack.dll` if not found.
 - Network connection check.
-- GUI progress bar that shows up upon download driver file if the user is using the `quiet` switch.
+- GUI progress bar that shows up upon the driver download, if the user has selected the quiet mode.
 
 ### Changed
 - Went back to using the `SaveFileDialog`.
