@@ -629,7 +629,7 @@ namespace TinyNvidiaUpdateChecker
                             break;
 
                         default:
-                            LogManager.Log("The status: '" + status + "' is not a known status!", LogManager.Level.ERROR);
+                            LogManager.Log("The status: '" + status + "' is not a recognized status!", LogManager.Level.ERROR);
                             break;
                     }
                 }            
@@ -729,6 +729,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (!File.Exists("HtmlAgilityPack.dll")) {
 
+                Console.WriteLine();
                 Console.Write("Attempting to download HtmlAgilityPack.dll . . . ");
 
                 try {
@@ -1021,8 +1022,8 @@ namespace TinyNvidiaUpdateChecker
         {
             if(!hasRunIntro) {
                 hasRunIntro = true;
-                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-                //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+                // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                 Console.WriteLine();
                 Console.WriteLine("Copyright (C) 2016-2017 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");

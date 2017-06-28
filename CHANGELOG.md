@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.8.0] - 2017-06-28
 ### Added
 - Inform user to select a empty folder if using the minimal installer.
 - Automatic download of `HtmlAgilityPack.dll` if not found.
