@@ -664,6 +664,13 @@ namespace TinyNvidiaUpdateChecker
                 releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerHtml.Trim();
                 releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".");
 
+                // Remove not needed information
+                if(psID == 98) { // desktop
+                    releaseDesc = releaseDesc.Substring(297, releaseDesc.Length - 297).Trim();
+                } else { // mobile
+                    releaseDesc = releaseDesc.Substring(886, releaseDesc.Length - 886).Trim();
+                }
+
 
                 // get download link
                 htmlDocument = htmlWeb.Load(confirmURL);
