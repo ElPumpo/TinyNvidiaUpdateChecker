@@ -18,7 +18,7 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be
 # Requirements
 + Windows 10, 8.x or 7
 + .NET framework 4.5
-+ `HtmlAgilityPack.dll` in same folder as the executable
++ `HtmlAgilityPack.dll` in same folder as the executable (automatic download from v1.8.0 and up)
 + Stable internet connection
 + [WinRAR](http://www.rarlab.com/) (if using minimal installer method)
 
@@ -48,7 +48,7 @@ You may customize the application using the config file located at `%localappdat
 ### License
 TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
 
-Copyright (C) 2016 Hawaii_Beach
+Copyright (C) 2016-2017 Hawaii_Beach
 
 This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.
 
