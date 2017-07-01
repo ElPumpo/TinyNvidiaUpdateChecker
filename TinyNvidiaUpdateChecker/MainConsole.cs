@@ -475,9 +475,10 @@ namespace TinyNvidiaUpdateChecker
                 case "ru-RU":  // Russian - Russia
                     langID = 16;
                     break;
-                case "tr-TR":  // Turkish - Turkey
+             /* case "tr-TR":  // Turkish - Turkey
                     langID = 19;
                     break;
+             */
                 default:
                     // intl
                     langID = 17;
