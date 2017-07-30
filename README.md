@@ -1,3 +1,5 @@
+# ![image-preview](image.png)
+
 # TinyNvidiaUpdateChecker
 Tiny application which checks for NVIDIA GeForce GPU drivers, written in C-sharp (C#) for Windows
 
