@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- No more weird notes in the release description.
+- No more weird notes in the release description
+
+### Changed
+- Updated HtmlAgilityPack to the latest version
 
 ## [1.8.0] - 2017-06-28
 ### Added
