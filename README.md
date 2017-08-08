@@ -1,5 +1,9 @@
+![Image preview](image.png)
+
 # TinyNvidiaUpdateChecker
 Tiny application which checks for NVIDIA GeForce GPU drivers, written in C-sharp (C#) for Windows
+
+Visit the [wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) for more information about the application!
 
 Instead of using GeForce Experience you can use this tiny application which is customizable, secure and very easy to use.
 It searches for NVIDIA GPU drivers exactly like GeForce Experience does but in a lightweight (and open source) solution. 
@@ -22,27 +26,6 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be
 + Stable internet connection
 + [WinRAR](http://www.rarlab.com/) (if using minimal installer method)
 
-# Command line arguments
-| Argument   | Explanation |
-| ---------- |:-----------:|
-| --quiet | run quiet |
-| --erase-config | erase local configuration file |
-| --debug | turn debugging on |
-| --force-dl | force download of drivers |
-| --version | Current application version |
-| --help | view help |
-
-# Configuration file
-You may customize the application using the config file located at `%localappdata%\Hawaii_Beach\TinyNvidiaUpdateChecker` and modify `app.config`
-
-| Option | Restrictions | Effect |
-| ------ | ------------ |:------:|
-| Check for Updates | false or true | enables or disables searches for client updates |
-| GPU Type | desktop or mobile | self-explanatory, select `desktop` if you're running a desktop system configuiration |
-| Show Driver Description | false or true | Enables showing the driver description of drivers, which is in a beta state |
-| GPU Name | n/a | sets the gpu to be fetched |
-| Minimal install | false or true | switch for the minimal installer |
-
 # Legal
 
 ### License
@@ -60,7 +43,7 @@ You should have received a copy Of the GNU General Public License along with thi
 [Project icon](https://github.com/Maddoc42/Android-Material-Icon-Generator) by [Maddoc42](https://github.com/Maddoc42) is licensed under [CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/)
 
 ### HTML Agility Pack
-HTML Agility Pack by [DarthObiwan](https://www.codeplex.com/site/users/view/DarthObiwan) is licensed under the [Microsoft Public License](https://msdn.microsoft.com/en-us/library/ff648068.aspx)
+HTML Agility Pack by [zzzprojects](https://github.com/zzzprojects/html-agility-pack) is licensed under the [MIT License](https://opensource.org/licenses/MIT)
 
 ### ASCII-alike Progress Bar
 [ASCII-alike Progress Bar](https://gist.github.com/DanielSWolf/0ab6a96899cc5377bf54) by [DanielSWolf](https://github.com/DanielSWolf) is licensed under the [MIT License](https://opensource.org/licenses/MIT)
