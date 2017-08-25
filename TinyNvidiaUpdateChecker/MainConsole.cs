@@ -880,6 +880,12 @@ namespace TinyNvidiaUpdateChecker
                         }
                     }
 
+                    // check for empty folder
+                    if (Directory.GetFiles(savePath).Length != 0) {
+                        Directory.CreateDirectory(savePath + @"\" + OnlineGPUVersion);
+                        savePath += @"\" + OnlineGPUVersion;
+                    }
+
                     // don't download driver if it already exists
                     Console.Write("Downloading the driver . . . ");
                     if (showUI && !File.Exists(savePath + @"\" + driverFileName)) {

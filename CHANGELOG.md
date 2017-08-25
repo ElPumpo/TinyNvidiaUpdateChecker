@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - No more weird notes in the release description
 
 ### Changed
+- Will now create a folder if the selected one isn't empty
 - Updated HtmlAgilityPack to the latest version
 
 ## [1.8.0] - 2017-06-28
