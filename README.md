@@ -24,7 +24,7 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be
 + .NET framework 4.5
 + `HtmlAgilityPack.dll` in same folder as the executable (automatic download from v1.8.0 and up)
 + Stable internet connection
-+ [WinRAR](http://www.rarlab.com/) (if using minimal installer method)
++ (optional) [WinRAR](http://www.rarlab.com/) (***only*** if using minimal installer method)
 
 # Legal
 
