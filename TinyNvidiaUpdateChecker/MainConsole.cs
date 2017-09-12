@@ -19,7 +19,7 @@ namespace TinyNvidiaUpdateChecker
 {
 
     /*
-    TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
+    TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
     Copyright (C) 2016-2017 Hawaii_Beach
 
     This program Is free software: you can redistribute it And/Or modify
@@ -1036,8 +1036,8 @@ namespace TinyNvidiaUpdateChecker
         {
             if(!hasRunIntro) {
                 hasRunIntro = true;
-                // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+               // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                 Console.WriteLine();
                 Console.WriteLine("Copyright (C) 2016-2017 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
