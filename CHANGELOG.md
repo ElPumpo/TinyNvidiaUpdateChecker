@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - No more weird notes in the release description
 - Basic logic for new libary handling system
+- Support for 7-Zip
 
 ### Changed
 - Will now create a folder if the selected one isn't empty
