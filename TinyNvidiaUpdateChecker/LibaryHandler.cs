@@ -52,9 +52,9 @@ namespace TinyNvidiaUpdateChecker
 
     class LibaryFile
     {
-        string InstallLocation;
-        LibaryHandler.Libary libary;
-        bool installed;
+        public string InstallLocation;
+        public LibaryHandler.Libary libary;
+        public bool installed;
 
         public LibaryFile(string InstallLocation, LibaryHandler.Libary libary) {
             this.InstallLocation = InstallLocation;
