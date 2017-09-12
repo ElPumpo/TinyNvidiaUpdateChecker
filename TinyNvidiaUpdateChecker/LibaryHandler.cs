@@ -9,13 +9,12 @@ namespace TinyNvidiaUpdateChecker
         public enum Libary
         {
             SEVENZIP,
-            WINRAR,
-            ERROR
+            WINRAR
         }
 
         public static LibaryFile EvaluateLibary() {
-            LibaryFile WinRAR = CheckWinRAR();
-            LibaryFile SevenZip = Check7Zip();
+            LibaryFile WinRAR = CheckWinRAR(); // CheckWinRAR
+            LibaryFile SevenZip = Check7Zip(); // Check7Zip
 
             if (WinRAR.IsInstalled()) {
                 return WinRAR;

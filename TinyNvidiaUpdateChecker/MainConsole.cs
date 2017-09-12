@@ -759,14 +759,14 @@ namespace TinyNvidiaUpdateChecker
 
             string val = null;
             string key = "Minimal install";
-            bool checkWinRar = false;
+            bool checkLib = false;
 
             // loop
             while (val != "true" & val != "false")
             {
                 val = SettingManager.ReadSetting(key); // refresh value each time
                 if (val == "true") {
-                    checkWinRar = true;
+                    checkLib = true;
                 } else if (val == "false") {
                     break;
                 } else {
@@ -774,14 +774,10 @@ namespace TinyNvidiaUpdateChecker
                     SettingManager.SetupSetting(key);
                 }
             }
-            if(checkWinRar) {
-                try {
-                    using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
-                        LogManager.Log("WinRAR path: " + regKey.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);
-                    }
-                } catch (Exception) {
-                    Console.WriteLine("Doesn't seem like WinRAR is installed, and is required!");
-                    DialogResult dialogUpdates = MessageBox.Show("Since WinRAR couldn't be found, do you want to disable it and use the traditional way?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if(checkLib) {
+                if(LibaryHandler.EvaluateLibary() == null) {
+                    Console.WriteLine("Doesn't seem like either WinRAR or 7-Zip is installed!");
+                    DialogResult dialogUpdates = MessageBox.Show("Do you want to disable the minimal install feature and use the traditional way?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (dialogUpdates == DialogResult.Yes) {
                         SettingManager.SetSetting(key, "false");
                     } else {
@@ -789,13 +785,11 @@ namespace TinyNvidiaUpdateChecker
                         if (showUI == true) Console.ReadKey();
                         Environment.Exit(2);
                     }
-
                 }
             }
 
 
             Console.WriteLine();
-
         }
 
         /// <summary>
@@ -883,7 +877,7 @@ namespace TinyNvidiaUpdateChecker
                     }
 
                     // check for empty folder
-                    if (Directory.GetFiles(savePath).Length != 0) {
+                    if (Directory.GetFiles(savePath).Length > 1) {
                         Directory.CreateDirectory(savePath + @"\" + OnlineGPUVersion);
                         savePath += @"\" + OnlineGPUVersion;
                     }
@@ -994,40 +988,39 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
             Console.Write("Making installer . . . ");
 
-            // get winrar path
-            string rarPath = null;
-
-            try {
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
-                    rarPath = key.GetValue("InstallLocation").ToString();
-                }
-            } catch (Exception ex) {
-                Console.Write("ERROR!");
-                Console.WriteLine();
-                Console.WriteLine(ex.StackTrace);
-                Console.WriteLine();
-            }
+            LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
 
             string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
 
             File.WriteAllLines(savePath + @"\" + "inclList.txt", filesToExtract);
 
             string fullDriverPath = @"""" + savePath + @"\" + driverFileName + @"""";
-            using (Process WinRAR = new Process()) {
-                WinRAR.StartInfo.FileName = rarPath + "winrar.exe";
-                WinRAR.StartInfo.WorkingDirectory = savePath;
-                WinRAR.StartInfo.Arguments = "X " + fullDriverPath  + @" -N@""inclList.txt""";
-                WinRAR.StartInfo.UseShellExecute = false;
-                WinRAR.Start();
-                WinRAR.WaitForExit();
+
+            if (libaryFile.libary == LibaryHandler.Libary.WINRAR) {
+                using (Process WinRAR = new Process())
+                {
+                    WinRAR.StartInfo.FileName = libaryFile.InstallLocation + "winrar.exe";
+                    WinRAR.StartInfo.WorkingDirectory = savePath;
+                    WinRAR.StartInfo.Arguments = "X " + fullDriverPath + @" -N@""inclList.txt""";
+                    WinRAR.StartInfo.UseShellExecute = false;
+                    WinRAR.Start();
+                    WinRAR.WaitForExit();
+                }
+            } else if (libaryFile.libary == LibaryHandler.Libary.SEVENZIP) {
+                using (Process SevenZip = new Process()) {
+                    SevenZip.StartInfo.FileName = libaryFile.InstallLocation + "7zG.exe";
+                    SevenZip.StartInfo.WorkingDirectory = savePath;
+                    SevenZip.StartInfo.Arguments = "x " + fullDriverPath + @" @inclList.txt";
+                    SevenZip.StartInfo.UseShellExecute = false;
+                    SevenZip.Start();
+                    SevenZip.WaitForExit();
+                }
             }
+
+
 
             Console.Write("OK!");
             Console.WriteLine();
-
-            if (debug) {
-                Console.WriteLine("rarPath: " + rarPath);
-            }
 
         }
 
