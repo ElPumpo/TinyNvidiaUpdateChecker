@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HtmlToText.cs" />
+    <Compile Include="LibaryHandler.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="MainConsole.cs" />
     <Compile Include="ProgressBar.cs" />

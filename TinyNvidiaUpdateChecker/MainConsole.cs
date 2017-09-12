@@ -142,6 +142,8 @@ namespace TinyNvidiaUpdateChecker
 
             GetLanguage();
 
+            Console.WriteLine(LibaryHandler.EvaluateLibary());
+
             string val = null;
             string key = "Check for Updates";
 

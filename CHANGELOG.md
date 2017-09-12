@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - No more weird notes in the release description
+- Basic logic for new libary handling system
 
 ### Changed
 - Will now create a folder if the selected one isn't empty
