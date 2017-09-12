@@ -5,12 +5,10 @@ Tiny application which checks for NVIDIA GeForce GPU drivers, written in C-sharp
 
 Visit the [wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) for more information about the application!
 
-Instead of using GeForce Experience you can use this tiny application which is customizable, secure and very easy to use.
-It searches for NVIDIA GPU drivers exactly like GeForce Experience does but in a lightweight (and open source) solution. 
+This application has a simple concept, when launched it will check for new driver updates for your NVIDIA gpu! With this you no longer need waste your time searching if there's something new to get. You may also use the `--quiet` [switch](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Command-Line-Arguments) in e.g one of the [startup](https://www.tekrevue.com/tip/windows-10-startup-folder/) folders so it gets runs quietly and only notifies you if there's an new update.
 
-When you install GeForce Experience a lot of extra services are being installed without you knowing, and we have no clue what the executables does in the background when the application isn't even used.
-
-NVIDIAs drivers also come with telemetry which this application can remove from the installer, but requries WinRAR in order to extract the self-extracting archive, and will only extract the core GPU drivers. (no Physics, HD Audio, Geforce Experience, 3D drivers, etc).
+NVIDIAs drivers come with telemetry, but I've done it possible so that you can remove it from the installer **(as an optional feature!)**, which requries WinRAR in order to extract the self-extracting archive, which will only extract the core GPU drivers. (no Physics, HD Audio, Geforce Experience, 3D drivers, etc).
+For this to fully work you have to uninstall your previous drivers! Use [DDU](https://www.wagnardsoft.com/) to make a clean uninstall first!
 
 # Download
 Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
@@ -24,12 +22,12 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be
 + .NET framework 4.5
 + `HtmlAgilityPack.dll` in same folder as the executable (automatic download from v1.8.0 and up)
 + Stable internet connection
-+ [WinRAR](http://www.rarlab.com/) (if using minimal installer method)
++ (optional) [WinRAR](http://www.rarlab.com/) (***only*** if using minimal installer method)
 
 # Legal
 
 ### License
-TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
+TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
 
 Copyright (C) 2016-2017 Hawaii_Beach
 
