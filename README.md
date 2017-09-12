@@ -27,7 +27,7 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be
 # Legal
 
 ### License
-TinyNvidiaUpdateChecker - Check for NVIDIA GPU drivers, GeForce Experience replacer
+TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
 
 Copyright (C) 2016-2017 Hawaii_Beach
 
