@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for 7-Zip
 
 ### Changed
-- Will now create a folder if the selected one isn't empty
 - Updated HtmlAgilityPack to the latest version
 - Replaced the `GPU Type` system with now assuming the type depending on the gpu name
+- Changed back to the correct folder browser dialog
 
 ## [1.8.0] - 2017-06-28
 ### Added

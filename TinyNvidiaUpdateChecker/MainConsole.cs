@@ -97,9 +97,14 @@ namespace TinyNvidiaUpdateChecker
         private static bool debug = false;
 
         /// <summary>
-        /// Force a download of GPU drivers
+        /// Force a prompt to download GPU drivers
         /// </summary>
         private static bool forceDL = false;
+
+        /// <summary>
+        /// Will automaticly download and install drivers
+        /// </summary>
+        private static bool confirmDL = false;
 
         /// <summary>
         /// Direction for configuration folder, blueprint: <local-appdata><author><project-name>
@@ -385,11 +390,15 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 // show version number
-                else if (arg.ToLower() == "--version")
-                {
+                else if (arg.ToLower() == "--version") {
                     RunIntro();
                     Console.WriteLine("Current version is " + offlineVer);
                     Console.WriteLine();
+                }
+
+                // automaticly download driver
+                else if (arg.ToLower() == "--confirm-dl") {
+                    confirmDL = true;
                 }
 
                 // help menu
@@ -402,6 +411,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("--debug        Enable debugging for extended information.");
                     Console.WriteLine("--force-dl     Force download of drivers.");
                     Console.WriteLine("--version      View version number.");
+                    Console.WriteLine("--confirm-dl   Automaticly download driver if new one is available.");
                     Console.WriteLine("--help         Displays this message.");
                     Environment.Exit(0);
                 }
@@ -796,7 +806,7 @@ namespace TinyNvidiaUpdateChecker
                 theDate = DateDiff + " days ago";
             }
 
-            var message = "Graphics card drivers are available, do you want to update now?" + Environment.NewLine + Environment.NewLine;
+            string message = "Graphics card drivers are available, do you want to update now?" + Environment.NewLine + Environment.NewLine;
 
             string key = "Show Driver Description";
             string val = null;
@@ -815,7 +825,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            message = message + "Driver version: " + OnlineGPUVersion + " (you're running " + OfflineGPUVersion + ")" + Environment.NewLine +
+            message += "Driver version: " + OnlineGPUVersion + " (you're running " + OfflineGPUVersion + ")" + Environment.NewLine +
                         "Driver released: " + theDate + " (" + releaseDate.ToShortDateString() + ")";
 
             DialogResult dialog = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -828,7 +838,7 @@ namespace TinyNvidiaUpdateChecker
                 driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
 
                 try {
-
+                        
                     message = "Where do you want to save the drivers?";
 
                     key = "Minimal install";
@@ -838,7 +848,7 @@ namespace TinyNvidiaUpdateChecker
                     while (val != "true" & val != "false") {
                         val = SettingManager.ReadSetting(key); // refresh value each time
                         if (val == "true") {
-                            message = message + " (you should select a empty folder)";
+                            message += " (you should select a empty folder)";
                         } else if (val == "false") {
                             break;
                         } else {
@@ -848,26 +858,19 @@ namespace TinyNvidiaUpdateChecker
                     }
 
                     DialogResult result;
-                    using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
-                        saveFileDialog.Title = message;
-                        saveFileDialog.FileName = "Save here";
+                    using (FolderBrowserDialog folderDialog = new FolderBrowserDialog()) {
+                        folderDialog.Description = message;
 
-                        result = saveFileDialog.ShowDialog(); // show dialog and get status (will wait for input)
+                        result = folderDialog.ShowDialog(); // show dialog and get status (will wait for input)
                         switch (result) {
                             case DialogResult.OK:
-                                savePath = Path.GetDirectoryName(saveFileDialog.FileName);
+                                savePath = folderDialog.SelectedPath;
                                 break;
 
                             default:
                                 Console.WriteLine("User closed dialog!");
                                 return;
                         }
-                    }
-
-                    // check for empty folder
-                    if (Directory.GetFiles(savePath).Length > 1) {
-                        Directory.CreateDirectory(savePath + @"\" + OnlineGPUVersion);
-                        savePath += @"\" + OnlineGPUVersion;
                     }
 
                     // don't download driver if it already exists
