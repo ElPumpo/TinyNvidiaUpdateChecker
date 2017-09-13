@@ -220,7 +220,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Generating configuration file, this only happenes once.");
 
                 SettingManager.SetupSetting("Check for Updates");
-                SettingManager.SetupSetting("GPU Type");
                 SettingManager.SetupSetting("Show Driver Description");
                 SettingManager.SetupSetting("GPU Name");
                 SettingManager.SetupSetting("Minimal install");
@@ -503,11 +502,10 @@ namespace TinyNvidiaUpdateChecker
             string processURL = null;
             string confirmURL = null;
             string gpuURL = null;
+            string gpuName = null;
 
             // query local driver version
-            try
-            {
-                string gpuName = null;
+            try {
                 while (string.IsNullOrEmpty(gpuName)) {
                     gpuName = SettingManager.ReadSetting("GPU Name");
                     if (string.IsNullOrEmpty(gpuName)) {
@@ -547,26 +545,18 @@ namespace TinyNvidiaUpdateChecker
             int psID = 0;
             int pfID = 0;
 
-            // loop until value is selected by user
-            string key = "GPU Type";
-
-            while (psID == 0 & pfID == 0) {
-                string val = SettingManager.ReadSetting(key); // refresh value each time
-
-                /// Get correct gpu drivers:
-                /// you do not have to choose the exact GPU,
-                /// looking at supported products, we see that the same driver package includes
-                /// drivers for the majority GPU family.
-                if (val == "desktop") {
-                    psID = 98;  // GeForce 900-series
-                    pfID = 756; // GTX 970
-                } else if (val == "mobile") {
-                    psID = 99;  // GeForce 900M-series (M for Mobile)
-                    pfID = 758; // GTX 970M
-                } else {
-                    // invalid value
-                    SettingManager.SetupSetting(key);
-                }
+            /// Get correct gpu drivers:
+            /// you do not have to choose the exact GPU,
+            /// looking at supported products, we see that the same driver package includes
+            /// drivers for the majority GPU family.
+            if (gpuName.Contains("M")) {
+                // mobile | notebook
+                psID = 99;  // GeForce 900M-series (M for Mobile)
+                pfID = 758; // GTX 970M
+            } else {
+                // desktop
+                psID = 98;  // GeForce 900-series
+                pfID = 756; // GTX 970
             }
 
             // finish request
@@ -663,13 +653,13 @@ namespace TinyNvidiaUpdateChecker
 
                 // get driver desc
                 releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerHtml.Trim();
-                releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".");
+                releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".", gpuName.Contains("M"));
 
                 // Remove not needed information
                 if(psID == 98) { // desktop
                     releaseDesc = releaseDesc.Substring(297, releaseDesc.Length - 297).Trim();
                 } else { // mobile
-                    releaseDesc = releaseDesc.Substring(886, releaseDesc.Length - 886).Trim();
+                    releaseDesc = releaseDesc.Substring(878, releaseDesc.Length - 878).Trim();
                 }
 
 

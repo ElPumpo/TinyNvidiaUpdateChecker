@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Will now create a folder if the selected one isn't empty
 - Updated HtmlAgilityPack to the latest version
+- Replaced the `GPU Type` system with now assuming the type depending on the gpu name
 
 ## [1.8.0] - 2017-06-28
 ### Added

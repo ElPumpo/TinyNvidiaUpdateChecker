@@ -49,13 +49,13 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Converts HTML code to basic text
         /// </summary>
-        public static string ConvertHtml(string html)
+        public static string ConvertHtml(string html, bool isDesktop)
         {
             tries = 0; // reset
-            if(SettingManager.ReadSetting("GPU Type") == "mobile") {
-                maxTries = 7;
-            } else {
+            if(isDesktop) {
                 maxTries = 2;
+            } else {
+                maxTries = 7;
             }
 
             HtmlDocument doc = new HtmlDocument();

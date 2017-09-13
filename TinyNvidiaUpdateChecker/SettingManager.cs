@@ -123,13 +123,6 @@ namespace TinyNvidiaUpdateChecker
                     special = false;
                     break;
 
-                // gpu type
-                case "GPU Type":
-                    message = "If you're running a desktop GPU select Yes, if you're running a mobile GPU select No.";
-                    value = new string[] { "desktop", "mobile" };
-                    special = false;
-                    break;
-
                 // desc
                 case "Show Driver Description":
                     message = "Do you want to see the driver description? (BETA)";
