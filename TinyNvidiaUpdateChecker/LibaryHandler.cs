@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.IO;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -37,6 +38,10 @@ namespace TinyNvidiaUpdateChecker
         }
 
         private static LibaryFile Check7Zip() {
+            if(Directory.Exists("7-Zip")) {
+                LogManager.Log("7-Zip path: " + Path.GetFullPath("7-Zip") + @"\", LogManager.Level.INFO);
+                return new LibaryFile(Path.GetFullPath("7-Zip") + @"\", Libary.SEVENZIP, true);
+            }
             try {
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", false)) {
                     LogManager.Log("7-Zip path: " + regKey.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);

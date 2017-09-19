@@ -12,7 +12,6 @@ using HtmlAgilityPack;
 using System.Threading;
 using System.Configuration;
 using System.Management;
-using Microsoft.Win32;
 using System.Net.NetworkInformation;
 
 namespace TinyNvidiaUpdateChecker
@@ -174,26 +173,31 @@ namespace TinyNvidiaUpdateChecker
                 OfflineGPUVersion = "Unknown";
                 Console.WriteLine(ex);
             }
-            
+
             int iOnline = Convert.ToInt32(OnlineGPUVersion.Replace(".", string.Empty));
 
             if (iOnline == iOffline) {
                 Console.WriteLine("Your GPU drivers are up-to-date!");
             } else {
                 if (iOffline > iOnline) {
-                    Console.WriteLine("Your current GPU driver is newer than remote!");}
-                if (iOnline < iOffline) {
+                    Console.WriteLine("Your current GPU driver is newer than remote!");
+                } if (iOnline < iOffline) {
                     Console.WriteLine("Your GPU drivers are up-to-date!");
                 } else {
                     Console.WriteLine("There are new drivers available to download!");
                     hasSelected = true;
-                    DownloadDriver();
+
+                    if (confirmDL) {
+                        DownloadDriverQuiet();
+                    } else {
+                        DownloadDriver();
+                    }
                 }
             }
 
-            if (hasSelected == false)
-            {
-                if (forceDL == true) DownloadDriver();
+
+            if (!hasSelected) {
+                if (forceDL) DownloadDriver();
             }
 
             Console.WriteLine();
@@ -411,7 +415,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("--debug        Enable debugging for extended information.");
                     Console.WriteLine("--force-dl     Force download of drivers.");
                     Console.WriteLine("--version      View version number.");
-                    Console.WriteLine("--confirm-dl   Automaticly download driver if new one is available.");
+                    Console.WriteLine("--confirm-dl   Automaticly download and install driver if new one is available.");
                     Console.WriteLine("--help         Displays this message.");
                     Environment.Exit(0);
                 }
@@ -864,7 +868,7 @@ namespace TinyNvidiaUpdateChecker
                         result = folderDialog.ShowDialog(); // show dialog and get status (will wait for input)
                         switch (result) {
                             case DialogResult.OK:
-                                savePath = folderDialog.SelectedPath;
+                                savePath = folderDialog.SelectedPath + @"\";
                                 break;
 
                             default:
@@ -875,7 +879,7 @@ namespace TinyNvidiaUpdateChecker
 
                     // don't download driver if it already exists
                     Console.Write("Downloading the driver . . . ");
-                    if (showUI && !File.Exists(savePath + @"\" + driverFileName)) {
+                    if (showUI && !File.Exists(savePath + driverFileName)) {
 
                         using (WebClient webClient = new WebClient()) {
                             var notifier = new AutoResetEvent(false);
@@ -888,19 +892,19 @@ namespace TinyNvidiaUpdateChecker
                                 if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
                             };
 
-                            webClient.DownloadFileAsync(new Uri(downloadURL), savePath + @"\" + driverFileName);
+                            webClient.DownloadFileAsync(new Uri(downloadURL), savePath + driverFileName);
 
                             notifier.WaitOne(); // sync with the above
                             progress.Dispose(); // get rid of the progress bar
                         }
                     }
                     // show the progress bar gui
-                    else if(!showUI && !File.Exists(savePath + @"\" + driverFileName)) {
+                    else if(!showUI && !File.Exists(savePath + driverFileName)) {
                         DownloaderForm dlForm = new DownloaderForm();
                         
                         dlForm.Show();
                         dlForm.Focus();
-                        dlForm.DownloadFile(new Uri(downloadURL), savePath + @"\" + driverFileName);
+                        dlForm.DownloadFile(new Uri(downloadURL), savePath + driverFileName);
                         dlForm.Close();
                     }
                     else {
@@ -944,7 +948,7 @@ namespace TinyNvidiaUpdateChecker
                 while (val != "true" & val != "false") {
                     val = SettingManager.ReadSetting(key); // refresh value each time
                     if (val == "true") {
-                        MakeInstaller();
+                        MakeInstaller(false);
                     } else if (val == "false") {
                         break;
                     } else {
@@ -958,9 +962,9 @@ namespace TinyNvidiaUpdateChecker
                     try {
                         if(val == "true") {
                             // extracted
-                            Process.Start(savePath + @"\setup.exe");
+                            Process.Start(savePath + "setup.exe");
                         } else {
-                            Process.Start(savePath + @"\" + driverFileName);
+                            Process.Start(savePath + driverFileName);
                         }
                         
                     } catch (Exception ex) {
@@ -972,9 +976,55 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
+        /// Downloads and installs the driver without user interaction
+        /// </summary>
+        private static void DownloadDriverQuiet()
+        {
+            driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
+            savePath = Path.GetTempPath();
+
+            string FULL_PATH_DIRECTORY = savePath + OnlineGPUVersion + @"\";
+            string FULL_PATH_DRIVER = FULL_PATH_DIRECTORY + driverFileName;
+
+            savePath = FULL_PATH_DIRECTORY;
+
+            Directory.CreateDirectory(FULL_PATH_DIRECTORY);
+
+            Console.WriteLine("FULL_PATH_DIRECTORY: " + FULL_PATH_DIRECTORY);
+            Console.WriteLine("FULL_PATH_DRIVER: " + FULL_PATH_DRIVER);
+
+            if (!File.Exists(FULL_PATH_DRIVER)) {
+                using (WebClient webClient = new WebClient()) {
+                    webClient.DownloadFile(downloadURL, FULL_PATH_DRIVER);
+                }
+            }
+
+            MakeInstaller(true);
+
+            try {
+                Console.Write("Running installer . . . ");
+                Process.Start(FULL_PATH_DIRECTORY + "setup.exe", "/s").WaitForExit();
+            } catch {
+                Console.WriteLine("Could not run driver installer!");
+            } finally {
+                Console.Write("OK!");
+                Console.WriteLine();
+            }
+            
+            try {
+                Directory.Delete(FULL_PATH_DIRECTORY);
+            } catch {
+                
+            } finally {
+                Console.WriteLine("cleaned up: " + FULL_PATH_DIRECTORY);
+            }
+
+        }
+
+        /// <summary>
         /// Remove telementry and only extract basic drivers
         /// </summary>
-        private static void MakeInstaller()
+        private static void MakeInstaller(bool silent)
         {
             Console.WriteLine();
             Console.Write("Making installer . . . ");
@@ -983,32 +1033,36 @@ namespace TinyNvidiaUpdateChecker
 
             string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
 
-            File.WriteAllLines(savePath + @"\" + "inclList.txt", filesToExtract);
+            File.WriteAllLines(savePath + "inclList.txt", filesToExtract);
 
-            string fullDriverPath = @"""" + savePath + @"\" + driverFileName + @"""";
+            string fullDriverPath = @"""" + savePath + driverFileName + @"""";
 
             if (libaryFile.libary == LibaryHandler.Libary.WINRAR) {
-                using (Process WinRAR = new Process())
-                {
+                using (Process WinRAR = new Process()) {
                     WinRAR.StartInfo.FileName = libaryFile.InstallLocation + "winrar.exe";
                     WinRAR.StartInfo.WorkingDirectory = savePath;
                     WinRAR.StartInfo.Arguments = "X " + fullDriverPath + @" -N@""inclList.txt""";
+                    if (silent) WinRAR.StartInfo.Arguments += " -ibck -y";
                     WinRAR.StartInfo.UseShellExecute = false;
                     WinRAR.Start();
                     WinRAR.WaitForExit();
                 }
             } else if (libaryFile.libary == LibaryHandler.Libary.SEVENZIP) {
                 using (Process SevenZip = new Process()) {
-                    SevenZip.StartInfo.FileName = libaryFile.InstallLocation + "7zG.exe";
+                    if (silent) {
+                        SevenZip.StartInfo.FileName = libaryFile.InstallLocation + "7z.exe";
+                    } else {
+                        SevenZip.StartInfo.FileName = libaryFile.InstallLocation + "7zG.exe";
+                    }
                     SevenZip.StartInfo.WorkingDirectory = savePath;
                     SevenZip.StartInfo.Arguments = "x " + fullDriverPath + @" @inclList.txt";
+                    if (silent) SevenZip.StartInfo.Arguments += " -y";
                     SevenZip.StartInfo.UseShellExecute = false;
+                    SevenZip.StartInfo.CreateNoWindow = true; // don't show the console in our console!
                     SevenZip.Start();
                     SevenZip.WaitForExit();
                 }
             }
-
-
 
             Console.Write("OK!");
             Console.WriteLine();
