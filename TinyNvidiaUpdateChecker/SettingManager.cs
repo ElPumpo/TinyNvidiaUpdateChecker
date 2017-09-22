@@ -112,18 +112,11 @@ namespace TinyNvidiaUpdateChecker
             string message = null;
             string[] value = null;
 
-            switch (key)
-            {
+            switch (key) {
 
                 // check for update
                 case "Check for Updates":
                     message = "Do you want to search for client updates?";
-                    value = new string[] { "true", "false" };
-                    break;
-
-                // desc
-                case "Show Driver Description":
-                    message = "Do you want to see the driver description? (BETA)";
                     value = new string[] { "true", "false" };
                     break;
 

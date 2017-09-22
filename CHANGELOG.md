@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- New fancy dialog when a new driver is available
 - No more weird notes in the release description
 - Basic logic for new libary handling system
 - Support for 7-Zip

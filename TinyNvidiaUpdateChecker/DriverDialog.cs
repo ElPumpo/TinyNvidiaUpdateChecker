@@ -1,0 +1,67 @@
+﻿using System;
+using System.Diagnostics;
+using System.Windows.Forms;
+
+namespace TinyNvidiaUpdateChecker
+{
+    public partial class DriverDialog : Form
+    {
+        public DriverDialog()
+        {
+            InitializeComponent();
+        }
+
+        public static string ShowGUI()
+        {
+            // show the form
+            using (DriverDialog form = new DriverDialog()) {
+                form.ShowDialog();
+            }
+
+            return null;
+        }
+
+        private void DriverDialog_Load(object sender, EventArgs e)
+        {
+            // ReleaseNotesBox.Text = MainConsole.releaseDesc;
+            webBrowser1.DocumentText = MainConsole.releaseDesc;
+
+            int DateDiff = (DateTime.Now - MainConsole.releaseDate).Days; // how many days between the two dates
+            string theDate = null;
+
+            if (DateDiff == 1){
+                theDate = DateDiff + " day ago";
+            } else if (DateDiff < 1) {
+                theDate = "today"; // we only have the date and not time :/
+            } else {
+                theDate = DateDiff + " days ago";
+            }
+
+            ReleasedLabel.Text += theDate;
+
+            VersionLabel.Text += MainConsole.OnlineGPUVersion + " (you're on " + MainConsole.OfflineGPUVersion + ")";
+        }
+
+        private void NotesBtn_Click(object sender, EventArgs e)
+        {
+            try {
+                Process.Start(MainConsole.pdfURL);
+            } catch (Exception ex) {
+                Console.WriteLine(ex.StackTrace);
+            }
+        }
+
+        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            webBrowser1.Document.ExecCommand("SelectAll", false, "null");
+            webBrowser1.Document.ExecCommand("FontName", false, "Microsoft Sans Serif"); // or any desired font
+            webBrowser1.Document.ExecCommand("FontSize", false, 1);
+            webBrowser1.Document.ExecCommand("Unselect", false, "null");
+        }
+
+        private void IgnoreBtn_Click(object sender, EventArgs e)
+        {
+            
+        }
+    }
+}

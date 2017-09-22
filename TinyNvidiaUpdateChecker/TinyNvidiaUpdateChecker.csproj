@@ -79,6 +79,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DriverDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DriverDialog.Designer.cs">
+      <DependentUpon>DriverDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="LibaryHandler.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="MainConsole.cs" />
@@ -122,6 +128,9 @@
   <ItemGroup>
     <EmbeddedResource Include="DownloaderForm.resx">
       <DependentUpon>DownloaderForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DriverDialog.resx">
+      <DependentUpon>DriverDialog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

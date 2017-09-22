@@ -56,12 +56,12 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Current GPU driver version
         /// </summary>
-        private static string OfflineGPUVersion;
+        public static string OfflineGPUVersion;
 
         /// <summary>
         /// Remote GPU driver version
         /// </summary>
-        private static string OnlineGPUVersion;
+        public static string OnlineGPUVersion;
 
         /// <summary>
         /// Langauge ID for GPU driver download
@@ -71,9 +71,9 @@ namespace TinyNvidiaUpdateChecker
         private static string downloadURL;
         private static string savePath;
         private static string driverFileName;
-        private static string pdfURL;
-        private static DateTime releaseDate;
-        private static string releaseDesc;
+        public static string pdfURL;
+        public static DateTime releaseDate;
+        public static string releaseDesc;
 
         /// <summary>
         /// Local Windows version
@@ -229,7 +229,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Generating configuration file, this only happenes once.");
 
                 SettingManager.SetupSetting("Check for Updates");
-                SettingManager.SetupSetting("Show Driver Description");
                 SettingManager.SetupSetting("Minimal install");
 
                 Console.WriteLine();
@@ -667,8 +666,8 @@ namespace TinyNvidiaUpdateChecker
                     LogManager.Log("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.", LogManager.Level.INFO);
                 }
 
-                // get driver desc
-                releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerText.Trim();
+                // get driver description and show it in HTML
+                releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerHtml.Trim();
 
                 // get download link
                 htmlDocument = htmlWeb.Load(confirmURL);
@@ -792,40 +791,14 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void DownloadDriver()
         {
-            int DateDiff = (DateTime.Now - releaseDate).Days; // how many days between the two dates
-            string theDate = null;
-
-            if (DateDiff == 1) {
-                theDate = DateDiff + " day ago";
-            } else if (DateDiff < 1) {
-                theDate = "today"; // we only have the date and not time :/
-            } else {
-                theDate = DateDiff + " days ago";
-            }
-
-            string message = "Graphics card drivers are available, do you want to update now?" + Environment.NewLine + Environment.NewLine;
-
-            string key = "Show Driver Description";
             string val = null;
+            string message = null;
+            string key = null;
 
-            // loop
-            while (val != "true" & val != "false") {
-                val = SettingManager.ReadSetting(key); // refresh value each time
+            // DialogResult dialog = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult dialog = DialogResult.Abort;
 
-                if (val == "true") {
-                    message = message + "Description: " + releaseDesc + Environment.NewLine + Environment.NewLine;
-                } else if (val == "false") {
-                    break;
-                } else {
-                    // invalid value
-                    SettingManager.SetupSetting(key);
-                }
-            }
-
-            message += "Driver version: " + OnlineGPUVersion + " (you're running " + OfflineGPUVersion + ")" + Environment.NewLine +
-                        "Driver released: " + theDate + " (" + releaseDate.ToShortDateString() + ")";
-
-            DialogResult dialog = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DriverDialog.ShowGUI();
 
             if (dialog == DialogResult.Yes) {
 
