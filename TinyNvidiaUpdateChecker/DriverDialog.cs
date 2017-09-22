@@ -6,6 +6,7 @@ namespace TinyNvidiaUpdateChecker
 {
     public partial class DriverDialog : Form
     {
+        public static SelectedBtn selectedBtn;
         public DriverDialog()
         {
             InitializeComponent();
@@ -61,7 +62,28 @@ namespace TinyNvidiaUpdateChecker
 
         private void IgnoreBtn_Click(object sender, EventArgs e)
         {
-            
+            selectedBtn = SelectedBtn.IGNORE;
+            Close();
+        }
+
+        private void DownloadInstallButton_Click(object sender, EventArgs e)
+        {
+            selectedBtn = SelectedBtn.DLINSTALL;
+            Close();
+        }
+
+        private void DownloadBtn_Click(object sender, EventArgs e)
+        {
+            selectedBtn = SelectedBtn.DLEXTRACT;
+            Close();
+        }
+
+        public enum SelectedBtn
+        {
+            DLINSTALL,
+            DLEXTRACT,
+            IGNORE
+
         }
     }
 }

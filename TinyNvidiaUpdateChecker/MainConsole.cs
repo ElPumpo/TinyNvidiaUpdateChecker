@@ -795,15 +795,11 @@ namespace TinyNvidiaUpdateChecker
             string message = null;
             string key = null;
 
-            // DialogResult dialog = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            DialogResult dialog = DialogResult.Abort;
-
             DriverDialog.ShowGUI();
 
-            if (dialog == DialogResult.Yes) {
-
+            if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLEXTRACT) {
+                // download and save (and extract)
                 Console.WriteLine();
-
                 bool error = false;
                 driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
 
@@ -862,6 +858,8 @@ namespace TinyNvidiaUpdateChecker
 
                             notifier.WaitOne(); // sync with the above
                             progress.Dispose(); // get rid of the progress bar
+
+                            webClient.DownloadFile(pdfURL, savePath + pdfURL.Split('/').Last()); // download release notes
                         }
                     }
                     // show the progress bar gui
@@ -898,16 +896,6 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("savePath: " + savePath);
                 }
 
-                dialog = MessageBox.Show("Do you want view the release PDF?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (dialog == DialogResult.Yes) {
-                    try {
-                        Process.Start(pdfURL);
-                    }
-                    catch (Exception ex) {
-                        Console.WriteLine(ex.StackTrace);
-                    }
-                }
-
                 key = "Minimal install";
                 val = null; // reset value
                 // loop
@@ -922,22 +910,8 @@ namespace TinyNvidiaUpdateChecker
                         SettingManager.SetupSetting(key);
                     }
                 }
-
-                dialog = MessageBox.Show("Do you wish to run the driver installer?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (dialog == DialogResult.Yes) {
-                    try {
-                        if(val == "true") {
-                            // extracted
-                            Process.Start(savePath + "setup.exe");
-                        } else {
-                            Process.Start(savePath + driverFileName);
-                        }
-                        
-                    } catch (Exception ex) {
-                        Console.WriteLine(ex.StackTrace);
-                    }
-                    
-                }
+            } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLINSTALL) {
+                DownloadDriverQuiet();
             }
         }
 
@@ -955,13 +929,25 @@ namespace TinyNvidiaUpdateChecker
             savePath = FULL_PATH_DIRECTORY;
 
             Directory.CreateDirectory(FULL_PATH_DIRECTORY);
-
-            Console.WriteLine("FULL_PATH_DIRECTORY: " + FULL_PATH_DIRECTORY);
-            Console.WriteLine("FULL_PATH_DRIVER: " + FULL_PATH_DRIVER);
-
+           
             if (!File.Exists(FULL_PATH_DRIVER)) {
+                Console.Write("Downloading the driver . . . ");
                 using (WebClient webClient = new WebClient()) {
-                    webClient.DownloadFile(downloadURL, FULL_PATH_DRIVER);
+                    var notifier = new AutoResetEvent(false);
+                    var progress = new ProgressBar();
+
+                    webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
+                        progress.Report((double)e.ProgressPercentage / 100);
+
+                        if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
+                    };
+
+                    webClient.DownloadFile(pdfURL, savePath + pdfURL.Split('/').Last()); // download release notes
+
+                    webClient.DownloadFileAsync(new Uri(downloadURL), FULL_PATH_DRIVER);
+
+                    notifier.WaitOne(); // sync with the above
+                    progress.Dispose(); // get rid of the progress bar
                 }
             }
 
@@ -970,19 +956,18 @@ namespace TinyNvidiaUpdateChecker
             try {
                 Console.Write("Running installer . . . ");
                 Process.Start(FULL_PATH_DIRECTORY + "setup.exe", "/s").WaitForExit();
+                Console.Write("OK!");
             } catch {
                 Console.WriteLine("Could not run driver installer!");
-            } finally {
-                Console.Write("OK!");
-                Console.WriteLine();
             }
-            
+
+            Console.WriteLine();
+
             try {
                 Directory.Delete(FULL_PATH_DIRECTORY);
+                Console.WriteLine("Cleaned up: " + FULL_PATH_DIRECTORY);
             } catch {
-                
-            } finally {
-                Console.WriteLine("cleaned up: " + FULL_PATH_DIRECTORY);
+
             }
 
         }
