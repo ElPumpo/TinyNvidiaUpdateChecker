@@ -171,7 +171,7 @@ namespace TinyNvidiaUpdateChecker
                 iOffline = Convert.ToInt32(OfflineGPUVersion.Replace(".", string.Empty));
             } catch(Exception ex) {
                 OfflineGPUVersion = "Unknown";
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.ToString());
             }
 
             int iOnline = Convert.ToInt32(OnlineGPUVersion.Replace(".", string.Empty));
@@ -256,9 +256,9 @@ namespace TinyNvidiaUpdateChecker
                 error++;
                 onlineVer = "0.0.0";
                 Console.Write("ERROR!");
-                LogManager.Log(ex.Message, LogManager.Level.ERROR);
+                LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.ToString());
             }
             if (error == 0) {
                 Console.Write("OK!");
@@ -375,7 +375,7 @@ namespace TinyNvidiaUpdateChecker
                             File.Delete(configFile);
                         } catch (Exception ex) {
                             RunIntro();
-                            Console.WriteLine(ex.StackTrace);
+                            Console.WriteLine(ex.ToString());
                             Console.WriteLine();
                         }
                     }
@@ -549,7 +549,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("ERROR!");
                 LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.ToString());
             }
 
             /// In order to proceed, we must input what GPU we have.
@@ -590,7 +590,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                     error++;
                 }
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.ToString());
             }
 
             try
@@ -681,13 +681,13 @@ namespace TinyNvidiaUpdateChecker
 
             } catch (Exception ex) {
                 OnlineGPUVersion = "000.00";
-                LogManager.Log(ex.Message, LogManager.Level.ERROR);
+                LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                 if (error == 0) {
                     Console.Write("ERROR!");
                     Console.WriteLine();
                     error++;
                 }
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.ToString());
             }
 
             if (error == 0) {
@@ -745,7 +745,7 @@ namespace TinyNvidiaUpdateChecker
                 } catch (Exception ex) {
                     Console.Write("ERROR!");
                     Console.WriteLine();
-                    Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine(ex.ToString());
                     Console.WriteLine();
                 }
 
@@ -880,9 +880,9 @@ namespace TinyNvidiaUpdateChecker
                 {
                     error = true;
                     Console.Write("ERROR!");
-                    LogManager.Log(ex.Message, LogManager.Level.ERROR);
+                    LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                     Console.WriteLine();
-                    Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine(ex.ToString());
                     Console.WriteLine();
                 }
 
