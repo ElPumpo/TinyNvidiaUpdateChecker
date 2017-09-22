@@ -668,16 +668,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 // get driver desc
-                releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerHtml.Trim();
-                releaseDesc = HtmlToText.ConvertHtml(releaseDesc + ".", gpuName.Contains("M"));
-
-                // Remove not needed information
-                if(psID == 98) { // desktop
-                    releaseDesc = releaseDesc.Substring(297, releaseDesc.Length - 297).Trim();
-                } else { // mobile
-                    releaseDesc = releaseDesc.Substring(878, releaseDesc.Length - 878).Trim();
-                }
-
+                releaseDesc = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='tab1_content']").InnerText.Trim();
 
                 // get download link
                 htmlDocument = htmlWeb.Load(confirmURL);

@@ -79,7 +79,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HtmlToText.cs" />
     <Compile Include="LibaryHandler.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="MainConsole.cs" />
