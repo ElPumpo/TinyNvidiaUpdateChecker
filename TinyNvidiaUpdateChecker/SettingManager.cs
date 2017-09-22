@@ -111,7 +111,6 @@ namespace TinyNvidiaUpdateChecker
         {
             string message = null;
             string[] value = null;
-            Boolean special = false;
 
             switch (key)
             {
@@ -120,49 +119,34 @@ namespace TinyNvidiaUpdateChecker
                 case "Check for Updates":
                     message = "Do you want to search for client updates?";
                     value = new string[] { "true", "false" };
-                    special = false;
                     break;
 
                 // desc
                 case "Show Driver Description":
                     message = "Do you want to see the driver description? (BETA)";
                     value = new string[] { "true", "false" };
-                    special = false;
                     break;
-
-                // the gpu
-                case "GPU Name":
-                    message = "GPU Name";
-                    value = new string[] { SelectGPU.getGPU() };
-                    special = true;
-                    break;
-
 
                 // minimal installer maker
                 case "Minimal install":
-                    message = "Do you want to perform a minimal install of the drivers? This will remove telemetry and other things you won't need, but requires WinRAR installed.";
+                    message = "Do you want to perform a minimal install of the drivers? This will make sure you don't install telemetry and miscellaneous addons, but requires either WinRAR or 7-Zip to be installed.";
                     value = new string[] { "true", "false" };
-                    special = false;
                     break;
 
                 default:
                     MessageBox.Show("Unknown key '" + key + "'", "TinyNvidiaUpdateChecker", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     message = "Unknown";
                     value = null;
-                    special = false;
                     break;
 
             }
-            if(special) {
+            DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (dialogUpdates == DialogResult.Yes) {
                 SetSetting(key, value[0]);
             } else {
-                DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (dialogUpdates == DialogResult.Yes) {
-                    SetSetting(key, value[0]);
-                } else {
-                    SetSetting(key, value[1]);
-                }
+                SetSetting(key, value[1]);
             }
+
 
         }
 

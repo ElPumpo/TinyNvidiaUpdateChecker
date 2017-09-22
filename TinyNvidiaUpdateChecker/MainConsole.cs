@@ -134,7 +134,7 @@ namespace TinyNvidiaUpdateChecker
 
             RunIntro(); // will run intro if no args needs to output stuff
 
-            if (showUI == true) {
+            if (showUI) {
                 AllocConsole();
             }
 
@@ -202,7 +202,7 @@ namespace TinyNvidiaUpdateChecker
 
             Console.WriteLine();
             Console.WriteLine("Job done! Press any key to exit.");
-            if (showUI == true) Console.ReadKey();
+            if (showUI) Console.ReadKey();
             LogManager.Log("BYE!", LogManager.Level.INFO);
             Environment.Exit(0);
         }
@@ -230,7 +230,6 @@ namespace TinyNvidiaUpdateChecker
 
                 SettingManager.SetupSetting("Check for Updates");
                 SettingManager.SetupSetting("Show Driver Description");
-                SettingManager.SetupSetting("GPU Name");
                 SettingManager.SetupSetting("Minimal install");
 
                 Console.WriteLine();
@@ -339,7 +338,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine(message);
                 Console.WriteLine("verOrg: " + verOrg);
                 LogManager.Log(message, LogManager.Level.ERROR);
-                if (showUI == true) Console.ReadKey();
+                if (showUI) Console.ReadKey();
                 Environment.Exit(1);
             }
 
@@ -498,7 +497,7 @@ namespace TinyNvidiaUpdateChecker
                     break;
             }
 
-            if (debug == true) {
+            if (debug) {
                 Console.WriteLine("langID:   " + langID);
                 Console.WriteLine("cultName: " + cultName);
                 Console.WriteLine();
@@ -517,31 +516,34 @@ namespace TinyNvidiaUpdateChecker
             string confirmURL = null;
             string gpuURL = null;
             string gpuName = null;
+            bool foundGpu = false;
 
             // query local driver version
             try {
-                while (string.IsNullOrEmpty(gpuName)) {
-                    gpuName = SettingManager.ReadSetting("GPU Name");
-                    if (string.IsNullOrEmpty(gpuName)) {
-                        SettingManager.SetupSetting("GPU Name");
-                    }
-                }
-
                 ManagementObjectSearcher objectSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
 
                 // TODO: this is not the optimal code
                 foreach (ManagementObject obj in objectSearcher.Get()) {
-                    if(obj["Description"].ToString() == gpuName) {
+                    if (obj["Description"].ToString().ToLower().Contains("nvidia")) {
+                        gpuName = obj["Description"].ToString().Trim();
                         OfflineGPUVersion = obj["DriverVersion"].ToString().Replace(".", string.Empty).Substring(5);
                         OfflineGPUVersion = OfflineGPUVersion.Substring(0, 3) + "." + OfflineGPUVersion.Substring(3); // add dot
+                        foundGpu = true;
                         break;
-                    } else {
-                       // gpu not found
+                    }  else {
+                        // gpu not found
+                        LogManager.Log(obj["Description"].ToString().Trim() + " is not NVIDIA!", LogManager.Level.INFO);
                     }
-                  
                 }
-            
 
+                if (!foundGpu) throw new InvalidDataException();
+
+            } catch (InvalidDataException) {
+                Console.Write("ERROR!");
+                Console.WriteLine();
+                Console.WriteLine("No supported nvidia graphics cards were not found, and the application will not continue!");
+                if (showUI) Console.ReadKey();
+                Environment.Exit(1);
             } catch (Exception ex) {
                 error++;
                 OfflineGPUVersion = "000.00";
@@ -734,7 +736,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.Write("ERROR!");
                     Console.WriteLine();
                     Console.WriteLine("No network connection was found, the application will now determinate!");
-                    if (showUI == true) Console.ReadKey();
+                    if (showUI) Console.ReadKey();
                     Environment.Exit(2);
                     break;
             }
@@ -784,7 +786,7 @@ namespace TinyNvidiaUpdateChecker
                         SettingManager.SetSetting(key, "false");
                     } else {
                         Console.WriteLine("The application will determinate itself");
-                        if (showUI == true) Console.ReadKey();
+                        if (showUI) Console.ReadKey();
                         Environment.Exit(2);
                     }
                 }

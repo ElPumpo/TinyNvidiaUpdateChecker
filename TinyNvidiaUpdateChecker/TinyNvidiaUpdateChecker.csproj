@@ -91,12 +91,6 @@
       <DependentUpon>DownloaderForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectGPU.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SelectGPU.Designer.cs">
-      <DependentUpon>SelectGPU.cs</DependentUpon>
-    </Compile>
     <Compile Include="SettingManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -129,9 +123,6 @@
   <ItemGroup>
     <EmbeddedResource Include="DownloaderForm.resx">
       <DependentUpon>DownloaderForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SelectGPU.resx">
-      <DependentUpon>SelectGPU.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

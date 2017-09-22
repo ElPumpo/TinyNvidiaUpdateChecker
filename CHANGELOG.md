@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Replaced the `GPU Type` system with now assuming the type depending on the gpu name
 - Changed back to the correct folder browser dialog
 
+### Removed
+- You no longer have to select your gpu
+
 ## [1.8.0] - 2017-06-28
 ### Added
 - Inform user to select a empty folder if using the minimal installer.
