@@ -163,7 +163,7 @@ namespace TinyNvidiaUpdateChecker
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DriverDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Driver up!";
+            this.Text = "TinyNvidiaUpdateChecker";
             this.Load += new System.EventHandler(this.DriverDialog_Load);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
