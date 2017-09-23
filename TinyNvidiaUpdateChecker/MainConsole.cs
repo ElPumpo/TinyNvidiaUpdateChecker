@@ -76,6 +76,11 @@ namespace TinyNvidiaUpdateChecker
         public static string releaseDesc;
 
         /// <summary>
+        /// The file size of downloadURL in bytes
+        /// </summary>
+        public static long downloadFileSize;
+
+        /// <summary>
         /// Local Windows version
         /// </summary>
         private static string winVer;
@@ -642,19 +647,22 @@ namespace TinyNvidiaUpdateChecker
 
                 releaseDate = new DateTime(year, month, day); // follows the ISO 8601 standard 
 
-                IEnumerable <HtmlNode> links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
-                foreach (var link in links) {
+                IEnumerable <HtmlNode> node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
 
-                    // get driver URL
-                    if (link.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/")) {
-                        confirmURL = "http://www.nvidia.com" + link.Attributes["href"].Value.Trim();
+                // get driver URL
+                foreach (var child in node) {
+                    if (child.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/")) {
+                        confirmURL = "http://www.nvidia.com" + child.Attributes["href"].Value.Trim();
+                        break;
                     }
+                }
 
-                    // get release notes URL
-                    if (link.Attributes["href"].Value.Contains("release-notes.pdf")) {
-                        pdfURL = link.Attributes["href"].Value.Trim();
+                // get release notes URL
+                foreach (var child in node) {
+                    if (child.Attributes["href"].Value.Contains("release-notes.pdf")) {
+                        pdfURL = child.Attributes["href"].Value.Trim();
+                        break;
                     }
-                    
                 }
 
                 if (pdfURL == null) {
@@ -671,12 +679,19 @@ namespace TinyNvidiaUpdateChecker
 
                 // get download link
                 htmlDocument = htmlWeb.Load(confirmURL);
-                links = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
-                foreach (var link in links) {
-                    if (link.Attributes["href"].Value.Contains("download.nvidia")) {
-                        downloadURL = link.Attributes["href"].Value.Trim();
+                node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
+                foreach (var child in node) {
+                    if (child.Attributes["href"].Value.Contains("download.nvidia")) {
+                        downloadURL = child.Attributes["href"].Value.Trim();
                         break; // don't need to keep search after we've found what we searched for
                     }
+                }
+
+                // get file size
+                WebRequest request = WebRequest.Create(downloadURL);
+                request.Method = "HEAD";
+                using (WebResponse responce = request.GetResponse()) {
+                    downloadFileSize = responce.ContentLength;
                 }
 
             } catch (Exception ex) {
@@ -702,6 +717,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("downloadURL: " + downloadURL);
                 Console.WriteLine("pdfURL:      " + pdfURL);
                 Console.WriteLine("releaseDate: " + releaseDate.ToShortDateString());
+                Console.WriteLine("downloadFileSize: " + downloadFileSize.ToString());
                 Console.WriteLine("OfflineGPUVersion: " + OfflineGPUVersion);
                 Console.WriteLine("OnlineGPUVersion:  " + OnlineGPUVersion);
             }
