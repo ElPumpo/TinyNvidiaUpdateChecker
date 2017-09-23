@@ -7,6 +7,7 @@ namespace TinyNvidiaUpdateChecker
     public partial class DriverDialog : Form
     {
         public static SelectedBtn selectedBtn;
+
         public DriverDialog()
         {
             InitializeComponent();

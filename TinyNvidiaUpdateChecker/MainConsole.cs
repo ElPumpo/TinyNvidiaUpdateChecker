@@ -858,8 +858,6 @@ namespace TinyNvidiaUpdateChecker
 
                             notifier.WaitOne(); // sync with the above
                             progress.Dispose(); // get rid of the progress bar
-
-                            webClient.DownloadFile(pdfURL, savePath + pdfURL.Split('/').Last()); // download release notes
                         }
                     }
                     // show the progress bar gui
@@ -942,8 +940,6 @@ namespace TinyNvidiaUpdateChecker
                         if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
                     };
 
-                    webClient.DownloadFile(pdfURL, savePath + pdfURL.Split('/').Last()); // download release notes
-
                     webClient.DownloadFileAsync(new Uri(downloadURL), FULL_PATH_DRIVER);
 
                     notifier.WaitOne(); // sync with the above
@@ -980,11 +976,18 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
             Console.Write("Making installer . . . ");
 
+            int error = 0;
             LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
-
             string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
 
-            File.WriteAllLines(savePath + "inclList.txt", filesToExtract);
+            try {
+                File.WriteAllLines(savePath + "inclList.txt", filesToExtract);
+            } catch (Exception ex) {
+                error++;
+                Console.Write("ERROR!");
+                Console.WriteLine();
+                Console.WriteLine(ex.ToString());
+            }
 
             string fullDriverPath = @"""" + savePath + driverFileName + @"""";
 
@@ -995,8 +998,16 @@ namespace TinyNvidiaUpdateChecker
                     WinRAR.StartInfo.Arguments = "X " + fullDriverPath + @" -N@""inclList.txt""";
                     if (silent) WinRAR.StartInfo.Arguments += " -ibck -y";
                     WinRAR.StartInfo.UseShellExecute = false;
-                    WinRAR.Start();
-                    WinRAR.WaitForExit();
+                    try {
+                        WinRAR.Start();
+                        WinRAR.WaitForExit();
+                    } catch (Exception ex) {
+                        error++;
+                        Console.Write("ERROR!");
+                        Console.WriteLine();
+                        Console.WriteLine(ex.ToString());
+                    }
+
                 }
             } else if (libaryFile.libary == LibaryHandler.Libary.SEVENZIP) {
                 using (Process SevenZip = new Process()) {
@@ -1010,13 +1021,22 @@ namespace TinyNvidiaUpdateChecker
                     if (silent) SevenZip.StartInfo.Arguments += " -y";
                     SevenZip.StartInfo.UseShellExecute = false;
                     SevenZip.StartInfo.CreateNoWindow = true; // don't show the console in our console!
-                    SevenZip.Start();
-                    SevenZip.WaitForExit();
+                    try {
+                        SevenZip.Start();
+                        SevenZip.WaitForExit();
+                    } catch (Exception ex) {
+                        error++;
+                        Console.Write("ERROR!");
+                        Console.WriteLine();
+                        Console.WriteLine(ex.ToString());
+                    }
                 }
             }
 
-            Console.Write("OK!");
-            Console.WriteLine();
+            if(error == 0) {
+                Console.Write("OK!");
+                Console.WriteLine();
+            }
 
         }
 
