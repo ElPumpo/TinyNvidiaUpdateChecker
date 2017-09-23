@@ -23,7 +23,6 @@ namespace TinyNvidiaUpdateChecker
                     progressBar1.Value = e.ProgressPercentage;
                 };
                 
-                
                 webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
                     if (e.Cancelled) {
                         File.Delete(savePath);
