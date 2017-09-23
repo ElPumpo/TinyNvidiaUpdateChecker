@@ -13,6 +13,7 @@ using System.Threading;
 using System.Configuration;
 using System.Management;
 using System.Net.NetworkInformation;
+using System.ComponentModel;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -855,6 +856,11 @@ namespace TinyNvidiaUpdateChecker
                         }
                     }
 
+                    if(!DoesDriverFileSizeMatch(savePath + driverFileName)) {
+                        LogManager.Log("Deleting " + savePath + driverFileName + " because its length doesn't match!", LogManager.Level.INFO);
+                        File.Delete(savePath + driverFileName);
+                    }
+
                     // don't download driver if it already exists
                     Console.Write("Downloading the driver . . . ");
                     if (showUI && !File.Exists(savePath + driverFileName)) {
@@ -868,6 +874,13 @@ namespace TinyNvidiaUpdateChecker
                                 progress.Report((double)e.ProgressPercentage / 100);
 
                                 if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
+                            };
+
+                            webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e)
+                            {
+                                if(e.Cancelled) {
+                                    File.Delete(savePath + driverFileName);
+                                }
                             };
 
                             webClient.DownloadFileAsync(new Uri(downloadURL), savePath + driverFileName);
@@ -943,7 +956,12 @@ namespace TinyNvidiaUpdateChecker
             savePath = FULL_PATH_DIRECTORY;
 
             Directory.CreateDirectory(FULL_PATH_DIRECTORY);
-           
+
+            if (!DoesDriverFileSizeMatch(FULL_PATH_DRIVER)) {
+                LogManager.Log("Deleting " + FULL_PATH_DRIVER + " because its length doesn't match!", LogManager.Level.INFO);
+                File.Delete(savePath + driverFileName);
+            }
+
             if (!File.Exists(FULL_PATH_DRIVER)) {
                 Console.Write("Downloading the driver . . . ");
                 using (WebClient webClient = new WebClient()) {
@@ -954,6 +972,12 @@ namespace TinyNvidiaUpdateChecker
                         progress.Report((double)e.ProgressPercentage / 100);
 
                         if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
+                    };
+
+                    webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
+                        if (e.Cancelled) {
+                            File.Delete(FULL_PATH_DRIVER);
+                        }
                     };
 
                     webClient.DownloadFileAsync(new Uri(downloadURL), FULL_PATH_DRIVER);
@@ -1098,5 +1122,9 @@ namespace TinyNvidiaUpdateChecker
             .SetValue(null, null);
         }
 
+        private static bool DoesDriverFileSizeMatch(string FULL_PATH_DRIVER)
+        {
+            return new FileInfo(FULL_PATH_DRIVER).Length == downloadFileSize;
+        }
     }
 }

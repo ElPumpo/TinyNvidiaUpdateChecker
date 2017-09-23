@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Basic logic for new libary handling system
 - Support for 7-Zip
 - `--confirm-dl` argument. It will automaticly download and install new drivers! (uses minimal installer)
+- Implemented check for driver file size
 
 ### Changed
 - Updated HtmlAgilityPack to the latest version

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Net;
 using System.Windows.Forms;
 
@@ -24,6 +25,9 @@ namespace TinyNvidiaUpdateChecker
                 
                 
                 webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
+                    if (e.Cancelled) {
+                        File.Delete(savePath);
+                    }
                     isDownloadComplete = true;
                 };
                 
