@@ -811,12 +811,12 @@ namespace TinyNvidiaUpdateChecker
                     }
                     // show the progress bar gui
                     else if(!showUI && !File.Exists(savePath + driverFileName)) {
-                        DownloaderForm dlForm = new DownloaderForm();
-                        
-                        dlForm.Show();
-                        dlForm.Focus();
-                        dlForm.DownloadFile(new Uri(downloadURL), savePath + driverFileName);
-                        dlForm.Close();
+                        using (DownloaderForm dlForm = new DownloaderForm()) {
+                            dlForm.Show();
+                            dlForm.Focus();
+                            dlForm.DownloadFile(new Uri(downloadURL), savePath + driverFileName);
+                            dlForm.Close();
+                        }
                     } else {
                         LogManager.Log("Driver is already downloaded", LogManager.Level.INFO);
                     }
@@ -869,26 +869,36 @@ namespace TinyNvidiaUpdateChecker
 
             if (!File.Exists(FULL_PATH_DRIVER)) {
                 Console.Write("Downloading the driver . . . ");
-                using (WebClient webClient = new WebClient()) {
-                    var notifier = new AutoResetEvent(false);
-                    var progress = new ProgressBar();
 
-                    webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
-                        progress.Report((double)e.ProgressPercentage / 100);
+                if (showUI) {
+                    using (WebClient webClient = new WebClient()) {
+                        var notifier = new AutoResetEvent(false);
+                        var progress = new ProgressBar();
 
-                        if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
-                    };
+                        webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
+                            progress.Report((double)e.ProgressPercentage / 100);
 
-                    webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
-                        if (e.Cancelled) {
-                            File.Delete(FULL_PATH_DRIVER);
-                        }
-                    };
+                            if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
+                        };
 
-                    webClient.DownloadFileAsync(new Uri(downloadURL), FULL_PATH_DRIVER);
+                        webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
+                            if (e.Cancelled) {
+                                File.Delete(FULL_PATH_DRIVER);
+                            }
+                        };
 
-                    notifier.WaitOne(); // sync with the above
-                    progress.Dispose(); // get rid of the progress bar
+                        webClient.DownloadFileAsync(new Uri(downloadURL), FULL_PATH_DRIVER);
+
+                        notifier.WaitOne(); // sync with the above
+                        progress.Dispose(); // get rid of the progress bar
+                    }
+                } else {
+                    using (DownloaderForm dlForm = new DownloaderForm()) {
+                        dlForm.Show();
+                        dlForm.Focus();
+                        dlForm.DownloadFile(new Uri(downloadURL), FULL_PATH_DRIVER);
+                        dlForm.Close();
+                    }
                 }
             }
 
