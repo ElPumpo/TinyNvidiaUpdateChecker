@@ -467,7 +467,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("cultName: " + cultName);
                 Console.WriteLine();
             }
-            LogManager.Log("langID: " + langID, LogManager.Level.INFO);
         }
 
         /// <summary>

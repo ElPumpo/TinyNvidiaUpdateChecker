@@ -52,6 +52,8 @@ namespace TinyNvidiaUpdateChecker
                 configFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile; // in case we wipe the config (see below)
             }
 
+            ResetConfigMechanism(); // still needed 2017-09-24
+
             if (MainConsole.debug) {
                 Console.WriteLine("configFile: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
             }
@@ -93,7 +95,7 @@ namespace TinyNvidiaUpdateChecker
             string result = null;
 
             try {
-                LogManager.Log("key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'", LogManager.Level.SETTING);
+                LogManager.Log("operation='read',key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'", LogManager.Level.SETTING);
 
                 if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
@@ -121,8 +123,9 @@ namespace TinyNvidiaUpdateChecker
         /// <param name="val"> Requested value.</param>
         public static void SetSetting(string key, string val)
         {
-            try
-            {
+            try {
+                LogManager.Log("operation='set',key='" + key + "',val='" + val + "'", LogManager.Level.SETTING);
+
                 var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                 var settings = configFile.AppSettings.Settings;
 
@@ -137,7 +140,6 @@ namespace TinyNvidiaUpdateChecker
                 ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
 
             } catch (ConfigurationErrorsException ex) {
-
                 // clean config file
                 if (File.Exists(configFile)) {
 
@@ -188,23 +190,25 @@ namespace TinyNvidiaUpdateChecker
 
             }
 
-            if(!MainConsole.confirmDL) {
+            if (!MainConsole.confirmDL) {
                 DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialogUpdates == DialogResult.Yes) {
                     SetSetting(key, value[0]);
+                    LogManager.Log("operation='setup',key='" + key + "',val='" + value[0] + "'", LogManager.Level.SETTING);
                 } else {
                     SetSetting(key, value[1]);
+                    LogManager.Log("operation='setup',key='" + key + "',val='" + value[1] + "'", LogManager.Level.SETTING);
                 }
             } else {
                 SetSetting(key, value[1]);
+                LogManager.Log("operation='setup',key='" + key + "',val='" + value[1] + "'", LogManager.Level.SETTING);
             }
-
-
 
         }
 
         /// <summary>
-        /// Credit goes to Daniel Hilgarth for the weird bug fix I'm experiencing on my dev station, call after setting config dir.
+        /// Credit goes to Daniel Hilgarth,
+        /// fixes the bug where the config strait up refuses to be read
         /// </summary>
         private static void ResetConfigMechanism()
         {
@@ -229,12 +233,23 @@ namespace TinyNvidiaUpdateChecker
         {
             string read = ReadSetting(key);
 
-            if(read == "true") {
+            if (read == "true") {
                 return true;
             } else if (read == "false") {
                 return false;
-            }
+            } else {
 
+                // setup and read
+                SetupSetting(key);
+                read = ReadSetting(key);
+
+                if (read == "true") {
+                    return true;
+                } else if (read == "false") {
+                    return false;
+                }
+            }
+            Console.WriteLine("Could not retrive the key '" + key + "', this is bad!");
             return false;
         }
 
