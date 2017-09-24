@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Basic logic for new libary handling system
 - Support for 7-Zip
 - `--confirm-dl` argument. It will automaticly download and install new drivers! (uses minimal installer)
+- `--config-here` argument. It uses the working directory as the path for the config
 - Implemented check for driver file size
 
 ### Changed
