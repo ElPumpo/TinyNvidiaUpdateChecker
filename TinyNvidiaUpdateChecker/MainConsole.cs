@@ -913,7 +913,7 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
 
             try {
-                Directory.Delete(FULL_PATH_DIRECTORY);
+                Directory.Delete(FULL_PATH_DIRECTORY, true);
                 Console.WriteLine("Cleaned up: " + FULL_PATH_DIRECTORY);
             } catch {
                 Console.WriteLine("Could not cleanup: " + FULL_PATH_DIRECTORY);
