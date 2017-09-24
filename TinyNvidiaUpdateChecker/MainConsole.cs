@@ -10,7 +10,6 @@ using System.Globalization;
 using System.Reflection;
 using HtmlAgilityPack;
 using System.Threading;
-using System.Configuration;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.ComponentModel;
@@ -99,7 +98,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Enable extended information
         /// </summary>
-        private static bool debug = false;
+        public static bool debug = false;
 
         /// <summary>
         /// Force a prompt to download GPU drivers
@@ -112,11 +111,9 @@ namespace TinyNvidiaUpdateChecker
         private static bool confirmDL = false;
 
         /// <summary>
-        /// Direction for configuration folder, blueprint: <local-appdata><author><project-name>
+        /// Should the application use the working directory as the path for the config file?
         /// </summary>
-        private static string configDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName);
-        
-        public static string configFile = Path.Combine(configDir, "app.config");
+        public static bool configSwitch = false;
 
         /// <summary>
         /// Has the intro been displayed? Because we do not want to display the intro multiple times.
@@ -144,7 +141,7 @@ namespace TinyNvidiaUpdateChecker
                 AllocConsole();
             }
 
-            ConfigInit();
+            SettingManager.ConfigInit();
 
             CheckDependencies();
 
@@ -152,22 +149,9 @@ namespace TinyNvidiaUpdateChecker
 
             GetLanguage();
 
-            string val = null;
-            string key = "Check for Updates";
-
-            while (val != "true" & val != "false") {
-                val = SettingManager.ReadSetting(key); // refresh value each time
-
-                if (val == "true") {
-                    SearchForUpdates();
-                    break;
-                } else if (val == "false") {
-                    break;
-                } else {
-                    // invalid value
-                    SettingManager.SetupSetting(key);
-                }   
-            }
+            if(SettingManager.ReadSettingBool("Check for Updates")) {
+                SearchForUpdates();
+            }   
 
             GpuInfo();
 
@@ -196,13 +180,12 @@ namespace TinyNvidiaUpdateChecker
                     hasSelected = true;
 
                     if (confirmDL) {
-                        DownloadDriverQuiet();
+                        DownloadDriverQuiet(true);
                     } else {
                         DownloadDriver();
                     }
                 }
             }
-
 
             if (!hasSelected) {
                 if (forceDL) DownloadDriver();
@@ -213,35 +196,6 @@ namespace TinyNvidiaUpdateChecker
             if (showUI) Console.ReadKey();
             LogManager.Log("BYE!", LogManager.Level.INFO);
             Environment.Exit(0);
-        }
-
-        /// <summary>
-        /// Initialize configuration manager
-        /// </summary>
-        private static void ConfigInit()
-        {
-            // powered by the .NET framework "Settings" function
-
-            // set config dir
-            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFile);
-            ResetConfigMechanism();
-
-            if (debug == true) {
-                Console.WriteLine("configFile: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-                Console.WriteLine();
-            }
-            LogManager.Log("configFile: " + configFile, LogManager.Level.INFO);
-
-            // create config file
-            if (!File.Exists(configFile)) {
-                Console.WriteLine("Generating configuration file, this only happenes once.");
-
-                SettingManager.SetupSetting("Check for Updates");
-                SettingManager.SetupSetting("Minimal install");
-
-                Console.WriteLine();
-            }
-
         }
 
         /// <summary>
@@ -283,7 +237,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            if (debug == true)
+            if (debug)
             {
                 Console.WriteLine("offlineVer: " + offlineVer);
                 Console.WriteLine("onlineVer:  " + onlineVer);
@@ -339,17 +293,13 @@ namespace TinyNvidiaUpdateChecker
                 }
 
             } else {
-                winVer = "Unknown";
-                string message = "You're running a non-supported version of Windows; the application will determine itself.";
-
-                Console.WriteLine(message);
+                Console.WriteLine("You're running a non-supported version of Windows; the application will determine itself.");
                 Console.WriteLine("verOrg: " + verOrg);
-                LogManager.Log(message, LogManager.Level.ERROR);
                 if (showUI) Console.ReadKey();
                 Environment.Exit(1);
             }
 
-            if (debug == true) {
+            if (debug) {
                 Console.WriteLine("winVer: " + winVer);
                 Console.WriteLine("osID:   " + osID.ToString());
                 Console.WriteLine("verOrg: " + verOrg);
@@ -378,9 +328,9 @@ namespace TinyNvidiaUpdateChecker
 
                 // erase config
                 else if (arg.ToLower() == "--erase-config") {
-                    if (File.Exists(configFile)) {
+                    if (File.Exists(SettingManager.configFile)) {
                         try {
-                            File.Delete(configFile);
+                            File.Delete(SettingManager.configFile);
                         } catch (Exception ex) {
                             RunIntro();
                             Console.WriteLine(ex.ToString());
@@ -411,17 +361,23 @@ namespace TinyNvidiaUpdateChecker
                     confirmDL = true;
                 }
 
+                // change the config path to the same path as application
+                else if (arg.ToLower() == "--config-here") {
+                    configSwitch = true;
+                }
+
                 // help menu
                 else if (arg.ToLower() == "--help") {
                     RunIntro();
                     Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [ARGS]");
                     Console.WriteLine();
-                    Console.WriteLine("--quiet        Run application quiet.");
+                    Console.WriteLine("--quiet        Runs the application quietly in the background, and will only notify the user if a update is available.");
                     Console.WriteLine("--erase-config Erase local configuration file.");
-                    Console.WriteLine("--debug        Enable debugging for extended information.");
-                    Console.WriteLine("--force-dl     Force download of drivers.");
+                    Console.WriteLine("--debug        Turn debugging on, will output more information that can be used for debugging.");
+                    Console.WriteLine("--force-dl     force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
                     Console.WriteLine("--version      View version number.");
-                    Console.WriteLine("--confirm-dl   Automaticly download and install driver if new one is available.");
+                    Console.WriteLine("--confirm-dl   Automatically download and install the driver quietly without any user interaction at all. should be used with '--quiet' for the optimal solution.");
+                    Console.WriteLine("--config-here  Use the working directory as path to the config file.");
                     Console.WriteLine("--help         Displays this message.");
                     Environment.Exit(0);
                 }
@@ -709,7 +665,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
 
-            if (debug == true) {
+            if (debug) {
                 Console.WriteLine("gpuURL:      " + gpuURL);
                 Console.WriteLine("processURL:  " + processURL);
               //  Console.WriteLine("confirmURL:  " + confirmURL);
@@ -766,37 +722,19 @@ namespace TinyNvidiaUpdateChecker
 
             }
 
-            string val = null;
-            string key = "Minimal install";
-            bool checkLib = false;
-
-            // loop
-            while (val != "true" & val != "false")
-            {
-                val = SettingManager.ReadSetting(key); // refresh value each time
-                if (val == "true") {
-                    checkLib = true;
-                } else if (val == "false") {
-                    break;
-                } else {
-                    // invalid value
-                    SettingManager.SetupSetting(key);
-                }
-            }
-            if(checkLib) {
-                if(LibaryHandler.EvaluateLibary() == null) {
+            if (SettingManager.ReadSettingBool("Minimal install")) {
+                if (LibaryHandler.EvaluateLibary() == null) {
                     Console.WriteLine("Doesn't seem like either WinRAR or 7-Zip is installed!");
                     DialogResult dialogUpdates = MessageBox.Show("Do you want to disable the minimal install feature and use the traditional way?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (dialogUpdates == DialogResult.Yes) {
-                        SettingManager.SetSetting(key, "false");
+                        SettingManager.SetSetting("Minimal install", "false");
                     } else {
                         Console.WriteLine("The application will determinate itself");
                         if (showUI) Console.ReadKey();
-                        Environment.Exit(2);
+                        Environment.Exit(1);
                     }
                 }
             }
-
 
             Console.WriteLine();
         }
@@ -806,10 +744,6 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void DownloadDriver()
         {
-            string val = null;
-            string message = null;
-            string key = null;
-
             DriverDialog.ShowGUI();
 
             if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLEXTRACT) {
@@ -819,23 +753,10 @@ namespace TinyNvidiaUpdateChecker
                 driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
 
                 try {
-                        
-                    message = "Where do you want to save the drivers?";
+                   string message = "Where do you want to save the drivers?";
 
-                    key = "Minimal install";
-                    val = null; // reset value
-
-                    // loop
-                    while (val != "true" & val != "false") {
-                        val = SettingManager.ReadSetting(key); // refresh value each time
-                        if (val == "true") {
-                            message += " (you should select a empty folder)";
-                        } else if (val == "false") {
-                            break;
-                        } else {
-                            // invalid value
-                            SettingManager.SetupSetting(key);
-                        }
+                    if (SettingManager.ReadSettingBool("Minimal install")) {
+                        message += " (you should select a empty folder)";
                     }
 
                     DialogResult result;
@@ -895,14 +816,11 @@ namespace TinyNvidiaUpdateChecker
                         dlForm.Focus();
                         dlForm.DownloadFile(new Uri(downloadURL), savePath + driverFileName);
                         dlForm.Close();
-                    }
-                    else {
+                    } else {
                         LogManager.Log("Driver is already downloaded", LogManager.Level.INFO);
                     }
 
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     error = true;
                     Console.Write("ERROR!");
                     LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
@@ -911,39 +829,27 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                 }
 
-                if (error == false)
-                {
+                if (!error) {
                     Console.Write("OK!");
                     Console.WriteLine();
                 }
 
-                if (debug == true) {
+                if (debug) {
                     Console.WriteLine("savePath: " + savePath);
                 }
 
-                key = "Minimal install";
-                val = null; // reset value
-                // loop
-                while (val != "true" & val != "false") {
-                    val = SettingManager.ReadSetting(key); // refresh value each time
-                    if (val == "true") {
-                        MakeInstaller(false);
-                    } else if (val == "false") {
-                        break;
-                    } else {
-                        // invalid value
-                        SettingManager.SetupSetting(key);
-                    }
+                if (SettingManager.ReadSettingBool("Minimal install")) {
+                    MakeInstaller(false);
                 }
             } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLINSTALL) {
-                DownloadDriverQuiet();
+                DownloadDriverQuiet(false);
             }
         }
 
         /// <summary>
         /// Downloads and installs the driver without user interaction
         /// </summary>
-        private static void DownloadDriverQuiet()
+        private static void DownloadDriverQuiet(bool minimized)
         {
             driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
             savePath = Path.GetTempPath();
@@ -985,11 +891,18 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            MakeInstaller(true);
+            if (SettingManager.ReadSettingBool("Minimal install")) {
+                MakeInstaller(minimized);
+            }
 
             try {
                 Console.Write("Running installer . . . ");
-                Process.Start(FULL_PATH_DIRECTORY + "setup.exe", "/s").WaitForExit();
+                if (SettingManager.ReadSettingBool("Minimal install")) {
+                    Process.Start(FULL_PATH_DIRECTORY + "setup.exe", "/s").WaitForExit();
+                } else {
+                    Process.Start(FULL_PATH_DRIVER, "/s").WaitForExit();
+                }
+                
                 Console.Write("OK!");
             } catch {
                 Console.WriteLine("Could not run driver installer!");
@@ -1001,7 +914,7 @@ namespace TinyNvidiaUpdateChecker
                 Directory.Delete(FULL_PATH_DIRECTORY);
                 Console.WriteLine("Cleaned up: " + FULL_PATH_DIRECTORY);
             } catch {
-
+                Console.WriteLine("Could not cleanup: " + FULL_PATH_DIRECTORY);
             }
 
         }
@@ -1069,6 +982,8 @@ namespace TinyNvidiaUpdateChecker
                         Console.WriteLine(ex.ToString());
                     }
                 }
+            } else {
+                Console.WriteLine("Could not identify a possible extractor! We should panic.");
             }
 
             if(error == 0) {
@@ -1096,28 +1011,6 @@ namespace TinyNvidiaUpdateChecker
             } else {
                 LogManager.Log("Intro has already been run!", LogManager.Level.INFO);
             }
-        }
-
-        /// <summary>
-        /// Credit goes to Daniel Hilgarth for the weird bug fix I'm experiencing on my dev station, call after setting config dir.
-        /// </summary>
-        private static void ResetConfigMechanism()
-        {
-            typeof(ConfigurationManager)
-            .GetField("s_initState", BindingFlags.NonPublic | BindingFlags.Static)
-            .SetValue(null, 0);
-
-            typeof(ConfigurationManager)
-            .GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static)
-            .SetValue(null, null);
-
-            typeof(ConfigurationManager)
-            .Assembly.GetTypes()
-            .Where(x => x.FullName ==
-               "System.Configuration.ClientConfigPaths")
-            .First()
-            .GetField("s_current", BindingFlags.NonPublic | BindingFlags.Static)
-            .SetValue(null, null);
         }
 
         private static bool DoesDriverFileSizeMatch(string FULL_PATH_DRIVER)

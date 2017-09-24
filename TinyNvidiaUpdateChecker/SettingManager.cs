@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace TinyNvidiaUpdateChecker
@@ -25,14 +28,67 @@ namespace TinyNvidiaUpdateChecker
     */
 
     /// <summary>
-    /// Everything related to reading settings from config
+    /// Powered by the .NET framework "Settings" function
     /// </summary>
     class SettingManager
     {
+
+        /// <summary>
+        /// Direction for configuration folder, blueprint: <local-appdata><author><project-name>
+        /// </summary>
+        private static string configDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName);
+
+        public static string configFile = Path.Combine(configDir, "app.config");
+
+        /// <summary>
+        /// Check if all the keys are OK before we use them
+        /// </summary>
+        public static void ConfigInit()
+        {
+
+            if (!MainConsole.configSwitch) {
+                AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFile); // set config dir
+            } else {
+                configFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile; // in case we wipe the config (see below)
+            }
+
+            if (MainConsole.debug) {
+                Console.WriteLine("configFile: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            }
+
+            // create config file
+            if (!MainConsole.configSwitch && !File.Exists(configFile)) {
+                Console.WriteLine("Generating configuration file, this only happenes once.");
+
+                SetupSetting("Check for Updates");
+                SetupSetting("Minimal install");
+
+                Console.WriteLine();
+            }
+
+            VerifyConfig();
+
+            if(MainConsole.debug) Console.WriteLine();
+        }
+
+        /// <summary>
+        /// Verify the config before we run the application
+        /// </summary>
+        private static void VerifyConfig()
+        {
+            string CHECK_UPDATE = ReadSetting("Check for Updates");
+            string MINIMAL_INSTALL = ReadSetting("Minimal install");
+
+            if(MainConsole.debug) {
+                Console.WriteLine("CHECK_UPDATE: " + CHECK_UPDATE);
+                Console.WriteLine("MINIMAL_INSTALL: " + MINIMAL_INSTALL);
+            }
+        }
+
         /// <summary>
         /// Reads setting from configuration file, and adds if requested key / value is missing - returns a string.</summary>
         /// <param name="key"> Config key to read value from.</param>
-        public static string ReadSetting(string key)
+        private static string ReadSetting(string key)
         {
             string result = null;
 
@@ -83,10 +139,10 @@ namespace TinyNvidiaUpdateChecker
             } catch (ConfigurationErrorsException ex) {
 
                 // clean config file
-                if (File.Exists(MainConsole.configFile)) {
+                if (File.Exists(configFile)) {
 
                     try {
-                        File.Delete(MainConsole.configFile);
+                        File.Delete(configFile);
                     } catch (Exception e) {
                         Console.WriteLine(e.ToString());
                     }
@@ -105,7 +161,7 @@ namespace TinyNvidiaUpdateChecker
         /// Ask operator for setting value, not to be confused with setSetting. Only called from setSetting.</summary>
         /// <param name="key"> Requested key name.</param>
         /// <seealso cref="SetSetting(string, string)"> Where settings are made.</seealso>
-        public static void SetupSetting(string key)
+        private static void SetupSetting(string key)
         {
             string message = null;
             string[] value = null;
@@ -141,5 +197,45 @@ namespace TinyNvidiaUpdateChecker
 
         }
 
+        /// <summary>
+        /// Credit goes to Daniel Hilgarth for the weird bug fix I'm experiencing on my dev station, call after setting config dir.
+        /// </summary>
+        private static void ResetConfigMechanism()
+        {
+            typeof(ConfigurationManager)
+            .GetField("s_initState", BindingFlags.NonPublic | BindingFlags.Static)
+            .SetValue(null, 0);
+
+            typeof(ConfigurationManager)
+            .GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static)
+            .SetValue(null, null);
+
+            typeof(ConfigurationManager)
+            .Assembly.GetTypes()
+            .Where(x => x.FullName ==
+               "System.Configuration.ClientConfigPaths")
+            .First()
+            .GetField("s_current", BindingFlags.NonPublic | BindingFlags.Static)
+            .SetValue(null, null);
+        }
+
+        public static bool ReadSettingBool(string key)
+        {
+            string read = ReadSetting(key);
+
+            if(read == "true") {
+                return true;
+            } else if (read == "false") {
+                return false;
+            }
+
+            return false;
+        }
+    }
+
+    class ConfigFile
+    {
+        public static bool CLIENT_UPDATES;
+        public static bool USE_MINIMAL_INSTALL;
     }
 }

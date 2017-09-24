@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Updated HtmlAgilityPack to the latest version
 - Replaced the `GPU Type` system with now assuming the type depending on the gpu name
 - Changed back to the correct folder browser dialog
+- A lot of cleanup (yet again) and refactoring
+- Code improvements
 
 ### Removed
 - You no longer have to select your gpu

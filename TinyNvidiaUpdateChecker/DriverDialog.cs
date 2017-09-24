@@ -50,7 +50,7 @@ namespace TinyNvidiaUpdateChecker
             try {
                 Process.Start(MainConsole.pdfURL);
             } catch (Exception ex) {
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.ToString());
             }
         }
 
@@ -85,7 +85,6 @@ namespace TinyNvidiaUpdateChecker
             DLINSTALL,
             DLEXTRACT,
             IGNORE
-
         }
     }
 }
