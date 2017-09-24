@@ -777,7 +777,7 @@ namespace TinyNvidiaUpdateChecker
                         }
                     }
 
-                    if(!DoesDriverFileSizeMatch(savePath + driverFileName)) {
+                    if(File.Exists(savePath + driverFileName) && !DoesDriverFileSizeMatch(savePath + driverFileName)) {
                         LogManager.Log("Deleting " + savePath + driverFileName + " because its length doesn't match!", LogManager.Level.INFO);
                         File.Delete(savePath + driverFileName);
                     }
@@ -863,7 +863,7 @@ namespace TinyNvidiaUpdateChecker
 
             Directory.CreateDirectory(FULL_PATH_DIRECTORY);
 
-            if (!DoesDriverFileSizeMatch(FULL_PATH_DRIVER)) {
+            if (File.Exists(FULL_PATH_DRIVER) && !DoesDriverFileSizeMatch(FULL_PATH_DRIVER)) {
                 LogManager.Log("Deleting " + FULL_PATH_DRIVER + " because its length doesn't match!", LogManager.Level.INFO);
                 File.Delete(savePath + driverFileName);
             }
