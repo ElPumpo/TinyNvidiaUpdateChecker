@@ -173,10 +173,12 @@ namespace TinyNvidiaUpdateChecker
 
             bool hasSelected = false;
             int iOffline = 0;
+
             try {
                 iOffline = Convert.ToInt32(OfflineGPUVersion.Replace(".", string.Empty));
             } catch(Exception ex) {
                 OfflineGPUVersion = "Unknown";
+                Console.WriteLine("Could not retrive OfflineGPUVersion!");
                 Console.WriteLine(ex.ToString());
             }
 
@@ -562,7 +564,7 @@ namespace TinyNvidiaUpdateChecker
             /// Looking at the supported products on NVIDIA website for desktop and mobile GeForce series,
             /// we can see that they're sharing drivers with other GPU families, the only thing we have to do is tell the website
             /// if we're running a mobile or desktop GPU.
-            
+
             int psID = 0;
             int pfID = 0;
 
@@ -570,12 +572,10 @@ namespace TinyNvidiaUpdateChecker
             /// you do not have to choose the exact GPU,
             /// looking at supported products, we see that the same driver package includes
             /// drivers for the majority GPU family.
-            if (gpuName.Contains("M")) {
-                // mobile | notebook
+            if (gpuName.Contains("M")) { // mobile | notebook
                 psID = 99;  // GeForce 900M-series (M for Mobile)
                 pfID = 758; // GTX 970M
-            } else {
-                // desktop
+            } else { // desktop
                 psID = 98;  // GeForce 900-series
                 pfID = 756; // GTX 970
             }
@@ -615,7 +615,7 @@ namespace TinyNvidiaUpdateChecker
                 HtmlNode tdReleaseDate = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdReleaseDate");
                 var dates = tdReleaseDate.InnerHtml.Trim();
 
-                // not the best code, but does the job, might come back to cleanup in the future
+                // get driver release date
                 int status = 0;
                 int year = 0;
                 int month = 0;
@@ -689,9 +689,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 // get file size
-                WebRequest request = WebRequest.Create(downloadURL);
-                request.Method = "HEAD";
-                using (WebResponse responce = request.GetResponse()) {
+                using (WebResponse responce = WebRequest.Create(downloadURL).GetResponse()) {
                     downloadFileSize = responce.ContentLength;
                 }
 
@@ -714,11 +712,11 @@ namespace TinyNvidiaUpdateChecker
             if (debug == true) {
                 Console.WriteLine("gpuURL:      " + gpuURL);
                 Console.WriteLine("processURL:  " + processURL);
-                Console.WriteLine("confirmURL:  " + confirmURL);
+              //  Console.WriteLine("confirmURL:  " + confirmURL);
                 Console.WriteLine("downloadURL: " + downloadURL);
                 Console.WriteLine("pdfURL:      " + pdfURL);
                 Console.WriteLine("releaseDate: " + releaseDate.ToShortDateString());
-                Console.WriteLine("downloadFileSize: " + downloadFileSize.ToString());
+                Console.WriteLine("downloadFileSize:  " + Math.Round((downloadFileSize / 1024f) / 1024f) + " MB (" + downloadFileSize + " Bytes)");
                 Console.WriteLine("OfflineGPUVersion: " + OfflineGPUVersion);
                 Console.WriteLine("OnlineGPUVersion:  " + OnlineGPUVersion);
             }
