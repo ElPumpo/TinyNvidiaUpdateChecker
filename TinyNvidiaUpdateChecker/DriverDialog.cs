@@ -25,7 +25,6 @@ namespace TinyNvidiaUpdateChecker
 
         private void DriverDialog_Load(object sender, EventArgs e)
         {
-            // ReleaseNotesBox.Text = MainConsole.releaseDesc;
             webBrowser1.DocumentText = MainConsole.releaseDesc;
 
             int DateDiff = (DateTime.Now - MainConsole.releaseDate).Days; // how many days between the two dates
