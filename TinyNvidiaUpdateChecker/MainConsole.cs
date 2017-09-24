@@ -108,7 +108,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Will automaticly download and install drivers
         /// </summary>
-        private static bool confirmDL = false;
+        public static bool confirmDL = false;
 
         /// <summary>
         /// Should the application use the working directory as the path for the config file?
@@ -226,22 +226,24 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("OK!");
                 Console.WriteLine();
             }
-           
 
             if (Convert.ToInt32(onlineVer.Replace(".", string.Empty)) > Convert.ToInt32(offlineVer.Replace(".", string.Empty))) {
                 Console.WriteLine("There is a update available for TinyNvidiaUpdateChecker!");
-                DialogResult dialog = MessageBox.Show("There is a new client update available to download, do you want to be navigate to the official GitHub download section?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                if (dialog == DialogResult.Yes) {
-                    Process.Start("https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases");
+                if(!confirmDL) {
+                    DialogResult dialog = MessageBox.Show("There is a new client update available to download, do you want to be navigate to the official GitHub download section?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (dialog == DialogResult.Yes) {
+                        Process.Start("https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases");
+                    }
                 }
             }
 
-            if (debug)
-            {
+            if (debug) {
                 Console.WriteLine("offlineVer: " + offlineVer);
                 Console.WriteLine("onlineVer:  " + onlineVer);
             }
+
             Console.WriteLine();
         }
 

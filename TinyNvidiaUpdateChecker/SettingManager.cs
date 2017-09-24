@@ -187,12 +187,18 @@ namespace TinyNvidiaUpdateChecker
                     break;
 
             }
-            DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (dialogUpdates == DialogResult.Yes) {
-                SetSetting(key, value[0]);
+
+            if(!MainConsole.confirmDL) {
+                DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dialogUpdates == DialogResult.Yes) {
+                    SetSetting(key, value[0]);
+                } else {
+                    SetSetting(key, value[1]);
+                }
             } else {
                 SetSetting(key, value[1]);
             }
+
 
 
         }
@@ -231,11 +237,6 @@ namespace TinyNvidiaUpdateChecker
 
             return false;
         }
-    }
 
-    class ConfigFile
-    {
-        public static bool CLIENT_UPDATES;
-        public static bool USE_MINIMAL_INSTALL;
     }
 }

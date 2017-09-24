@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -31,8 +30,7 @@ namespace TinyNvidiaUpdateChecker
             SETTING
         }
 
-        [STAThread]
-        public static void Log(string information, LogManager.Level level)
+        public static void Log(string information, Level level)
         {
 
             string logMessage = null;
