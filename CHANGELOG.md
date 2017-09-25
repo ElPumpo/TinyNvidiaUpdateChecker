@@ -4,12 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.9.0] - 2017-09-25
 ### Added
 - New fancy dialog when a new driver is available, with a much better GUI solution and better release notes preview
-- No more weird notes in the release description
-- Basic logic for new libary handling system
-- Support for 7-Zip
+- Support for 7-Zip, and an improved libary handling system
 - `--confirm-dl` argument. It will automaticly download and install new drivers! (uses minimal installer)
 - `--config-here` argument. It uses the working directory as the path for the config
 - Implemented check for driver file size
