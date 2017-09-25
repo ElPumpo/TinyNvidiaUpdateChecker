@@ -187,13 +187,11 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            if (!hasSelected) {
-                if (forceDL) {
-                    if (confirmDL) {
-                        DownloadDriverQuiet(true);
-                    } else {
-                        DownloadDriver();
-                    }
+            if (!hasSelected && forceDL) {
+                if (confirmDL) {
+                    DownloadDriverQuiet(true);
+                } else {
+                    DownloadDriver();
                 }
             }
 
