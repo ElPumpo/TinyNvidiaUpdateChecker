@@ -188,7 +188,13 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (!hasSelected) {
-                if (forceDL) DownloadDriver();
+                if (forceDL) {
+                    if (confirmDL) {
+                        DownloadDriverQuiet(true);
+                    } else {
+                        DownloadDriver();
+                    }
+                }
             }
 
             Console.WriteLine();
@@ -870,7 +876,7 @@ namespace TinyNvidiaUpdateChecker
             if (!File.Exists(FULL_PATH_DRIVER)) {
                 Console.Write("Downloading the driver . . . ");
 
-                if (showUI) {
+                if (showUI || confirmDL) {
                     using (WebClient webClient = new WebClient()) {
                         var notifier = new AutoResetEvent(false);
                         var progress = new ProgressBar();

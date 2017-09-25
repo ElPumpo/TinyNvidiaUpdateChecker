@@ -57,7 +57,7 @@ namespace TinyNvidiaUpdateChecker
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             webBrowser1.Document.ExecCommand("SelectAll", false, "null");
-            webBrowser1.Document.ExecCommand("FontName", false, "Microsoft Sans Serif"); // or any desired font
+            webBrowser1.Document.ExecCommand("FontName", false, "Microsoft Sans Serif");
             webBrowser1.Document.ExecCommand("FontSize", false, 1);
             webBrowser1.Document.ExecCommand("Unselect", false, "null");
         }
