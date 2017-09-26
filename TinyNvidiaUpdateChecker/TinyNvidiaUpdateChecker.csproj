@@ -85,6 +85,7 @@
     <Compile Include="DriverDialog.Designer.cs">
       <DependentUpon>DriverDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="FolderSelectDialog.cs" />
     <Compile Include="LibaryHandler.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="MainConsole.cs" />

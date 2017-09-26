@@ -764,23 +764,17 @@ namespace TinyNvidiaUpdateChecker
                         message += " (you should select a empty folder)";
                     }
 
-                    DialogResult result;
-                    using (FolderBrowserDialog folderDialog = new FolderBrowserDialog()) {
-                        folderDialog.Description = message;
+                    FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
+                    folderSelectDialog.Title = message;
 
-                        result = folderDialog.ShowDialog(); // show dialog and get status (will wait for input)
-                        switch (result) {
-                            case DialogResult.OK:
-                                savePath = folderDialog.SelectedPath + @"\";
-                                break;
-
-                            default:
-                                Console.WriteLine("User closed dialog!");
-                                return;
-                        }
+                    if (folderSelectDialog.Show()) {
+                        savePath = folderSelectDialog.FileName + @"\";
+                    } else {
+                        Console.WriteLine("User closed dialog!");
+                        return;
                     }
 
-                    if(File.Exists(savePath + driverFileName) && !DoesDriverFileSizeMatch(savePath + driverFileName)) {
+                    if (File.Exists(savePath + driverFileName) && !DoesDriverFileSizeMatch(savePath + driverFileName)) {
                         LogManager.Log("Deleting " + savePath + driverFileName + " because its length doesn't match!", LogManager.Level.INFO);
                         File.Delete(savePath + driverFileName);
                     }
