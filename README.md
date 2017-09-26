@@ -3,12 +3,9 @@
 # TinyNvidiaUpdateChecker
 Tiny application which checks for NVIDIA GeForce GPU drivers, written in C-sharp (C#) for Windows
 
-Visit the [wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) for more information about the application!
+**Visit the [wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) for more information about the application!**
 
-This application has a simple concept, when launched it will check for new driver updates for your NVIDIA gpu! With this you no longer need waste your time searching if there's something new to get. You may also use the `--quiet` [switch](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Command-Line-Arguments) in e.g one of the [startup](https://www.tekrevue.com/tip/windows-10-startup-folder/) folders so it gets runs quietly and only notifies you if there's an new update.
-
-NVIDIAs drivers come with telemetry, but I've done it possible so that you can remove it from the installer **(as an optional feature!)**, which requries WinRAR in order to extract the self-extracting archive, which will only extract the core GPU drivers. (no Physics, HD Audio, Geforce Experience, 3D drivers, etc).
-For this to fully work you have to uninstall your previous drivers! Use [DDU](https://www.wagnardsoft.com/) to make a clean uninstall first!
+This application has a simple concept, when launched it will check for new driver updates for your NVIDIA gpu! With this you no longer need waste your time searching if there's something new to get.
 
 # Download
 Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
@@ -22,7 +19,7 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be
 + .NET framework 4.5
 + `HtmlAgilityPack.dll` in same folder as the executable (automatic download from v1.8.0 and up)
 + Stable internet connection
-+ (optional) [WinRAR](http://www.rarlab.com/) (***only*** if using minimal installer method)
++ (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://http://www.7-zip.org/) (***only*** if using minimal installer method)
 
 # Legal
 
@@ -41,7 +38,7 @@ You should have received a copy Of the GNU General Public License along with thi
 [Project icon](https://github.com/Maddoc42/Android-Material-Icon-Generator) by [Maddoc42](https://github.com/Maddoc42) is licensed under [CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/)
 
 ### HTML Agility Pack
-HTML Agility Pack by [zzzprojects](https://github.com/zzzprojects/html-agility-pack) is licensed under the [MIT License](https://opensource.org/licenses/MIT)
+HTML Agility Pack by [zzzprojects](https://github.com/zzzprojects/html-agility-pack) is licensed under the [MIT license](https://opensource.org/licenses/MIT)
 
 ### ASCII-alike Progress Bar
-[ASCII-alike Progress Bar](https://gist.github.com/DanielSWolf/0ab6a96899cc5377bf54) by [DanielSWolf](https://github.com/DanielSWolf) is licensed under the [MIT License](https://opensource.org/licenses/MIT)
+[ASCII-alike Progress Bar](https://gist.github.com/DanielSWolf/0ab6a96899cc5377bf54) by [DanielSWolf](https://github.com/DanielSWolf) is licensed under the [MIT license](https://opensource.org/licenses/MIT)
