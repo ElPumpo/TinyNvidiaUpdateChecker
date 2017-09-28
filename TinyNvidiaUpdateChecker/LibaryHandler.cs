@@ -32,9 +32,17 @@ namespace TinyNvidiaUpdateChecker
                     LogManager.Log("WinRAR path: " + regKey.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);
                     return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.WINRAR, true);
                 }
-            } catch (Exception) {
-                return new LibaryFile(false);
+            } catch (Exception) { }
+
+            try {
+                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
+                    LogManager.Log("WinRAR path: " + regKey.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);
+                    return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.WINRAR, true);
+                }
             }
+            catch (Exception) { }
+
+            return new LibaryFile(false);
         }
 
         private static LibaryFile Check7Zip() {
