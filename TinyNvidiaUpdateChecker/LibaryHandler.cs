@@ -48,9 +48,17 @@ namespace TinyNvidiaUpdateChecker
                     return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.SEVENZIP, true);
                 }
             }
-            catch (Exception) {
-                return new LibaryFile(false);
+            catch (Exception) { }
+
+            try {
+                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", false)) {
+                    LogManager.Log("7-Zip path: " + regKey.GetValue("InstallLocation").ToString(), LogManager.Level.INFO);
+                    return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.SEVENZIP, true);
+                }
             }
+            catch (Exception) { }
+
+            return new LibaryFile(false);
         }
     }
 
