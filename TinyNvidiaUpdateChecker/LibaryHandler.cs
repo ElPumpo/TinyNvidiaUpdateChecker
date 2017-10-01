@@ -66,7 +66,20 @@ namespace TinyNvidiaUpdateChecker
             }
             catch (Exception) { }
 
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps", "7zip", "current");
+
+            /* Scoop support */
+            string path;
+            
+            // installed in user profile
+            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps", "7zip", "current");
+            if (Directory.Exists(path)) {
+                path += @"\";
+                LogManager.Log("7-Zip path: " + path, LogManager.Level.INFO);
+                return new LibaryFile(path, Libary.SEVENZIP, true);
+            }
+
+            // installed in program data
+            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "scoop", "apps", "7zip", "current");
             if (Directory.Exists(path)) {
                 path += @"\";
                 LogManager.Log("7-Zip path: " + path, LogManager.Level.INFO);
