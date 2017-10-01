@@ -66,6 +66,13 @@ namespace TinyNvidiaUpdateChecker
             }
             catch (Exception) { }
 
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps", "7zip", "current");
+            if (Directory.Exists(path)) {
+                path += @"\";
+                LogManager.Log("7-Zip path: " + path, LogManager.Level.INFO);
+                return new LibaryFile(path, Libary.SEVENZIP, true);
+            }
+
             return new LibaryFile(false);
         }
     }

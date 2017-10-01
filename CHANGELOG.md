@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Implemented a much better dialog for chosing directory
-- Support for alternative locations for 7-Zip
+- Support for alternative locations for 7-Zip (Scoop, x86 install on amd64 systems)
 
 ## [1.9.0] - 2017-09-25
 ### Added
