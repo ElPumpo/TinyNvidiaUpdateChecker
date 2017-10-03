@@ -498,8 +498,16 @@ namespace TinyNvidiaUpdateChecker
                         OfflineGPUVersion = OfflineGPUVersion.Substring(0, 3) + "." + OfflineGPUVersion.Substring(3); // add dot
                         foundGpu = true;
                         break;
-                    }  else {
-                        // gpu not found
+                    } else if (obj["PNPDeviceID"].ToString().ToLower().Contains("ven_10de")) {
+                        if (SystemInformation.PowerStatus.BatteryChargeStatus == BatteryChargeStatus.NoSystemBattery) {
+                            gpuName = "GTX"; // assume desktop
+                        } else {
+                            gpuName = "GTX M"; // assume notebook
+                        }
+
+                        foundGpu = true;
+                        break;
+                    } else { // gpu not found
                         LogManager.Log(obj["Description"].ToString().Trim() + " is not NVIDIA!", LogManager.Level.INFO);
                     }
                 }
