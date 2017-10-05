@@ -149,7 +149,7 @@ namespace TinyNvidiaUpdateChecker
 
             GetLanguage();
 
-            if(SettingManager.ReadSettingBool("Check for Updates")) {
+            if (SettingManager.ReadSettingBool("Check for Updates")) {
                 SearchForUpdates();
             }   
 
@@ -488,10 +488,7 @@ namespace TinyNvidiaUpdateChecker
 
             // query local driver version
             try {
-                ManagementObjectSearcher objectSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController");
-
-                // TODO: this is not the optimal code
-                foreach (ManagementObject obj in objectSearcher.Get()) {
+                foreach (ManagementObject obj in new ManagementObjectSearcher("SELECT * FROM Win32_VideoController").Get()) {
                     if (obj["Description"].ToString().ToLower().Contains("nvidia")) {
                         gpuName = obj["Description"].ToString().Trim();
                         OfflineGPUVersion = obj["DriverVersion"].ToString().Replace(".", string.Empty).Substring(5);
@@ -499,10 +496,10 @@ namespace TinyNvidiaUpdateChecker
                         foundGpu = true;
                         break;
                     } else if (obj["PNPDeviceID"].ToString().ToLower().Contains("ven_10de")) {
-                        if (SystemInformation.PowerStatus.BatteryChargeStatus == BatteryChargeStatus.NoSystemBattery) {
-                            gpuName = "GTX"; // assume desktop
-                        } else {
-                            gpuName = "GTX M"; // assume notebook
+                        foreach (ManagementObject obj1 in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
+                            foreach (int chassisType in (UInt16[])(obj1["ChassisTypes"])) {
+                                gpuName = (chassisType == 3) ? "GTX" : "GTX M";
+                            }
                         }
 
                         foundGpu = true;
