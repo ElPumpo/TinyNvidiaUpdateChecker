@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Implemented a much better dialog for chosing directory
 - Support for alternative locations for 7-Zip (Scoop, x86 install on amd64 systems)
 - Added check against vendor ID if the gpu drivers aren't installed
+- Added missing text
+
+### Fixed
+- Driver installer always run quietly, now only skipping eula
 
 ## [1.9.0] - 2017-09-25
 ### Added

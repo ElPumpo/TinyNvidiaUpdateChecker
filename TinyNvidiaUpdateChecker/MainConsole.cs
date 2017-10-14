@@ -208,7 +208,7 @@ namespace TinyNvidiaUpdateChecker
         private static void SearchForUpdates()
         {
             Console.Write("Searching for Updates . . . ");
-            int error = 0;
+            bool error = false;
 
             try {
                 HtmlWeb htmlWeb = new HtmlWeb();
@@ -219,19 +219,19 @@ namespace TinyNvidiaUpdateChecker
                 onlineVer = tdVer.InnerText.Trim();
 
             } catch (Exception ex) {
-                error++;
+                error = true;
                 onlineVer = "0.0.0";
                 Console.Write("ERROR!");
                 LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
             }
-            if (error == 0) {
+            if (!error) {
                 Console.Write("OK!");
                 Console.WriteLine();
             }
 
-            if (Convert.ToInt32(onlineVer.Replace(".", string.Empty)) > Convert.ToInt32(offlineVer.Replace(".", string.Empty))) {
+            if (new Version(onlineVer).CompareTo(new Version(offlineVer)) > 0) {
                 Console.WriteLine("There is a update available for TinyNvidiaUpdateChecker!");
 
                 if(!confirmDL) {
@@ -827,7 +827,6 @@ namespace TinyNvidiaUpdateChecker
                 } catch (Exception ex) {
                     error = true;
                     Console.Write("ERROR!");
-                    LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                     Console.WriteLine();
                     Console.WriteLine(ex.ToString());
                     Console.WriteLine();
@@ -877,6 +876,7 @@ namespace TinyNvidiaUpdateChecker
                     using (WebClient webClient = new WebClient()) {
                         var notifier = new AutoResetEvent(false);
                         var progress = new ProgressBar();
+                        bool error = false;
 
                         webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
                             progress.Report((double)e.ProgressPercentage / 100);
@@ -890,10 +890,23 @@ namespace TinyNvidiaUpdateChecker
                             }
                         };
 
-                        webClient.DownloadFileAsync(new Uri(downloadURL), FULL_PATH_DRIVER);
-
-                        notifier.WaitOne(); // sync with the above
-                        progress.Dispose(); // get rid of the progress bar
+                        try {
+                            webClient.DownloadFileAsync(new Uri(downloadURL), FULL_PATH_DRIVER);
+                            notifier.WaitOne();
+                        } catch (Exception ex) {
+                            error = true;
+                            Console.Write("ERROR!");
+                            Console.WriteLine();
+                            Console.WriteLine(ex.ToString());
+                            Console.WriteLine();
+                        }
+                        
+                        progress.Dispose(); // dispone the progress bar
+                        
+                        if (!error) {
+                            Console.Write("OK!");
+                            Console.WriteLine();
+                        }
                     }
                 } else {
                     using (DownloaderForm dlForm = new DownloaderForm()) {
@@ -910,11 +923,17 @@ namespace TinyNvidiaUpdateChecker
             }
 
             try {
+                Console.WriteLine();
                 Console.Write("Running installer . . . ");
                 if (SettingManager.ReadSettingBool("Minimal install")) {
                     Process.Start(FULL_PATH_DIRECTORY + "setup.exe", "/s").WaitForExit();
                 } else {
-                    Process.Start(FULL_PATH_DRIVER, "/s").WaitForExit();
+                    if(minimized) {
+                        Process.Start(FULL_PATH_DRIVER, "/s").WaitForExit();
+                    } else {
+                        Process.Start(FULL_PATH_DRIVER, "/noeula").WaitForExit();
+                    }
+                    
                 }
                 
                 Console.Write("OK!");
