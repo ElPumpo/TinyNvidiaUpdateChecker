@@ -514,7 +514,7 @@ namespace TinyNvidiaUpdateChecker
             } catch (InvalidDataException) {
                 Console.Write("ERROR!");
                 Console.WriteLine();
-                Console.WriteLine("No supported nvidia graphics cards were not found, and the application will not continue!");
+                Console.WriteLine("No supported nvidia graphics cards were found, and the application will not continue!");
                 if (showUI) Console.ReadKey();
                 Environment.Exit(1);
             } catch (Exception ex) {
