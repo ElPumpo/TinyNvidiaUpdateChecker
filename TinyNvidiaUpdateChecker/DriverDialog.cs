@@ -7,6 +7,7 @@ namespace TinyNvidiaUpdateChecker
     public partial class DriverDialog : Form
     {
         public static SelectedBtn selectedBtn;
+        float notesScale;
 
         public DriverDialog()
         {
@@ -27,10 +28,12 @@ namespace TinyNvidiaUpdateChecker
         {
             webBrowser1.DocumentText = MainConsole.releaseDesc;
 
+            notesScale = this.CreateGraphics().DpiX;
+
             int DateDiff = (DateTime.Now - MainConsole.releaseDate).Days; // how many days between the two dates
             string theDate = null;
 
-            if (DateDiff == 1){
+            if (DateDiff == 1) {
                 theDate = DateDiff + " day ago";
             } else if (DateDiff < 1) {
                 theDate = "today"; // we only have the date and not time :/
@@ -58,7 +61,12 @@ namespace TinyNvidiaUpdateChecker
         {
             webBrowser1.Document.ExecCommand("SelectAll", false, "null");
             webBrowser1.Document.ExecCommand("FontName", false, "Microsoft Sans Serif");
-            webBrowser1.Document.ExecCommand("FontSize", false, 1);
+            if (notesScale > 96) {
+                webBrowser1.Document.ExecCommand("FontSize", false, 1);
+            } else {
+                webBrowser1.Document.ExecCommand("FontSize", false, 2);
+            }
+            
             webBrowser1.Document.ExecCommand("Unselect", false, "null");
         }
 
