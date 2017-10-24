@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.10.0]
+## [1.10.0] - 2017-10-24
 ### Added
 - Implemented a much better dialog for chosing directory
 - Support for alternative locations for 7-Zip (Scoop, x86 install on amd64 systems, MSI installer and last resort)
