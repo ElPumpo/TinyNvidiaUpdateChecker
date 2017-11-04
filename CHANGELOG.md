@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Fixed
+- Possible fix for 7-Zip extraction error
+
 ## [1.10.0] - 2017-10-24
 ### Added
 - Implemented a much better dialog for chosing directory

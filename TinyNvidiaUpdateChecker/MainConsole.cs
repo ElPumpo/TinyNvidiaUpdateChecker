@@ -1006,6 +1006,7 @@ namespace TinyNvidiaUpdateChecker
                     SevenZip.StartInfo.UseShellExecute = false;
                     SevenZip.StartInfo.CreateNoWindow = true; // don't show the console in our console!
                     try {
+                        Thread.Sleep(1000);
                         SevenZip.Start();
                         SevenZip.WaitForExit();
                     } catch (Exception ex) {
@@ -1033,8 +1034,8 @@ namespace TinyNvidiaUpdateChecker
         {
             if(!hasRunIntro) {
                 hasRunIntro = true;
-                // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+                //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                 Console.WriteLine();
                 Console.WriteLine("Copyright (C) 2016-2017 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
