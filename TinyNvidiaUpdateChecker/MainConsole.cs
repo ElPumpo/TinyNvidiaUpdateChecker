@@ -120,6 +120,11 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static bool hasRunIntro = false;
 
+        /// <summary>
+        /// Should we ignore that no compatible gpu were found?
+        /// </summary>
+        private static bool ignoreMissingGpu = false;
+
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AllocConsole();
 
@@ -372,19 +377,25 @@ namespace TinyNvidiaUpdateChecker
                     configSwitch = true;
                 }
 
+                // ignore incompatible gpu
+                else if (arg.ToLower() == "--ignore-missing-gpu") {
+                    ignoreMissingGpu = true;
+                }
+
                 // help menu
                 else if (arg.ToLower() == "--help") {
                     RunIntro();
                     Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [ARGS]");
                     Console.WriteLine();
-                    Console.WriteLine("--quiet        Runs the application quietly in the background, and will only notify the user if a update is available.");
-                    Console.WriteLine("--erase-config Erase local configuration file.");
-                    Console.WriteLine("--debug        Turn debugging on, will output more information that can be used for debugging.");
-                    Console.WriteLine("--force-dl     force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
-                    Console.WriteLine("--version      View version number.");
-                    Console.WriteLine("--confirm-dl   Automatically download and install the driver quietly without any user interaction at all. should be used with '--quiet' for the optimal solution.");
-                    Console.WriteLine("--config-here  Use the working directory as path to the config file.");
-                    Console.WriteLine("--help         Displays this message.");
+                    Console.WriteLine("--quiet               Runs the application quietly in the background, and will only notify the user if a update is available.");
+                    Console.WriteLine("--erase-config        Erase local configuration file.");
+                    Console.WriteLine("--debug               Turn debugging on, will output more information that can be used for debugging.");
+                    Console.WriteLine("--force-dl            force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
+                    Console.WriteLine("--version             View version number.");
+                    Console.WriteLine("--confirm-dl          Automatically download and install the driver quietly without any user interaction at all. should be used with '--quiet' for the optimal solution.");
+                    Console.WriteLine("--config-here         Use the working directory as path to the config file.");
+                    Console.WriteLine("--ignore-missing-gpu  Ignore the fact that no compatible were found.");
+                    Console.WriteLine("--help                Displays this message.");
                     Environment.Exit(0);
                 }
 
@@ -509,7 +520,13 @@ namespace TinyNvidiaUpdateChecker
                     }
                 }
 
-                if (!foundGpu) throw new InvalidDataException();
+                if (!foundGpu) {
+                    if (ignoreMissingGpu) {
+                        gpuName = "GTX";
+                    } else {
+                        throw new InvalidDataException();
+                    }
+                }
 
             } catch (InvalidDataException) {
                 Console.Write("ERROR!");

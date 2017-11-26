@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- `--ignore-missing-gpu` argument, will ignore the fact that no compatible gpu were found
+
 ### Fixed
 - Possible fix for 7-Zip extraction error
 
