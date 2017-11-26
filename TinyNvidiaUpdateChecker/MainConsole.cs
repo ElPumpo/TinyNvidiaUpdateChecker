@@ -387,10 +387,10 @@ namespace TinyNvidiaUpdateChecker
                     RunIntro();
                     Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [ARGS]");
                     Console.WriteLine();
-                    Console.WriteLine("--quiet               Runs the application quietly in the background, and will only notify the user if a update is available.");
+                    Console.WriteLine("--quiet               Runs the application quietly in the background, and will only notify the user if an update is available.");
                     Console.WriteLine("--erase-config        Erase local configuration file.");
                     Console.WriteLine("--debug               Turn debugging on, will output more information that can be used for debugging.");
-                    Console.WriteLine("--force-dl            force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
+                    Console.WriteLine("--force-dl            Force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
                     Console.WriteLine("--version             View version number.");
                     Console.WriteLine("--confirm-dl          Automatically download and install the driver quietly without any user interaction at all. should be used with '--quiet' for the optimal solution.");
                     Console.WriteLine("--config-here         Use the working directory as path to the config file.");
