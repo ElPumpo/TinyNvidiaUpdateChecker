@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - `--ignore-missing-gpu` argument, will ignore the fact that no compatible gpu were found
 
+### Changed
+- Tool tips in the driver dialog
+
 ### Fixed
 - Possible fix for 7-Zip extraction error
 

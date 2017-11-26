@@ -46,7 +46,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Current client version
         /// </summary>
-        private static string offlineVer = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+        private static string offlineVer = Application.ProductVersion;
         
         /// <summary>
         /// Remote client version

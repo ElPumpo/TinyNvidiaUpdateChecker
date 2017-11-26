@@ -117,42 +117,74 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="DownloadInstallButton.Locked" type="System.Boolean, mscorlib">
+  <metadata name="DownloadInstallButton.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
-  </data>
-  <data name="DownloadBtn.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="DownloadBtn.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="NotesBtn.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="NotesBtn.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="TitleLabel.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="TitleLabel.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="groupBox1.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="groupBox1.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="SizeLabel.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="SizeLabel.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="ReleasedLabel.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="ReleasedLabel.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="VersionLabel.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="VersionLabel.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="IgnoreBtn.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="IgnoreBtn.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="webBrowser1.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="webBrowser1.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
-  <data name="$this.Locked" type="System.Boolean, mscorlib">
+  </metadata>
+  <metadata name="$this.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAKCgQcQAAAACoBgAAFgAAACgAAAAoAAAAUAAAAAEABAAAAAAAYAQAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8AAAD//wD/AAAA/wD/AP//
+        AAD///8AAAAAAAAAAAAAAAAAAAd3d3AAAAAAAAAAAAAAAAAAAAB3d3d3d3AAAAAAAAAAAAAAAAAHd3d3
+        d3d3d3cAAAAAAAAAAAAAd3d3d3d3d3d3d3cAAAAAAAAAB3d3d3d3d3d3d3d3dwAAAAAAAHd3d3d3d3d3
+        d3d3d3d3AAAAAAd3d3d3d3d3d3cAd3d3d3cAAAB3d3d3d3d3cAAAAAB3d3d3dwAHd3d3d3dwAAAAAAAA
+        AHd3d3d3B3d3dwAAAAAAAAAAAAAAd3d3d3cAAAAAAAAAAAAAAAAAAAB3d3d3dwAAAAAAAAAAAAdwAAAA
+        AHd3d3d3AAAAAAAAAAAAd3dwAAAAd3d3d3cAAAAAAAAAAAd3d3cAAAB3d3d3dwAAAAAAAAAAd3d3d3AA
+        AHd3d3d3AAAAAAAAAAd3d3d3cAAAd3d3d3cAAAcAAAAAd3d3d3dwAAB3d3d3dwAHd3AAAAd3d3d3d3AA
+        AHd3d3d3AAd3dwAAd3d3d3d3cAAAd3d3d3cAB3d3dwd3d3dwd3dwAAB3d3d3dwAHd3d3d3d3dwB3d3AA
+        AHd3d3d3AAdwd3d3d3cAAHd3cAAAd3d3d3cAB3AHd3d3cAAAd3dwAAB3d3d3dwAHcAd3d3dwAAB3d3AA
+        AHd3d3d3AAdwd3d3d3cAAHd3cAAAd3d3d3cAB3d3d3d3d3cAd3dwAAB3d3d3dwAHd3d3B3d3d3B3d3AA
+        AHd3d3d3AAd3dwAAd3d3d3d3cAAAd3d3d3cAB3dwAAAHd3d3d3dwAAB3d3d3dwAABwAAAAB3d3d3d3AA
+        AHd3d3d3AAAAAAAAAAd3d3d3cAAAd3d3d3cAAAAAAAAAAHd3d3dwAAB3d3d3dwAAAAAAAAAAB3d3dwAA
+        AHd3d3d3AAAAAAAAAAAAd3dwAAAAd3d3d3cAAAAAAAAAAAAHAAAAAAB3d3d3dwAAAAAAAAAAAAAAAAAA
+        AHd3d3d3AAAAAAAAAAAAAAAAAAAAd3d3d3cAAAAAAAAAAAAAAAAAAAB3d3d3AAAAAAAAAAAAAAAAAAAA
+        AHd3cAAAAAAAAAAAAAAAAAAAAAAAd3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD////gfwAAAP///wAfAAAA///4AAMAAAD//8AAAAAAAP/+
+        AAAAAAAA//AAAAAAAAD/gAAMAAAAAPwAB/wAAAAA4AH//AAAAACA///8AAAAAP////wAAAAA///n/AAA
+        AAD//8H8AAAAAP//gPwAAAAA//8AfAAAAAD//gB8AAAAAPv8AHwAAAAA4fgAfAAAAADg8AB8AAAAAOAg
+        EHwAAAAA4AAwfAAAAADkAPB8AAAAAOYB8HwAAAAA5gHwfAAAAADkAPB8AAAAAOAAMHwAAAAA4CAQfAAA
+        AADg8AB8AAAAAOH4AHwAAAAA+/wAfAAAAAD//gB8AAAAAP//AHwAAAAA//+A/AAAAAD//8H8AAAAAP//
+        7/wAAAAA/////AAAAAD////8AAAAAP////wDAAAA/////B8AAAD////8fwAAAA==
+</value>
   </data>
 </root>

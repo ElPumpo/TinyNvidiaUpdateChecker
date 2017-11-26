@@ -113,7 +113,6 @@ namespace TinyNvidiaUpdateChecker
             this.SizeLabel.TabIndex = 6;
             this.SizeLabel.Text = "Size: ";
             this.SizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.SizeLabel, "The driver file size");
             // 
             // ReleasedLabel
             // 
@@ -123,7 +122,6 @@ namespace TinyNvidiaUpdateChecker
             this.ReleasedLabel.TabIndex = 5;
             this.ReleasedLabel.Text = "Released: ";
             this.ReleasedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.ReleasedLabel, "How long ago the drivers were released");
             // 
             // VersionLabel
             // 
@@ -173,7 +171,7 @@ namespace TinyNvidiaUpdateChecker
             this.Controls.Add(this.DownloadBtn);
             this.Controls.Add(this.DownloadInstallButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.Execut‌​ablePath);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DriverDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "TinyNvidiaUpdateChecker - Update Dialog";
