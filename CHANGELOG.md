@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.11.0] - 2018-02-09
 ### Added
 - `--ignore-missing-gpu` argument, will ignore the fact that no compatible gpu were found
 
 ### Changed
 - Tool tips in the driver dialog
+- Updated legal message
 
 ### Fixed
 - Possible fix for 7-Zip extraction error
