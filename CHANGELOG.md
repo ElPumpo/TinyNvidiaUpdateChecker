@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Possible fix for 7-Zip extraction error
+- Fixed update checker by updating to .NET 4.6.1 and HAP v1.6.16, thanks @dragondaud
 
 ## [1.10.0] - 2017-10-24
 ### Added
