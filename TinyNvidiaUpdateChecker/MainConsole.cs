@@ -1088,7 +1088,7 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void RunIntro()
         {
-            if(!hasRunIntro) {
+            if (!hasRunIntro) {
                 hasRunIntro = true;
                // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
                 Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
