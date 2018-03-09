@@ -847,14 +847,15 @@ namespace TinyNvidiaUpdateChecker
                             webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
                             {
                                 progress.Report((double)e.ProgressPercentage / 100);
-
-                                if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
                             };
 
+                            // Only set notifier here!
                             webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e)
                             {
-                                if(e.Cancelled) {
+                                if(e.Cancelled || e.Error != null) {
                                     File.Delete(savePath + driverFileName);
+                                } else {
+                                    notifier.Set();
                                 }
                             };
 
@@ -930,15 +931,18 @@ namespace TinyNvidiaUpdateChecker
                         var progress = new Handler.ProgressBar();
                         bool error = false;
 
-                        webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
+                        webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
+                        {
                             progress.Report((double)e.ProgressPercentage / 100);
-
-                            if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
                         };
 
-                        webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
-                            if (e.Cancelled) {
-                                File.Delete(FULL_PATH_DRIVER);
+                        // Only set notifier here!
+                        webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e)
+                        {
+                            if (e.Cancelled || e.Error != null) {
+                                File.Delete(savePath + driverFileName);
+                            } else {
+                                notifier.Set();
                             }
                         };
 
@@ -952,7 +956,7 @@ namespace TinyNvidiaUpdateChecker
                             Console.WriteLine(ex.ToString());
                             Console.WriteLine();
                         }
-                        
+
                         progress.Dispose(); // dispone the progress bar
                         
                         if (!error) {
