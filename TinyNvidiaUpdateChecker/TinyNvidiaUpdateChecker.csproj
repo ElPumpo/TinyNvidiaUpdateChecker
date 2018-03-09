@@ -67,8 +67,8 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack, Version=1.6.16.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.6.16\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.7.1.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.7.1\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -85,11 +85,12 @@
     <Compile Include="DriverDialog.Designer.cs">
       <DependentUpon>DriverDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="FolderSelectDialog.cs" />
-    <Compile Include="LibaryHandler.cs" />
+    <Compile Include="Handlers\FolderSelectDialog.cs" />
+    <Compile Include="Handlers\HashHandler.cs" />
+    <Compile Include="Handlers\LibaryHandler.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="MainConsole.cs" />
-    <Compile Include="ProgressBar.cs" />
+    <Compile Include="Handlers\ProgressBar.cs" />
     <Compile Include="DownloaderForm.cs">
       <SubType>Form</SubType>
     </Compile>

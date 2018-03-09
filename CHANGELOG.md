@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- Implemented checks for the MD5 hash for the HAP dll file. This is to make so that people don't use a wrong version of HAP, since TNUC only previously checkes for the file name. Now we are also checking the hash which means that we are comparing the entire file. This should fix all the dll hell trouble, sorry for the late fix :/
+
+### Changed
+- Moved class files
+- Updated HAP to v1.7.1
+
 ## [1.11.0] - 2018-02-09
 ### Added
 - `--ignore-missing-gpu` argument, will ignore the fact that no compatible gpu were found

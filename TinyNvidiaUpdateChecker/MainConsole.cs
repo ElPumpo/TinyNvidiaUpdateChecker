@@ -13,6 +13,7 @@ using System.Threading;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.ComponentModel;
+using TinyNvidiaUpdateChecker.Handler;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -728,8 +729,35 @@ namespace TinyNvidiaUpdateChecker
                     Environment.Exit(2);
                     break;
             }
+            var hap = "HtmlAgilityPack.dll";
+            if (File.Exists(hap)) {
+                Console.WriteLine();
+                Console.Write("Verifying HAP hash . . . ");
+                var hash = HashHandler.CalculateMD5(hap);
 
-            if (!File.Exists("HtmlAgilityPack.dll")) {
+                if (hash.md5 != HashHandler.HASH_HAP && hash.error == false) {
+                    Console.WriteLine("ERROR!");
+                    Console.WriteLine();
+                    Console.WriteLine("Deleting the invalid HAP file!");
+
+                    try {
+                        File.Delete(hap);
+                    } catch (Exception ex) {
+                        Console.WriteLine(ex.ToString());
+                    }
+                    
+                } else {
+                    Console.Write("OK!");
+                    Console.WriteLine();
+                }
+
+                if (debug) {
+                    Console.WriteLine("Generated hash:  " + hash.md5);
+                    Console.WriteLine("Known hash:      " + HashHandler.HASH_HAP);
+                }
+            }
+
+            if (!File.Exists(hap)) {
 
                 Console.WriteLine();
                 Console.Write("Attempting to download HtmlAgilityPack.dll . . . ");
@@ -807,7 +835,7 @@ namespace TinyNvidiaUpdateChecker
 
                         using (WebClient webClient = new WebClient()) {
                             var notifier = new AutoResetEvent(false);
-                            var progress = new ProgressBar();
+                            var progress = new Handler.ProgressBar();
 
                             webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
                             {
@@ -892,7 +920,7 @@ namespace TinyNvidiaUpdateChecker
                 if (showUI || confirmDL) {
                     using (WebClient webClient = new WebClient()) {
                         var notifier = new AutoResetEvent(false);
-                        var progress = new ProgressBar();
+                        var progress = new Handler.ProgressBar();
                         bool error = false;
 
                         webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {

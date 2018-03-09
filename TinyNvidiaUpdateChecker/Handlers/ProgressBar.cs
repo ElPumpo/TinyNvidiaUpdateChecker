@@ -2,7 +2,7 @@
 using System.Text;
 using System.Threading;
 
-namespace TinyNvidiaUpdateChecker
+namespace TinyNvidiaUpdateChecker.Handler
 {
 
     /// <summary>
