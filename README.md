@@ -8,8 +8,7 @@ Tiny application which checks for NVIDIA GeForce GPU drivers, written in C-sharp
 This application has a simple concept, when launched it will check for new driver updates for your NVIDIA gpu! With this you no longer need waste your time searching if there's something new to get.
 
 # Download
-Downloads are available [here](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases).
-Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be in the executing directory.
+[Go to the releases page](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases) for all downloads
 
 ### Forkers
 [HTML Agility Pack](https://www.nuget.org/packages/HtmlAgilityPack) will automatically install when attempting to debug the project (make sure you're running the latest version of VS2017), or you may manually install it by doing the following: Open up your Package Manager Console and type in `Install-Package HtmlAgilityPack`.
@@ -19,7 +18,7 @@ Don't forget to download `HtmlAgilityPack.dll` which is a dependency and must be
 + .NET framework 4.6.1
 + `HtmlAgilityPack.dll` in same folder as the executable (automatic download from v1.8.0 and up)
 + Stable internet connection
-+ (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org) (***only*** if using minimal installer method)
++ (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org)
 
 # Legal
 
