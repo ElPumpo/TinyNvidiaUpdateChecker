@@ -847,14 +847,14 @@ namespace TinyNvidiaUpdateChecker
                             webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
                             {
                                 progress.Report((double)e.ProgressPercentage / 100);
-
-                                if (e.BytesReceived >= e.TotalBytesToReceive) notifier.Set();
                             };
 
                             webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e)
                             {
                                 if(e.Cancelled) {
                                     File.Delete(savePath + driverFileName);
+                                }else{
+                                    notifier.Set();
                                 }
                             };
 
