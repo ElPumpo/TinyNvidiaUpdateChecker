@@ -738,7 +738,7 @@ namespace TinyNvidiaUpdateChecker
                 if (hash.md5 != HashHandler.HASH_HAP && hash.error == false) {
                     Console.Write("ERROR!");
                     Console.WriteLine();
-                    Console.WriteLine("Deleting the invalid HAP file!");
+                    Console.WriteLine("Deleting the invalid HAP file.");
 
                     try {
                         File.Delete(hap);
