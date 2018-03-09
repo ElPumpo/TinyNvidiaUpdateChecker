@@ -745,7 +745,14 @@ namespace TinyNvidiaUpdateChecker
                     } catch (Exception ex) {
                         Console.WriteLine(ex.ToString());
                     }
-                    
+
+                // delete HAP file as it couldn't be verified
+                } else if (hash.error) {
+                    try {
+                        File.Delete(hap);
+                    } catch (Exception ex) {
+                        Console.WriteLine(ex.ToString());
+                    }
                 } else {
                     Console.Write("OK!");
                     Console.WriteLine();
