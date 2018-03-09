@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Moved class files
 - Updated HAP to v1.7.1
 
+### Fixed
+- An issue where the file is still being used by TNUC after the drivers have been downloaded. This was the cause of #26, thanks a lot [https://github.com/indivisible](indivisible) for fixing the issue, credits to him!
+
 ## [1.11.0] - 2018-02-09
 ### Added
 - `--ignore-missing-gpu` argument, will ignore the fact that no compatible gpu were found
