@@ -1090,10 +1090,10 @@ namespace TinyNvidiaUpdateChecker
         {
             if(!hasRunIntro) {
                 hasRunIntro = true;
-                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-                //Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+               // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
+                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
                 Console.WriteLine();
-                Console.WriteLine("Copyright (C) 2016-2017 Hawaii_Beach");
+                Console.WriteLine("Copyright (C) 2016-2018 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
                 Console.WriteLine("This is free software, and you are welcome to redistribute it");
                 Console.WriteLine("under certain conditions. Licensed under GPLv3.");
