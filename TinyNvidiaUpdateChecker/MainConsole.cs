@@ -752,8 +752,8 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 if (debug) {
-                    Console.WriteLine("Generated hash:  " + hash.md5);
-                    Console.WriteLine("Known hash:      " + HashHandler.HASH_HAP);
+                    Console.WriteLine("Generated hash: " + hash.md5);
+                    Console.WriteLine("Known hash:     " + HashHandler.HASH_HAP);
                 }
             }
 
