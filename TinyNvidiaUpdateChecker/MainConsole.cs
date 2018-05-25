@@ -68,6 +68,7 @@ namespace TinyNvidiaUpdateChecker
         /// Langauge ID for GPU driver download
         /// </summary>
         private static int langID;
+        private static string langSTR;
 
         private static string downloadURL;
         private static string savePath;
@@ -481,6 +482,43 @@ namespace TinyNvidiaUpdateChecker
             if (debug) {
                 Console.WriteLine("langID:   " + langID);
                 Console.WriteLine("cultName: " + cultName);
+                Console.WriteLine();
+            }
+        }
+
+         
+        /// <summary>
+        /// Gets the local langauge used by operator and sets value 'langSTR'.
+        /// </summary>
+        /// <seealso cref="GpuInfo"> Used here, decides driver download language and possibly download server.</seealso>
+        private static void GetLanguageAsString()
+        {
+            string cultName = CultureInfo.CurrentCulture.ToString(); // https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx - http://www.lingoes.net/en/translator/langcode.htm
+
+            switch (cultName)
+            {
+                case "en-US":  // English - United States
+                case "en-GB":  // English - United Kingdom
+                case "zh-CHS": // Chinese (Simplified)
+                case "zh-CHT": // Chinese (Traditional)
+                case "ja-JP":  // Japanese - Japan
+                case "ko-KR":  // Korean - Korea
+                case "de-DE":  // German - Germany
+                case "es-ES":  // Spanish - Spain
+                case "fr-FR":  // French - France
+                case "it-IT":  // Italian - Italy
+                case "pl-PL":  // Polish - Poland
+                case "pt-BR":  // Portuguese - Brazil
+                case "ru-RU":  // Russian - Russia
+                    langSTR = cultName;
+                    break;
+                default:
+                    // intl
+                    langSTR = "en-US";
+                    break;
+            }
+            if (debug) {
+                Console.WriteLine("langSTR:   " + langSTR);
                 Console.WriteLine();
             }
         }
@@ -1018,8 +1056,11 @@ namespace TinyNvidiaUpdateChecker
 
             int error = 0;
             LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
-            string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
-
+            GetLanguageAsString();
+            string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe", @"GFExperience\EULA.html"
+                ,@"GFExperience\PrivacyPolicy\PrivacyPolicy_" + langSTR + ".htm"
+                , @"GFExperience\FunctionalConsent_" + langSTR + ".txt", };
+            
             try {
                 File.WriteAllLines(savePath + "inclList.txt", filesToExtract);
             } catch (Exception ex) {
