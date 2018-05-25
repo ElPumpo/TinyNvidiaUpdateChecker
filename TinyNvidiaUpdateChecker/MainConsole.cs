@@ -1018,8 +1018,10 @@ namespace TinyNvidiaUpdateChecker
 
             int error = 0;
             LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
-            string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
-
+            string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe", @"GFExperience\EULA.html"
+                ,@"GFExperience\PrivacyPolicy\PrivacyPolicy_" + CultureInfo.CurrentCulture.ToString() + ".htm"
+                , @"GFExperience\FunctionalConsent_" + CultureInfo.CurrentCulture.ToString() + ".txt", };
+            
             try {
                 File.WriteAllLines(savePath + "inclList.txt", filesToExtract);
             } catch (Exception ex) {
