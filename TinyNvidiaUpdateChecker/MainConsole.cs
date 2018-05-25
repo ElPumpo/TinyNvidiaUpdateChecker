@@ -177,7 +177,6 @@ namespace TinyNvidiaUpdateChecker
 
             if (iOnline == iOffline) {
                 Console.WriteLine("Your GPU drivers are up-to-date!");
-                DownloadDriver();
             } else {
                 if (iOffline > iOnline) {
                     Console.WriteLine("Your current GPU driver is newer than remote!");
