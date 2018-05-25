@@ -177,6 +177,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (iOnline == iOffline) {
                 Console.WriteLine("Your GPU drivers are up-to-date!");
+                DownloadDriver();
             } else {
                 if (iOffline > iOnline) {
                     Console.WriteLine("Your current GPU driver is newer than remote!");
@@ -1056,6 +1057,7 @@ namespace TinyNvidiaUpdateChecker
 
             int error = 0;
             LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
+            GetLanguageAsString();
             string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe", @"GFExperience\EULA.html"
                 ,@"GFExperience\PrivacyPolicy\PrivacyPolicy_" + langSTR + ".htm"
                 , @"GFExperience\FunctionalConsent_" + langSTR + ".txt", };
