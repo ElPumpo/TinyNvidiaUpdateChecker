@@ -13,6 +13,7 @@ using System.Threading;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.ComponentModel;
+using System.Xml;
 using TinyNvidiaUpdateChecker.Handler;
 
 namespace TinyNvidiaUpdateChecker
@@ -1076,6 +1077,16 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Could not identify a possible extractor! We should panic.");
             }
 
+            try {
+                FixGdrp();;
+            }
+            catch (Exception e) {
+                error++;
+                Console.Write("ERROR!");
+                Console.WriteLine();
+                Console.WriteLine(e.ToString());
+            }
+
             if(error == 0) {
                 Console.Write("OK!");
                 Console.WriteLine();
@@ -1106,6 +1117,24 @@ namespace TinyNvidiaUpdateChecker
         private static bool DoesDriverFileSizeMatch(string FULL_PATH_DRIVER)
         {
             return new FileInfo(FULL_PATH_DRIVER).Length == downloadFileSize;
+        }
+
+        /// <summary>
+        /// Fixing the need of dependencies in the setup.cfg
+        /// </summary>
+        private static void FixGdrp()
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load("setup.cfg");
+            string[] LinesToDelete = {  "${{EulaHtmlFile}}", "${{FunctionalConsentFile}}", "${{PrivacyPolicyFile}}" };
+
+            foreach (string line in LinesToDelete)
+            {
+                XmlElement node = (XmlElement)doc.DocumentElement.SelectSingleNode("/setup/manifest/file[@name=\"" +line + "\"]");
+                if (node != null)
+                    node.ParentNode.RemoveChild(node);
+            }
+            doc.Save("setup.cfg");
         }
     }
 }
