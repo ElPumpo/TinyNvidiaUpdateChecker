@@ -164,6 +164,13 @@ namespace TinyNvidiaUpdateChecker
 
             bool hasSelected = false;
             int iOffline = 0;
+            try
+            {
+                ConsoleQuickEdit.DisableQuickEdit();
+            } catch (Exception ex) {
+                Console.WriteLine("Could not disable QuickEdit of Console");
+                Console.WriteLine(ex.ToString());
+            }
 
             try {
                 iOffline = Convert.ToInt32(OfflineGPUVersion.Replace(".", string.Empty));
