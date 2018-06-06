@@ -14,6 +14,7 @@ using System.Management;
 using System.Net.NetworkInformation;
 using System.ComponentModel;
 using TinyNvidiaUpdateChecker.Handler;
+using System.Xml;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -1016,14 +1017,14 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
             Console.Write("Making installer . . . ");
 
-            int error = 0;
+            bool error = false;
             LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
             string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
 
             try {
                 File.WriteAllLines(savePath + "inclList.txt", filesToExtract);
             } catch (Exception ex) {
-                error++;
+                error = true;
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
@@ -1042,7 +1043,7 @@ namespace TinyNvidiaUpdateChecker
                         WinRAR.Start();
                         WinRAR.WaitForExit();
                     } catch (Exception ex) {
-                        error++;
+                        error = true;
                         Console.Write("ERROR!");
                         Console.WriteLine();
                         Console.WriteLine(ex.ToString());
@@ -1066,7 +1067,7 @@ namespace TinyNvidiaUpdateChecker
                         SevenZip.Start();
                         SevenZip.WaitForExit();
                     } catch (Exception ex) {
-                        error++;
+                        error = true;
                         Console.Write("ERROR!");
                         Console.WriteLine();
                         Console.WriteLine(ex.ToString());
@@ -1074,13 +1075,30 @@ namespace TinyNvidiaUpdateChecker
                 }
             } else {
                 Console.WriteLine("Could not identify a possible extractor! We should panic.");
+                error = true;
             }
 
-            if(error == 0) {
+            // remove new EULA files from the installer config, or else the installer throws error codes
+            // thanks to https://github.com/cywq
+            if (!error) {
+                XmlDocument xmlDocument = new XmlDocument();
+                string setupFile = savePath + "setup.cfg";
+                xmlDocument.Load(setupFile);
+
+                string[] LinesToDelete = { "${{EulaHtmlFile}}", "${{FunctionalConsentFile}}", "${{PrivacyPolicyFile}}" };
+                foreach (string line in LinesToDelete) {
+                    XmlElement node = (XmlElement)xmlDocument.DocumentElement.SelectSingleNode("/setup/manifest/file[@name=\"" + line + "\"]");
+                    if (node != null) {
+                        node.ParentNode.RemoveChild(node);
+                    }
+                }
+                xmlDocument.Save(setupFile);
+            }
+
+            if (!error) {
                 Console.Write("OK!");
                 Console.WriteLine();
             }
-
         }
 
         /// <summary>
