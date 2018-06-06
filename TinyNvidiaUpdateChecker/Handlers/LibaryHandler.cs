@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace TinyNvidiaUpdateChecker.Handler
+namespace TinyNvidiaUpdateChecker.Handlers
 {
     /*
     TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!

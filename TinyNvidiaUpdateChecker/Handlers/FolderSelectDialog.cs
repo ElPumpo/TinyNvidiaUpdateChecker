@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace TinyNvidiaUpdateChecker.Handler
+namespace TinyNvidiaUpdateChecker.Handlers
 {
     /// <summary>
     /// Present the Windows Vista-style open file dialog to select a folder. Fall back for older Windows Versions
@@ -21,7 +21,7 @@ namespace TinyNvidiaUpdateChecker.Handler
         }
         public string Title
         {
-            get { return _title ?? "Select a folder"; }
+            get { return _title ?? "Select a directory"; }
             set { _title = value; }
         }
         public string FileName { get { return _fileName; } }

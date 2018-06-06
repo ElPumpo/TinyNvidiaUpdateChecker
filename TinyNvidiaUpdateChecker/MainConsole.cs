@@ -13,8 +13,8 @@ using System.Threading;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.ComponentModel;
-using TinyNvidiaUpdateChecker.Handler;
 using System.Xml;
+using TinyNvidiaUpdateChecker.Handlers;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -146,6 +146,10 @@ namespace TinyNvidiaUpdateChecker
 
             if (showUI) {
                 AllocConsole();
+
+                if (!debug) {
+                    GenericHandler.DisableQuickEdit();
+                }
             }
 
             SettingManager.ConfigInit();
@@ -843,7 +847,7 @@ namespace TinyNvidiaUpdateChecker
 
                         using (WebClient webClient = new WebClient()) {
                             var notifier = new AutoResetEvent(false);
-                            var progress = new Handler.ProgressBar();
+                            var progress = new Handlers.ProgressBar();
 
                             webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
                             {
@@ -929,7 +933,7 @@ namespace TinyNvidiaUpdateChecker
                 if (showUI || confirmDL) {
                     using (WebClient webClient = new WebClient()) {
                         var notifier = new AutoResetEvent(false);
-                        var progress = new Handler.ProgressBar();
+                        var progress = new Handlers.ProgressBar();
                         bool error = false;
 
                         webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
