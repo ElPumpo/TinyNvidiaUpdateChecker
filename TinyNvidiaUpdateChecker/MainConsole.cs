@@ -633,7 +633,7 @@ namespace TinyNvidiaUpdateChecker
                             LogManager.Log("The status: '" + status + "' is not a recognized status!", LogManager.Level.ERROR);
                             break;
                     }
-                }            
+                }
 
                 releaseDate = new DateTime(year, month, day); // follows the ISO 8601 standard 
 
@@ -987,10 +987,10 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.Write("Running installer . . . ");
                 if (SettingManager.ReadSettingBool("Minimal install")) {
-                    Process.Start(FULL_PATH_DIRECTORY + "setup.exe", "/s").WaitForExit();
+                    Process.Start(FULL_PATH_DIRECTORY + "setup.exe", "/s /noreboot").WaitForExit();
                 } else {
-                    if(minimized) {
-                        Process.Start(FULL_PATH_DRIVER, "/s").WaitForExit();
+                    if (minimized) {
+                        Process.Start(FULL_PATH_DRIVER, "/s /noreboot").WaitForExit();
                     } else {
                         Process.Start(FULL_PATH_DRIVER, "/noeula").WaitForExit();
                     }
