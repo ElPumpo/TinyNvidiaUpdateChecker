@@ -4,9 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.13.0] - 2018-06-06
+### Added
+- QuickEdit is now disabled, no more accidentally stalling the application
+
 ### Changed
 - Minor message when hash doesn't match
+- Updated HAP to v1.8.4
+
+### Fixed
+- Minimal installer not extracting new required EULA files [#41](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/issues/41) - thanks [cywq](https://github.com/cywq)
 
 ## [1.12.0] - 2018-03-09
 ### Added
