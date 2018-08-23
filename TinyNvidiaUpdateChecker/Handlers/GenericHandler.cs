@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace TinyNvidiaUpdateChecker.Handlers
@@ -35,6 +36,13 @@ namespace TinyNvidiaUpdateChecker.Handlers
             if (!SetConsoleMode(consoleHandle, consoleMode)){
                 return;
             }
+        }
+
+        public static string[] CheckPathForInstaller(string path)
+        {
+            string[] Installers;
+            Installers = Directory.GetFiles(path, "*-international-whql.exe");
+            return Installers;
         }
     }
 }
