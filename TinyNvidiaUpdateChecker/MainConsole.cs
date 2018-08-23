@@ -712,6 +712,8 @@ namespace TinyNvidiaUpdateChecker
 
         }
 
+
+
         /// <summary>
         /// Check if dependencies are all OK
         /// </summary>
@@ -729,9 +731,38 @@ namespace TinyNvidiaUpdateChecker
                 default:
                     Console.Write("ERROR!");
                     Console.WriteLine();
-                    Console.WriteLine("No network connection was found, the application will now determinate!");
-                    if (showUI) Console.ReadKey();
-                    Environment.Exit(2);
+                    Console.WriteLine("No network connection was found, searching for installer in programm directory....");
+
+                    string[] drvs = GenericHandler.CheckPathForInstaller(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                    if (drvs.Length != 0)
+                    {
+                        int count = 1;
+                        Console.Write("OK!");
+                        Console.WriteLine();
+                        
+                        foreach (string drv in drvs)
+                        {
+                            Console.WriteLine(count + "  - " + Path.GetFileName(drv));
+                            count++;
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine("Which driver do you want to install?");
+                        int select = Convert.ToInt32(Console.ReadLine());
+                        savePath = Path.GetDirectoryName(drvs[select - 1]) + @"\";
+                        driverFileName = Path.GetFileName(drvs[select - 1]);
+                        MakeInstaller(false);
+                        RunInstaller(false, drvs[select - 1]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("No installers found in tool directory");
+                        Console.ReadKey();
+                    }
+
+                    if (showUI)
+                        Console.ReadKey();
+
+                    Environment.Exit(0);
                     break;
             }
             var hap = "HtmlAgilityPack.dll";
@@ -983,34 +1014,54 @@ namespace TinyNvidiaUpdateChecker
                 MakeInstaller(minimized);
             }
 
-            try {
+            RunInstaller(minimized, FULL_PATH_DRIVER);
+        }
+
+
+        private static void RunInstaller(bool silent, string FULL_PATH_DRIVER)
+        {
+            try
+            {
                 Console.WriteLine();
                 Console.Write("Running installer . . . ");
-                if (SettingManager.ReadSettingBool("Minimal install")) {
-                    Process.Start(FULL_PATH_DIRECTORY + "setup.exe", "/s /noreboot").WaitForExit();
-                } else {
-                    if (minimized) {
+                if (SettingManager.ReadSettingBool("Minimal install"))
+                {
+                    Process.Start(Path.GetDirectoryName(FULL_PATH_DRIVER) + @"\" + "setup.exe", "/s /noreboot").WaitForExit();
+                }
+                else
+                {
+                    if (silent)
+                    {
                         Process.Start(FULL_PATH_DRIVER, "/s /noreboot").WaitForExit();
-                    } else {
+                    }
+                    else
+                    {
                         Process.Start(FULL_PATH_DRIVER, "/noeula").WaitForExit();
                     }
-                    
+
                 }
-                
+
                 Console.Write("OK!");
-            } catch {
+            }
+            catch
+            {
                 Console.WriteLine("Could not run driver installer!");
             }
 
             Console.WriteLine();
 
-            try {
-                Directory.Delete(FULL_PATH_DIRECTORY, true);
-                Console.WriteLine("Cleaned up: " + FULL_PATH_DIRECTORY);
-            } catch {
-                Console.WriteLine("Could not cleanup: " + FULL_PATH_DIRECTORY);
+            try
+            {
+                if (Path.GetDirectoryName(FULL_PATH_DRIVER) == Path.GetTempPath())
+                {
+                    Directory.Delete(Path.GetDirectoryName(FULL_PATH_DRIVER), true);
+                    Console.WriteLine("Cleaned up: " + Path.GetDirectoryName(FULL_PATH_DRIVER));
+                }
             }
-
+            catch
+            {
+                Console.WriteLine("Could not cleanup: " + Path.GetDirectoryName(FULL_PATH_DRIVER));
+            }
         }
 
         /// <summary>
