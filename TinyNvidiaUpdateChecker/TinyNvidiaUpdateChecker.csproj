@@ -72,19 +72,20 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnonymousEqualityComparer.cs" />
     <Compile Include="DriverDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="DriverDialog.Designer.cs">
       <DependentUpon>DriverDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Handlers\FolderSelectDialog.cs" />
     <Compile Include="Handlers\GenericHandler.cs" />
     <Compile Include="Handlers\HashHandler.cs" />
