@@ -14,6 +14,7 @@ using System.Management;
 using System.Net.NetworkInformation;
 using System.ComponentModel;
 using System.Xml;
+using TinyNvidiaUpdateChecker.Extensions;
 using TinyNvidiaUpdateChecker.Handlers;
 
 namespace TinyNvidiaUpdateChecker
@@ -126,6 +127,13 @@ namespace TinyNvidiaUpdateChecker
         /// Should we ignore that no compatible gpu were found?
         /// </summary>
         private static bool ignoreMissingGpu = false;
+
+        private static readonly List<string> driverComponentsToInstall = new List<string>();
+
+        private static bool ShouldMakeInstaller
+        {
+            get { return SettingManager.ReadSettingBool("Minimal install") || (driverComponentsToInstall?.Count ?? 0) > 0; }
+        }
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AllocConsole();
@@ -388,6 +396,15 @@ namespace TinyNvidiaUpdateChecker
                     ignoreMissingGpu = true;
                 }
 
+                // install only specified driver components: forces the use of MakeInstaller
+                else if (arg.ToLower().StartsWith("--install-components=")) {
+                    var components = arg.Substring(arg.IndexOf('=')).TrimStart('=').Split(',')
+                                        .Where(s => !string.IsNullOrWhiteSpace(s))
+                                        .Select(s => s.Trim())
+                                        .Distinct((s1, s2) => s1.ToLower().Equals(s2.ToLower()), s => s.ToLower().GetHashCode());
+                    driverComponentsToInstall.AddRange(components);
+                }
+
                 // help menu
                 else if (arg.ToLower() == "--help") {
                     RunIntro();
@@ -401,6 +418,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("--confirm-dl          Automatically download and install the driver quietly without any user interaction at all. should be used with '--quiet' for the optimal solution.");
                     Console.WriteLine("--config-here         Use the working directory as path to the config file.");
                     Console.WriteLine("--ignore-missing-gpu  Ignore the fact that no compatible were found.");
+                    Console.WriteLine("--install-components  Install only the specified components (in addition to the mandatory ones). Example: '--install-components=HDAudio,PhysX'");
                     Console.WriteLine("--help                Displays this message.");
                     Environment.Exit(0);
                 }
@@ -789,7 +807,7 @@ namespace TinyNvidiaUpdateChecker
 
             }
 
-            if (SettingManager.ReadSettingBool("Minimal install")) {
+            if (ShouldMakeInstaller) {
                 if (LibaryHandler.EvaluateLibary() == null) {
                     Console.WriteLine("Doesn't seem like either WinRAR or 7-Zip is installed!");
                     DialogResult dialogUpdates = MessageBox.Show("Do you want to disable the minimal install feature and use the traditional way?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -822,7 +840,7 @@ namespace TinyNvidiaUpdateChecker
                 try {
                    string message = "Where do you want to save the drivers?";
 
-                    if (SettingManager.ReadSettingBool("Minimal install")) {
+                    if (ShouldMakeInstaller) {
                         message += " (you should select a empty folder)";
                     }
 
@@ -899,7 +917,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("savePath: " + savePath);
                 }
 
-                if (SettingManager.ReadSettingBool("Minimal install")) {
+                if (ShouldMakeInstaller) {
                     MakeInstaller(false);
                 }
             } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLINSTALL) {
@@ -979,14 +997,14 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            if (SettingManager.ReadSettingBool("Minimal install")) {
+            if (ShouldMakeInstaller) {
                 MakeInstaller(minimized);
             }
 
             try {
                 Console.WriteLine();
                 Console.Write("Running installer . . . ");
-                if (SettingManager.ReadSettingBool("Minimal install")) {
+                if (ShouldMakeInstaller) {
                     Process.Start(FULL_PATH_DIRECTORY + "setup.exe", "/s /noreboot").WaitForExit();
                 } else {
                     if (minimized) {
@@ -1023,7 +1041,13 @@ namespace TinyNvidiaUpdateChecker
 
             bool error = false;
             LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
-            string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
+            List<string> filesToExtract = new List<string> { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
+
+            if (driverComponentsToInstall != null && driverComponentsToInstall.Count > 0) {
+                var lowerCaseEqualityComparer = new AnonymousEqualityComparer<string>((s1, s2) => s1.ToLower().Equals(s2.ToLower()), s => s.ToLower().GetHashCode());
+                var collection = driverComponentsToInstall.Where(s => !filesToExtract.Contains(s, lowerCaseEqualityComparer));
+                filesToExtract.AddRange(collection);
+            }
 
             try {
                 File.WriteAllLines(savePath + "inclList.txt", filesToExtract);
