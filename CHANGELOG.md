@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- Compare HAP versions, making sure downloaded one is the correct one (which also prevents a .NET error message)
+- We now run the NVIDIA installer with the `/noreboot` if the application is running quiet to prevent random reboots
+
+### Fixed
+- Minor typo
+
 ## [1.13.0] - 2018-06-06
 ### Added
 - QuickEdit is now disabled, no more accidentally stalling the application

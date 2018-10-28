@@ -310,7 +310,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
             } else {
-                Console.WriteLine("You're running a non-supported version of Windows; the application will determine itself.");
+                Console.WriteLine("You're running a non-supported version of Windows; the application will terminate itself.");
                 Console.WriteLine("verOrg: " + verOrg);
                 if (showUI) Console.ReadKey();
                 Environment.Exit(1);
@@ -699,9 +699,6 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (debug) {
-                Console.WriteLine("gpuURL:      " + gpuURL);
-                Console.WriteLine("processURL:  " + processURL);
-              //  Console.WriteLine("confirmURL:  " + confirmURL);
                 Console.WriteLine("downloadURL: " + downloadURL);
                 Console.WriteLine("pdfURL:      " + pdfURL);
                 Console.WriteLine("releaseDate: " + releaseDate.ToShortDateString());
@@ -729,24 +726,26 @@ namespace TinyNvidiaUpdateChecker
                 default:
                     Console.Write("ERROR!");
                     Console.WriteLine();
-                    Console.WriteLine("No network connection was found, the application will now determinate!");
+                    Console.WriteLine("No network connection was found, the application will now terminate!");
                     if (showUI) Console.ReadKey();
                     Environment.Exit(2);
                     break;
             }
+
             var hap = "HtmlAgilityPack.dll";
+
             if (File.Exists(hap)) {
                 Console.WriteLine();
                 Console.Write("Verifying HAP hash . . . ");
                 var hash = HashHandler.CalculateMD5(hap);
 
-                if (hash.md5 != HashHandler.HASH_HAP && hash.error == false) {
+                if (hash.md5 != HashHandler.HAP_HASH && hash.error == false) {
                     Console.Write("ERROR!");
                     Console.WriteLine();
                     Console.WriteLine("Deleting the invalid HAP file.");
 
                     try {
-                        File.Delete(hap);
+                        //fFile.Delete(hap);
                     } catch (Exception ex) {
                         Console.WriteLine(ex.ToString());
                     }
@@ -765,7 +764,7 @@ namespace TinyNvidiaUpdateChecker
 
                 if (debug) {
                     Console.WriteLine("Generated hash: " + hash.md5);
-                    Console.WriteLine("Known hash:     " + HashHandler.HASH_HAP);
+                    Console.WriteLine("Known hash:     " + HashHandler.HAP_HASH);
                 }
             }
 
@@ -788,15 +787,24 @@ namespace TinyNvidiaUpdateChecker
                 }
 
             }
+            var currentHapVersion = AssemblyName.GetAssemblyName(hap).Version.ToString();
 
-            if (SettingManager.ReadSettingBool("Minimal install")) {
+            // compare HAP version too
+            if (new Version(HashHandler.HAP_VERSION).CompareTo(new Version(currentHapVersion)) > 0) {
+                Console.WriteLine("ERROR: The current HAP libary v{0} does not match the wanted v{1}", currentHapVersion, HashHandler.HAP_VERSION);
+                Console.WriteLine("The application has been terminated to prevent a error message by .NET");
+                if (showUI) Console.ReadKey();
+                Environment.Exit(1);
+            }
+
+                if (SettingManager.ReadSettingBool("Minimal install")) {
                 if (LibaryHandler.EvaluateLibary() == null) {
                     Console.WriteLine("Doesn't seem like either WinRAR or 7-Zip is installed!");
                     DialogResult dialogUpdates = MessageBox.Show("Do you want to disable the minimal install feature and use the traditional way?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (dialogUpdates == DialogResult.Yes) {
                         SettingManager.SetSetting("Minimal install", "false");
                     } else {
-                        Console.WriteLine("The application will determinate itself");
+                        Console.WriteLine("The application will terminate itself");
                         if (showUI) Console.ReadKey();
                         Environment.Exit(1);
                     }
