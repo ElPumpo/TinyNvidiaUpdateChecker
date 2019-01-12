@@ -124,7 +124,7 @@ namespace TinyNvidiaUpdateChecker
         public static void SetSetting(string key, string val)
         {
             try {
-                LogManager.Log("operation='set',key='" + key + "',val='" + val + "'", LogManager.Level.SETTING);
+                LogManager.Log($"operation='set',key='{key}',val='{val}'", LogManager.Level.SETTING);
 
                 var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                 var settings = configFile.AppSettings.Settings;
@@ -183,7 +183,7 @@ namespace TinyNvidiaUpdateChecker
                     break;
 
                 default:
-                    MessageBox.Show("Unknown key '" + key + "'", "TinyNvidiaUpdateChecker", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Unknown key '{key}'", "TinyNvidiaUpdateChecker", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     message = "Unknown";
                     value = null;
                     break;
@@ -194,14 +194,14 @@ namespace TinyNvidiaUpdateChecker
                 DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialogUpdates == DialogResult.Yes) {
                     SetSetting(key, value[0]);
-                    LogManager.Log("operation='setup',key='" + key + "',val='" + value[0] + "'", LogManager.Level.SETTING);
+                    LogManager.Log($"operation='setup',key='{key}',val='{value[0]}'", LogManager.Level.SETTING);
                 } else {
                     SetSetting(key, value[1]);
-                    LogManager.Log("operation='setup',key='" + key + "',val='" + value[1] + "'", LogManager.Level.SETTING);
+                    LogManager.Log($"operation='setup',key='{key}',val='{value[1]}'", LogManager.Level.SETTING);
                 }
             } else {
                 SetSetting(key, value[1]);
-                LogManager.Log("operation='setup',key='" + key + "',val='" + value[1] + "'", LogManager.Level.SETTING);
+                LogManager.Log($"operation='setup',key='{key}',val='{value[1]}'", LogManager.Level.SETTING);
             }
 
         }
@@ -249,7 +249,7 @@ namespace TinyNvidiaUpdateChecker
                     return false;
                 }
             }
-            Console.WriteLine("Could not retrive the key '" + key + "', this is bad!");
+            Console.WriteLine($"Could not retrive the key '{key}', this is bad!");
             return false;
         }
 
