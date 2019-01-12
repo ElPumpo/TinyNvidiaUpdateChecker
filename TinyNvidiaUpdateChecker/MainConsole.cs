@@ -46,6 +46,11 @@ namespace TinyNvidiaUpdateChecker
         private readonly static string serverURL = "https://elpumpo.github.io/TinyNvidiaUpdateChecker/";
 
         /// <summary>
+        /// The NVIDIA download server used, it's a two-word prefix.
+        /// </summary>
+        private static string downloadServerPrefix;
+
+        /// <summary>
         /// Current client version
         /// </summary>
         private static string offlineVer = Application.ProductVersion;
@@ -391,7 +396,7 @@ namespace TinyNvidiaUpdateChecker
                 // help menu
                 else if (arg.ToLower() == "--help") {
                     RunIntro();
-                    Console.WriteLine("Usage: " + Path.GetFileName(Assembly.GetEntryAssembly().Location) + " [ARGS]");
+                    Console.WriteLine($"Usage: {Path.GetFileName(Assembly.GetEntryAssembly().Location)} [ARGS]");
                     Console.WriteLine();
                     Console.WriteLine("--quiet               Runs the application quietly in the background, and will only notify the user if an update is available.");
                     Console.WriteLine("--erase-config        Erase local configuration file.");
@@ -409,7 +414,7 @@ namespace TinyNvidiaUpdateChecker
                 else
                 {
                     RunIntro();
-                    Console.WriteLine("Unknown command '" + arg + "', type --help for help.");
+                    Console.WriteLine($"Unknown command '{arg}', type --help for help.");
                     Console.WriteLine();
                 }
             }
@@ -716,7 +721,7 @@ namespace TinyNvidiaUpdateChecker
         {
 
             // Check internet connection
-            Console.Write("Searching for a network connection . . . ");
+            Console.Write("Verifying internet connection . . . ");
             switch (NetworkInterface.GetIsNetworkAvailable()) {
                 case true:
                     Console.Write("OK!");
@@ -726,7 +731,7 @@ namespace TinyNvidiaUpdateChecker
                 default:
                     Console.Write("ERROR!");
                     Console.WriteLine();
-                    Console.WriteLine("No network connection was found, the application will now terminate!");
+                    Console.WriteLine("No internet connection was found, the application will now terminate!");
                     if (showUI) Console.ReadKey();
                     Environment.Exit(2);
                     break;
@@ -775,7 +780,7 @@ namespace TinyNvidiaUpdateChecker
 
                 try {
                     using (WebClient webClient = new WebClient()) {
-                        webClient.DownloadFile("https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/download/v" + offlineVer + "/HtmlAgilityPack.dll", "HtmlAgilityPack.dll");
+                        webClient.DownloadFile($"https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/download/v{offlineVer}/HtmlAgilityPack.dll", "HtmlAgilityPack.dll");
                     }
                     Console.Write("OK!");
                     Console.WriteLine();
@@ -845,7 +850,7 @@ namespace TinyNvidiaUpdateChecker
                     }
 
                     if (File.Exists(savePath + driverFileName) && !DoesDriverFileSizeMatch(savePath + driverFileName)) {
-                        LogManager.Log("Deleting " + savePath + driverFileName + " because its length doesn't match!", LogManager.Level.INFO);
+                        LogManager.Log($"Deleting {savePath}{driverFileName} because its length doesn't match!", LogManager.Level.INFO);
                         File.Delete(savePath + driverFileName);
                     }
 
@@ -904,7 +909,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 if (debug) {
-                    Console.WriteLine("savePath: " + savePath);
+                    Console.WriteLine($"savePath: {savePath}");
                 }
 
                 if (SettingManager.ReadSettingBool("Minimal install")) {
@@ -1048,9 +1053,10 @@ namespace TinyNvidiaUpdateChecker
                 using (Process WinRAR = new Process()) {
                     WinRAR.StartInfo.FileName = libaryFile.InstallLocation + "winrar.exe";
                     WinRAR.StartInfo.WorkingDirectory = savePath;
-                    WinRAR.StartInfo.Arguments = "X " + fullDriverPath + @" -N@""inclList.txt""";
+                    WinRAR.StartInfo.Arguments = $@"X {fullDriverPath} -N@""inclList.txt""";
                     if (silent) WinRAR.StartInfo.Arguments += " -ibck -y";
                     WinRAR.StartInfo.UseShellExecute = false;
+
                     try {
                         WinRAR.Start();
                         WinRAR.WaitForExit();
@@ -1070,10 +1076,11 @@ namespace TinyNvidiaUpdateChecker
                         SevenZip.StartInfo.FileName = libaryFile.InstallLocation + "7zG.exe";
                     }
                     SevenZip.StartInfo.WorkingDirectory = savePath;
-                    SevenZip.StartInfo.Arguments = "x " + fullDriverPath + @" @inclList.txt";
+                    SevenZip.StartInfo.Arguments = $"x {fullDriverPath} @inclList.txt";
                     if (silent) SevenZip.StartInfo.Arguments += " -y";
                     SevenZip.StartInfo.UseShellExecute = false;
                     SevenZip.StartInfo.CreateNoWindow = true; // don't show the console in our console!
+
                     try {
                         Thread.Sleep(1000);
                         SevenZip.Start();
@@ -1120,8 +1127,8 @@ namespace TinyNvidiaUpdateChecker
         {
             if (!hasRunIntro) {
                 hasRunIntro = true;
-               // Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer + " dev build");
-                Console.WriteLine("TinyNvidiaUpdateChecker v" + offlineVer);
+                Console.WriteLine($"TinyNvidiaUpdateChecker v{offlineVer} dev build");
+                Console.WriteLine($"TinyNvidiaUpdateChecker v{offlineVer}");
                 Console.WriteLine();
                 Console.WriteLine("Copyright (C) 2016-2018 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
