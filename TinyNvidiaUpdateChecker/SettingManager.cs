@@ -11,7 +11,7 @@ namespace TinyNvidiaUpdateChecker
 
     /*
     TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
-    Copyright (C) 2016-2018 Hawaii_Beach
+    Copyright (C) 2016-2019 Hawaii_Beach
     
     This program Is free software: you can redistribute it And/Or modify
     it under the terms Of the GNU General Public License As published by

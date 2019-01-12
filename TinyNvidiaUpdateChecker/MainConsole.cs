@@ -21,7 +21,7 @@ namespace TinyNvidiaUpdateChecker
 
     /*
     TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
-    Copyright (C) 2016-2018 Hawaii_Beach
+    Copyright (C) 2016-2019 Hawaii_Beach
 
     This program Is free software: you can redistribute it And/Or modify
     it under the terms Of the GNU General Public License As published by
@@ -1130,7 +1130,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine($"TinyNvidiaUpdateChecker v{offlineVer} dev build");
                 Console.WriteLine($"TinyNvidiaUpdateChecker v{offlineVer}");
                 Console.WriteLine();
-                Console.WriteLine("Copyright (C) 2016-2018 Hawaii_Beach");
+                Console.WriteLine("Copyright (C) 2016-2019 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
                 Console.WriteLine("This is free software, and you are welcome to redistribute it");
                 Console.WriteLine("under certain conditions. Licensed under GPLv3.");

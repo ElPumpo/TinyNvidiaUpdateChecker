@@ -25,7 +25,7 @@ This application has a simple concept, when launched it will check for new drive
 ### License
 TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
 
-Copyright (C) 2016-2018 Hawaii_Beach
+Copyright (C) 2016-2019 Hawaii_Beach
 
 This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.
 
