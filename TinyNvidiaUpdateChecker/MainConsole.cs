@@ -1118,12 +1118,12 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("OK!");
                 Console.WriteLine();
 
-                fullDriverPath = savePath + driverFileName;
                 try {
-                    File.Delete(fullDriverPath);
-                    Console.WriteLine("Cleaned up: " + fullDriverPath);
+                    File.Delete(savePath + driverFileName);
+                    File.Delete(savePath + "inclList.txt");
+                    Console.WriteLine("Cleaned up: driver archive and inclList.txt");
                 } catch {
-                    Console.WriteLine("Could not cleanup: " + fullDriverPath);
+                    Console.WriteLine("Could not cleanup: driver archive or inclList.txt");
                 }
             }
         }
