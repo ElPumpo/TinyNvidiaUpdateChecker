@@ -60,7 +60,7 @@ namespace TinyNvidiaUpdateChecker
 
             // create config file
             if (!MainConsole.configSwitch && !File.Exists(configFile)) {
-                Console.WriteLine("Generating configuration file, this only happenes once.");
+                Console.WriteLine("Generating configuration file, this only happens once.");
 
                 SetupSetting("Check for Updates");
                 SetupSetting("Minimal install");
