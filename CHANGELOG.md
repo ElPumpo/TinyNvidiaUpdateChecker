@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Compare HAP versions, making sure downloaded one is the correct one (which also prevents a .NET error message)
 - We now run the NVIDIA installer with the `/noreboot` if the application is running quiet to prevent random reboots
+- Automatically check if system needs DCH drivers, and download appropriate driver as necessary.
 
 ### Fixed
 - Minor typo

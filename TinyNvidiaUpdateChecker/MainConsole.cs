@@ -15,6 +15,7 @@ using System.Net.NetworkInformation;
 using System.ComponentModel;
 using System.Xml;
 using TinyNvidiaUpdateChecker.Handlers;
+using Microsoft.Win32;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -96,6 +97,8 @@ namespace TinyNvidiaUpdateChecker
         /// OS ID for GPU driver download
         /// </summary>
         private static int osID;
+
+        private static int dtcID;
 
         /// <summary>
         /// Show UI or go quiet mode
@@ -554,6 +557,33 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine(ex.ToString());
             }
 
+            // determine whether or not we need a DCH driver
+            try
+            {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\nvlddmkm"))
+                {
+                    if (key != null)
+                    {
+                        Object o = key.GetValue("DCHUVen");
+                        if (o != null)
+                        {
+                            dtcID = 1;
+                        }
+                        else
+                        {
+                            dtcID = 0;
+                        }
+                    }
+                    else
+                    {
+                        dtcID = 0;
+                    }
+                }
+            } catch (Exception)
+            {
+                dtcID = 0;
+            }
+
             /// In order to proceed, we must input what GPU we have.
             /// Looking at the supported products on NVIDIA website for desktop and mobile GeForce series,
             /// we can see that they're sharing drivers with other GPU families, the only thing we have to do is tell the website
@@ -576,7 +606,7 @@ namespace TinyNvidiaUpdateChecker
 
             // finish request
             try {
-                gpuURL = "http://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0";
+                gpuURL = "http://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&dtcid=" + dtcID.ToString() + "&ctk=0";
 
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(gpuURL);
