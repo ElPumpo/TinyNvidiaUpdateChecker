@@ -98,6 +98,9 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static int osID;
 
+        /// <summary>
+        /// Driver type ID. 0 represents a standard driver, and 1 represents a DCH driver.
+        /// </summary>
         private static int dtcID;
 
         /// <summary>
@@ -558,29 +561,22 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // determine whether or not we need a DCH driver
-            try
-            {
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\nvlddmkm"))
-                {
-                    if (key != null)
-                    {
+            try {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\nvlddmkm")) {
+                    if (key != null) {
                         Object o = key.GetValue("DCHUVen");
-                        if (o != null)
-                        {
+                        if (o != null) {
                             dtcID = 1;
                         }
-                        else
-                        {
+                        else {
                             dtcID = 0;
                         }
                     }
-                    else
-                    {
+                    else {
                         dtcID = 0;
                     }
                 }
-            } catch (Exception)
-            {
+            } catch (Exception) {
                 dtcID = 0;
             }
 
