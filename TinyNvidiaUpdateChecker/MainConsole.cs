@@ -55,7 +55,7 @@ namespace TinyNvidiaUpdateChecker
         /// Current client version
         /// </summary>
         private static string offlineVer = Application.ProductVersion;
-        
+
         /// <summary>
         /// Remote client version
         /// </summary>
@@ -173,7 +173,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (SettingManager.ReadSettingBool("Check for Updates")) {
                 SearchForUpdates();
-            }   
+            }
 
             GpuInfo();
 
@@ -424,7 +424,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                 }
             }
-            
+
             // show the args if debug mode
             if (debug) {
                 foreach (var arg in theArgs) {
@@ -434,7 +434,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
         }
-        
+
         /// <summary>
         /// Gets the local langauge used by operator and sets value 'langID'.
         /// </summary>
@@ -472,7 +472,7 @@ namespace TinyNvidiaUpdateChecker
                 case "fr-FR":  // French - France
                     langID = 12;
                     break;
-                case "it-IT":  // Italian - Italy 
+                case "it-IT":  // Italian - Italy
                     langID = 13;
                     break;
                 case "pl-PL":  // Polish - Poland
@@ -567,8 +567,7 @@ namespace TinyNvidiaUpdateChecker
                         Object o = key.GetValue("DCHUVen");
                         if (o != null) {
                             dtcID = 1;
-                        }
-                        else {
+                        } else {
                             dtcID = 0;
                         }
                     }
@@ -666,7 +665,7 @@ namespace TinyNvidiaUpdateChecker
                     }
                 }
 
-                releaseDate = new DateTime(year, month, day); // follows the ISO 8601 standard 
+                releaseDate = new DateTime(year, month, day); // follows the ISO 8601 standard
 
                 IEnumerable <HtmlNode> node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
 
@@ -1002,7 +1001,7 @@ namespace TinyNvidiaUpdateChecker
                         }
 
                         progress.Dispose(); // dispone the progress bar
-                        
+
                         if (!error) {
                             Console.Write("OK!");
                             Console.WriteLine();
@@ -1033,9 +1032,9 @@ namespace TinyNvidiaUpdateChecker
                     } else {
                         Process.Start(FULL_PATH_DRIVER, "/noeula").WaitForExit();
                     }
-                    
+
                 }
-                
+
                 Console.Write("OK!");
             } catch {
                 Console.WriteLine("Could not run driver installer!");
