@@ -33,7 +33,7 @@ namespace TinyNvidiaUpdateChecker
                 webClient.DownloadFileAsync(downloadURL, savePath); // begin download
 
                 while(!isDownloadComplete) {
-                    Application.DoEvents(); // causes high CPU usage!
+                    Application.DoEvents(); // TODO: causes high CPU usage!
                 }
             }
         }

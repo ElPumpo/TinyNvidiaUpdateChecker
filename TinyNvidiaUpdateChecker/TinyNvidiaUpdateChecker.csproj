@@ -89,6 +89,12 @@
     <Compile Include="Handlers\GenericHandler.cs" />
     <Compile Include="Handlers\HashHandler.cs" />
     <Compile Include="Handlers\LibaryHandler.cs" />
+    <Compile Include="LocationChooserForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LocationChooserForm.Designer.cs">
+      <DependentUpon>LocationChooserForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="LogManager.cs" />
     <Compile Include="MainConsole.cs" />
     <Compile Include="Handlers\ProgressBar.cs" />
@@ -133,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DriverDialog.resx">
       <DependentUpon>DriverDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LocationChooserForm.resx">
+      <DependentUpon>LocationChooserForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

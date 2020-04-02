@@ -21,7 +21,7 @@ namespace TinyNvidiaUpdateChecker
 
     /*
     TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
-    Copyright (C) 2016-2019 Hawaii_Beach
+    Copyright (C) 2016-2020 Hawaii_Beach
 
     This program Is free software: you can redistribute it And/Or modify
     it under the terms Of the GNU General Public License As published by
@@ -44,11 +44,6 @@ namespace TinyNvidiaUpdateChecker
         /// Server adress
         /// </summary>
         private readonly static string serverURL = "https://elpumpo.github.io/TinyNvidiaUpdateChecker/";
-
-        /// <summary>
-        /// The NVIDIA download server used, it's a two-word prefix.
-        /// </summary>
-        private static string downloadServerPrefix;
 
         /// <summary>
         /// Current client version
@@ -576,7 +571,7 @@ namespace TinyNvidiaUpdateChecker
 
             // finish request
             try {
-                gpuURL = "http://www.nvidia.com/Download/processDriver.aspx?psid=" + psID.ToString() + "&pfid=" + pfID.ToString() + "&rpf=1&osid=" + osID.ToString() + "&lid=" + langID.ToString() + "&ctk=0";
+                gpuURL = $"https://www.nvidia.com/Download/processDriver.aspx?psid={psID.ToString()}&pfid={pfID.ToString()}&rpf=1&osid={osID.ToString()}&lid={langID.ToString()}&ctk=0";
 
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(gpuURL);
@@ -635,19 +630,19 @@ namespace TinyNvidiaUpdateChecker
                             break;
 
                         default:
-                            LogManager.Log("The status: '" + status + "' is not a recognized status!", LogManager.Level.ERROR);
+                            LogManager.Log($"The status: '{status}' is not a recognized status!", LogManager.Level.ERROR);
                             break;
                     }
                 }
 
-                releaseDate = new DateTime(year, month, day); // follows the ISO 8601 standard 
+                releaseDate = new DateTime(year, month, day);
 
                 IEnumerable <HtmlNode> node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
 
                 // get driver URL
                 foreach (var child in node) {
                     if (child.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/")) {
-                        confirmURL = "http://www.nvidia.com" + child.Attributes["href"].Value.Trim();
+                        confirmURL = "https://www.nvidia.com" + child.Attributes["href"].Value.Trim();
                         break;
                     }
                 }
@@ -662,9 +657,9 @@ namespace TinyNvidiaUpdateChecker
 
                 if (pdfURL == null) {
                     if (psID == 98) { // if desktop
-                        pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-desktop-release-notes.pdf";
+                        pdfURL = $"https://us.download.nvidia.com/Windows/{OnlineGPUVersion}/{OnlineGPUVersion}-win10-win8-win7-desktop-release-notes.pdf";
                     } else {
-                        pdfURL = "http://us.download.nvidia.com/Windows/" + OnlineGPUVersion + "/" + OnlineGPUVersion + "-win10-win8-win7-notebook-release-notes.pdf";
+                        pdfURL = $"https://us.download.nvidia.com/Windows/{OnlineGPUVersion}/{OnlineGPUVersion}-win10-win8-win7-notebook-release-notes.pdf";
                     }
                     LogManager.Log("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.", LogManager.Level.INFO);
                 }
@@ -675,12 +670,17 @@ namespace TinyNvidiaUpdateChecker
                 // get download link
                 htmlDocument = htmlWeb.Load(confirmURL);
                 node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
+
                 foreach (var child in node) {
                     if (child.Attributes["href"].Value.Contains("download.nvidia")) {
                         downloadURL = child.Attributes["href"].Value.Trim();
-                        break; // don't need to keep search after we've found what we searched for
+                        break;
                     }
                 }
+
+                var locationPrefix = SettingManager.ReadSetting("Download location");
+                downloadURL = downloadURL.Substring(9);
+                downloadURL = $"http://{locationPrefix}{downloadURL}";
 
                 // get file size
                 using (WebResponse responce = WebRequest.Create(downloadURL).GetResponse()) {
@@ -704,12 +704,12 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (debug) {
-                Console.WriteLine("downloadURL: " + downloadURL);
-                Console.WriteLine("pdfURL:      " + pdfURL);
-                Console.WriteLine("releaseDate: " + releaseDate.ToShortDateString());
-                Console.WriteLine("downloadFileSize:  " + Math.Round((downloadFileSize / 1024f) / 1024f) + " MB (" + downloadFileSize + " Bytes)");
-                Console.WriteLine("OfflineGPUVersion: " + OfflineGPUVersion);
-                Console.WriteLine("OnlineGPUVersion:  " + OnlineGPUVersion);
+                Console.WriteLine($"downloadURL: {downloadURL}");
+                Console.WriteLine($"pdfURL:      {pdfURL}");
+                Console.WriteLine($"releaseDate: {releaseDate.ToShortDateString()}");
+                Console.WriteLine($"downloadFileSize:  {Math.Round((downloadFileSize / 1024f) / 1024f)} MB ({downloadFileSize:N} bytes)");
+                Console.WriteLine($"OfflineGPUVersion: {OfflineGPUVersion}");
+                Console.WriteLine($"OnlineGPUVersion:  {OnlineGPUVersion}");
             }
 
         }
@@ -741,7 +741,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (File.Exists(hap)) {
                 Console.WriteLine();
-                Console.Write("Verifying HAP hash . . . ");
+                Console.Write("Verifying HAP MD5 hash . . . ");
                 var hash = HashHandler.CalculateMD5(hap);
 
                 if (hash.md5 != HashHandler.HAP_HASH && hash.error == false) {
@@ -750,7 +750,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("Deleting the invalid HAP file.");
 
                     try {
-                        //fFile.Delete(hap);
+                        File.Delete(hap);
                     } catch (Exception ex) {
                         Console.WriteLine(ex.ToString());
                     }
@@ -768,8 +768,8 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 if (debug) {
-                    Console.WriteLine("Generated hash: " + hash.md5);
-                    Console.WriteLine("Known hash:     " + HashHandler.HAP_HASH);
+                    Console.WriteLine($"Generated hash: {hash.md5}");
+                    Console.WriteLine($"Known hash:     {HashHandler.HAP_HASH}");
                 }
             }
 
@@ -796,7 +796,7 @@ namespace TinyNvidiaUpdateChecker
 
             // compare HAP version too
             if (new Version(HashHandler.HAP_VERSION).CompareTo(new Version(currentHapVersion)) > 0) {
-                Console.WriteLine("ERROR: The current HAP libary v{0} does not match the wanted v{1}", currentHapVersion, HashHandler.HAP_VERSION);
+                Console.WriteLine($"ERROR: The current HAP libary v{currentHapVersion} does not match the wanted v{HashHandler.HAP_VERSION}");
                 Console.WriteLine("The application has been terminated to prevent a error message by .NET");
                 if (showUI) Console.ReadKey();
                 Environment.Exit(1);
@@ -936,7 +936,7 @@ namespace TinyNvidiaUpdateChecker
             Directory.CreateDirectory(FULL_PATH_DIRECTORY);
 
             if (File.Exists(FULL_PATH_DRIVER) && !DoesDriverFileSizeMatch(FULL_PATH_DRIVER)) {
-                LogManager.Log("Deleting " + FULL_PATH_DRIVER + " because its length doesn't match!", LogManager.Level.INFO);
+                LogManager.Log($"Deleting {FULL_PATH_DRIVER} because its length doesn't match!", LogManager.Level.INFO);
                 File.Delete(savePath + driverFileName);
             }
 
@@ -954,7 +954,7 @@ namespace TinyNvidiaUpdateChecker
                             progress.Report((double)e.ProgressPercentage / 100);
                         };
 
-                        // Only set notifier here!
+
                         webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e)
                         {
                             if (e.Cancelled || e.Error != null) {
@@ -1019,9 +1019,9 @@ namespace TinyNvidiaUpdateChecker
 
             try {
                 Directory.Delete(FULL_PATH_DIRECTORY, true);
-                Console.WriteLine("Cleaned up: " + FULL_PATH_DIRECTORY);
+                Console.WriteLine($"Cleaned up: {FULL_PATH_DIRECTORY}");
             } catch {
-                Console.WriteLine("Could not cleanup: " + FULL_PATH_DIRECTORY);
+                Console.WriteLine($"Could not cleanup: {FULL_PATH_DIRECTORY}");
             }
 
         }
@@ -1098,7 +1098,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // remove new EULA files from the installer config, or else the installer throws error codes
-            // thanks to https://github.com/cywq
+            // author https://github.com/cywq
             if (!error) {
                 XmlDocument xmlDocument = new XmlDocument();
                 string setupFile = savePath + "setup.cfg";
@@ -1127,10 +1127,10 @@ namespace TinyNvidiaUpdateChecker
         {
             if (!hasRunIntro) {
                 hasRunIntro = true;
-                Console.WriteLine($"TinyNvidiaUpdateChecker v{offlineVer} dev build");
+                //Console.WriteLine($"TinyNvidiaUpdateChecker v{offlineVer} dev build");
                 Console.WriteLine($"TinyNvidiaUpdateChecker v{offlineVer}");
                 Console.WriteLine();
-                Console.WriteLine("Copyright (C) 2016-2019 Hawaii_Beach");
+                Console.WriteLine("Copyright (C) 2016-2020 Hawaii_Beach");
                 Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY");
                 Console.WriteLine("This is free software, and you are welcome to redistribute it");
                 Console.WriteLine("under certain conditions. Licensed under GPLv3.");

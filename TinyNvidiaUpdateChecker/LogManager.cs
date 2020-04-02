@@ -5,7 +5,7 @@ namespace TinyNvidiaUpdateChecker
 
     /*
     TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
-    Copyright (C) 2016-2019 Hawaii_Beach
+    Copyright (C) 2016-2020 Hawaii_Beach
     
     This program Is free software: you can redistribute it And/Or modify
     it under the terms Of the GNU General Public License As published by
@@ -30,32 +30,37 @@ namespace TinyNvidiaUpdateChecker
             SETTING
         }
 
-        public static void Log(string information, Level level)
+        public static void Log(string msg, Level level)
         {
-
             string logMessage = null;
+
             switch (level) {
 
                 // INFO
                 case Level.INFO:
-                    logMessage = "[INFO] " + information;
+                    logMessage = "[INFO] " + msg;
                     break;
 
                 // ERROR
                 case Level.ERROR:
-                    logMessage = "[ERROR] " + information;
+                    logMessage = "[ERROR] " + msg;
                     break;
 
                 // SETTING
                 case Level.SETTING:
-                    logMessage = "[SETTING] " + information;
+                    logMessage = "[SETTING] " + msg;
                     break;
 
                 default:
                     break;
             }
-            Debug.WriteLine(logMessage);
 
+            Debug.WriteLine(logMessage);
+        }
+
+        public static void Log(string information)
+        {
+            Debug.WriteLine("[INFO] " + information);
         }
     }
 }

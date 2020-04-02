@@ -11,7 +11,7 @@ namespace TinyNvidiaUpdateChecker
 
     /*
     TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
-    Copyright (C) 2016-2019 Hawaii_Beach
+    Copyright (C) 2016-2020 Hawaii_Beach
     
     This program Is free software: you can redistribute it And/Or modify
     it under the terms Of the GNU General Public License As published by
@@ -64,13 +64,14 @@ namespace TinyNvidiaUpdateChecker
 
                 SetupSetting("Check for Updates");
                 SetupSetting("Minimal install");
+                SetupSetting("Download location");
 
                 Console.WriteLine();
             }
 
             VerifyConfig();
 
-            if(MainConsole.debug) Console.WriteLine();
+            if (MainConsole.debug) Console.WriteLine();
         }
 
         /// <summary>
@@ -80,17 +81,19 @@ namespace TinyNvidiaUpdateChecker
         {
             string CHECK_UPDATE = ReadSetting("Check for Updates");
             string MINIMAL_INSTALL = ReadSetting("Minimal install");
+            string DOWNLOAD_LOCATION = ReadSetting("Download location");
 
-            if(MainConsole.debug) {
+            if (MainConsole.debug) {
                 Console.WriteLine("CHECK_UPDATE: " + CHECK_UPDATE);
                 Console.WriteLine("MINIMAL_INSTALL: " + MINIMAL_INSTALL);
+                Console.WriteLine("DOWNLOAD_LOCATION: " + DOWNLOAD_LOCATION);
             }
         }
 
         /// <summary>
         /// Reads setting from configuration file, and adds if requested key / value is missing - returns a string.</summary>
         /// <param name="key"> Config key to read value from.</param>
-        private static string ReadSetting(string key)
+        public static string ReadSetting(string key)
         {
             string result = null;
 
@@ -165,45 +168,48 @@ namespace TinyNvidiaUpdateChecker
         /// <seealso cref="SetSetting(string, string)"> Where settings are made.</seealso>
         private static void SetupSetting(string key)
         {
-            string message = null;
-            string[] value = null;
+            string[] values;
+            string value;
 
             switch (key) {
 
                 // check for update
                 case "Check for Updates":
-                    message = "Do you want to search for client updates?";
-                    value = new string[] { "true", "false" };
+                    values = new string[] {"true", "false"};
+                    value = SetupConfigYesNoMessagebox("Do you want to search for client updates?", values, "false");
                     break;
 
                 // minimal installer maker
                 case "Minimal install":
-                    message = "Do you want to perform a minimal install of the drivers? This will make sure you don't install telemetry and miscellaneous addons, but requires either WinRAR or 7-Zip to be installed.";
-                    value = new string[] { "true", "false" };
+                    values = new string[] {"true", "false"};
+                    value = SetupConfigYesNoMessagebox("Do you want to perform a minimal install of the drivers? This will make sure you don't install telemetry and miscellaneous addons, but requires either WinRAR or 7-Zip to be installed.", values, "false");
+                    break;
+
+                // download location
+                case "Download location":
+                    var locationChooserForm = new LocationChooserForm();
+                    value = locationChooserForm.OpenLocationChooserForm();
                     break;
 
                 default:
                     MessageBox.Show($"Unknown key '{key}'", "TinyNvidiaUpdateChecker", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    message = "Unknown";
-                    value = null;
+                    value = "unknown";
                     break;
-
             }
 
+            SetSetting(key, value);
+            LogManager.Log($"operation='setup',key='{key}',val='{value}'", LogManager.Level.SETTING);
+        }
+
+        private static string SetupConfigYesNoMessagebox(string text, string[] values, string defaultValue)
+        {
             if (!MainConsole.confirmDL) {
-                DialogResult dialogUpdates = MessageBox.Show(message, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (dialogUpdates == DialogResult.Yes) {
-                    SetSetting(key, value[0]);
-                    LogManager.Log($"operation='setup',key='{key}',val='{value[0]}'", LogManager.Level.SETTING);
-                } else {
-                    SetSetting(key, value[1]);
-                    LogManager.Log($"operation='setup',key='{key}',val='{value[1]}'", LogManager.Level.SETTING);
-                }
-            } else {
-                SetSetting(key, value[1]);
-                LogManager.Log($"operation='setup',key='{key}',val='{value[1]}'", LogManager.Level.SETTING);
+                DialogResult dialogResult = MessageBox.Show(text, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                return (dialogResult == DialogResult.Yes) ? values[0] : values[1];
             }
-
+            else {
+                return defaultValue;
+            }
         }
 
         /// <summary>

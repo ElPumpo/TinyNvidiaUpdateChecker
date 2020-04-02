@@ -6,8 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Download selection form, you can now select the download server. Hopefully this resolves issue #45
 - Compare HAP versions, making sure downloaded one is the correct one (which also prevents a .NET error message)
 - We now run the NVIDIA installer with the `/noreboot` if the application is running quiet to prevent random reboots
+
+### Changed
+- Download size in bytes are now properly grouped
+- Use string interpolation where available
+- Minor code improvements
 
 ### Fixed
 - Minor typo
