@@ -917,6 +917,8 @@ namespace TinyNvidiaUpdateChecker
                 }
             } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLINSTALL) {
                 DownloadDriverQuiet(false);
+            } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.COPYURL) {
+                Clipboard.SetText(downloadURL);
             }
         }
 

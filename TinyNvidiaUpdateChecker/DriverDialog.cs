@@ -90,11 +90,18 @@ namespace TinyNvidiaUpdateChecker
             Close();
         }
 
+        private void CopyUrlBtn_Click(object sender, EventArgs e)
+        {
+            selectedBtn = SelectedBtn.COPYURL;
+            Close();
+        }
+
         public enum SelectedBtn
         {
             DLINSTALL,
             DLEXTRACT,
-            IGNORE
+            IGNORE,
+            COPYURL
         }
     }
 }
