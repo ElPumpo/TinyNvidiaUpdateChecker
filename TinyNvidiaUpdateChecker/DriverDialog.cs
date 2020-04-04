@@ -14,40 +14,37 @@ namespace TinyNvidiaUpdateChecker
             InitializeComponent();
         }
 
-        public static string ShowGUI()
+        public static void ShowGUI()
         {
             // show the form
-            using (DriverDialog form = new DriverDialog()) {
+            using (var form = new DriverDialog()) {
                 form.ShowDialog();
             }
-
-            return null;
         }
 
         private void DriverDialog_Load(object sender, EventArgs e)
         {
             webBrowser1.DocumentText = MainConsole.releaseDesc;
-
             notesScale = this.CreateGraphics().DpiX;
 
-            int DateDiff = (DateTime.Now - MainConsole.releaseDate).Days; // how many days between the two dates
-            string theDate = null;
+            var dateDiff = (DateTime.Now - MainConsole.releaseDate).Days; // how many days between the two dates
+            string daysAgoFromRelease = null;
 
-            if (DateDiff == 1) {
-                theDate = DateDiff + " day ago";
-            } else if (DateDiff < 1) {
-                theDate = "today"; // we only have the date and not time :/
+            if (dateDiff == 1) {
+                daysAgoFromRelease = $"{dateDiff} day ago";
+            } else if (dateDiff < 1) {
+                daysAgoFromRelease = "today"; // we only have the date and not time :/
             } else {
-                theDate = DateDiff + " days ago";
+                daysAgoFromRelease = $"{dateDiff} days ago";
             }
 
-            ReleasedLabel.Text += theDate;
-            toolTip1.SetToolTip(ReleasedLabel, MainConsole.releaseDate.ToShortDateString());
+            releasedLabel.Text += daysAgoFromRelease;
+            toolTip1.SetToolTip(releasedLabel, MainConsole.releaseDate.ToShortDateString());
 
-            VersionLabel.Text += MainConsole.OnlineGPUVersion + " (you're on " + MainConsole.OfflineGPUVersion + ")";
+            versionLabel.Text += MainConsole.OnlineGPUVersion + $" (you're on {MainConsole.OfflineGPUVersion})";
 
-            SizeLabel.Text += Math.Round((MainConsole.downloadFileSize / 1024f) / 1024f) + " MB";
-            toolTip1.SetToolTip(SizeLabel, $"{MainConsole.downloadFileSize:N} bytes");
+            sizeLabel.Text += Math.Round((MainConsole.downloadFileSize / 1024f) / 1024f) + " MB";
+            toolTip1.SetToolTip(sizeLabel, $"{MainConsole.downloadFileSize:N} bytes");
         }
 
         private void NotesBtn_Click(object sender, EventArgs e)

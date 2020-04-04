@@ -255,8 +255,8 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (debug) {
-                Console.WriteLine("offlineVer: " + offlineVer);
-                Console.WriteLine("onlineVer:  " + onlineVer);
+                Console.WriteLine($"offlineVer: {offlineVer}");
+                Console.WriteLine($"onlineVer:  {onlineVer}");
             }
 
             Console.WriteLine();
@@ -311,15 +311,15 @@ namespace TinyNvidiaUpdateChecker
 
             } else {
                 Console.WriteLine("You're running a non-supported version of Windows; the application will terminate itself.");
-                Console.WriteLine("verOrg: " + verOrg);
+                Console.WriteLine($"verOrg: {verOrg}");
                 if (showUI) Console.ReadKey();
                 Environment.Exit(1);
             }
 
             if (debug) {
-                Console.WriteLine("winVer: " + winVer);
-                Console.WriteLine("osID:   " + osID.ToString());
-                Console.WriteLine("verOrg: " + verOrg);
+                Console.WriteLine($"winVer: {winVer}");
+                Console.WriteLine($"osID:   {osID.ToString()}");
+                Console.WriteLine($"verOrg: {verOrg}");
                 Console.WriteLine();
             }
 
@@ -327,14 +327,14 @@ namespace TinyNvidiaUpdateChecker
 
         /// <summary>
         /// Handles the command line arguments </summary>
-        /// <param name="theArgs"> Command line arguments in. Turned out that Environment.GetCommandLineArgs() wasn't any good.</param>
-        private static void CheckArgs(string[] theArgs)
+        /// <param name="args"> Command line arguments in. Turned out that Environment.GetCommandLineArgs() wasn't any good.</param>
+        private static void CheckArgs(string[] args)
         {
 
             /// The command line argument handler does it's work here,
             /// for a list of available arguments, use the '--help' argument.
 
-            foreach (var arg in theArgs)
+            foreach (var arg in args)
             {
 
                 // no window
@@ -369,7 +369,7 @@ namespace TinyNvidiaUpdateChecker
                 // show version number
                 else if (arg.ToLower() == "--version") {
                     RunIntro();
-                    Console.WriteLine("Current version is " + offlineVer);
+                    Console.WriteLine($"Current version is {offlineVer}");
                     Console.WriteLine();
                 }
 
@@ -416,9 +416,9 @@ namespace TinyNvidiaUpdateChecker
             
             // show the args if debug mode
             if (debug) {
-                foreach (var arg in theArgs) {
+                foreach (var arg in args) {
                     RunIntro();
-                    Console.WriteLine("Arg: " + arg);
+                    Console.WriteLine($"Arg: {arg}");
                 }
                 Console.WriteLine();
             }
@@ -484,8 +484,8 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (debug) {
-                Console.WriteLine("langID:   " + langID);
-                Console.WriteLine("cultName: " + cultName);
+                Console.WriteLine($"langID:   {langID}");
+                Console.WriteLine($"cultName: {cultName}");
                 Console.WriteLine();
             }
         }

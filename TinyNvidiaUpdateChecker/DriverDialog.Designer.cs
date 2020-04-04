@@ -35,11 +35,11 @@ namespace TinyNvidiaUpdateChecker
             this.DownloadInstallButton = new System.Windows.Forms.Button();
             this.DownloadBtn = new System.Windows.Forms.Button();
             this.NotesBtn = new System.Windows.Forms.Button();
-            this.TitleLabel = new System.Windows.Forms.Label();
+            this.titleLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.SizeLabel = new System.Windows.Forms.Label();
-            this.ReleasedLabel = new System.Windows.Forms.Label();
-            this.VersionLabel = new System.Windows.Forms.Label();
+            this.sizeLabel = new System.Windows.Forms.Label();
+            this.releasedLabel = new System.Windows.Forms.Label();
+            this.versionLabel = new System.Windows.Forms.Label();
             this.IgnoreBtn = new System.Windows.Forms.Button();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -53,8 +53,8 @@ namespace TinyNvidiaUpdateChecker
             this.DownloadInstallButton.Name = "DownloadInstallButton";
             this.DownloadInstallButton.Size = new System.Drawing.Size(109, 55);
             this.DownloadInstallButton.TabIndex = 0;
-            this.DownloadInstallButton.Text = "Download + Install";
-            this.toolTip1.SetToolTip(this.DownloadInstallButton, "Download and install the drivers automatically");
+            this.DownloadInstallButton.Text = "Install Now";
+            this.toolTip1.SetToolTip(this.DownloadInstallButton, resources.GetString("DownloadInstallButton.ToolTip"));
             this.DownloadInstallButton.UseVisualStyleBackColor = true;
             this.DownloadInstallButton.Click += new System.EventHandler(this.DownloadInstallButton_Click);
             // 
@@ -65,8 +65,8 @@ namespace TinyNvidiaUpdateChecker
             this.DownloadBtn.Name = "DownloadBtn";
             this.DownloadBtn.Size = new System.Drawing.Size(109, 55);
             this.DownloadBtn.TabIndex = 1;
-            this.DownloadBtn.Text = "Download (+ Extract)";
-            this.toolTip1.SetToolTip(this.DownloadBtn, "Downloads and extracts the graphics drivers, but won\'t run the installer");
+            this.DownloadBtn.Text = "Download Only";
+            this.toolTip1.SetToolTip(this.DownloadBtn, resources.GetString("DownloadBtn.ToolTip"));
             this.DownloadBtn.UseVisualStyleBackColor = true;
             this.DownloadBtn.Click += new System.EventHandler(this.DownloadBtn_Click);
             // 
@@ -78,26 +78,26 @@ namespace TinyNvidiaUpdateChecker
             this.NotesBtn.Size = new System.Drawing.Size(109, 55);
             this.NotesBtn.TabIndex = 2;
             this.NotesBtn.Text = "View Release Notes";
-            this.toolTip1.SetToolTip(this.NotesBtn, "Show the release notes, that contains the following: new additions, what\'s fixed," +
-        " known issues and more");
+            this.toolTip1.SetToolTip(this.NotesBtn, "View the full pdf release notes, which contains:\r\n- what\'s new\r\n- what\'s fixed\r\n-" +
+        " open issues\r\n\r\nand more!");
             this.NotesBtn.UseVisualStyleBackColor = true;
             this.NotesBtn.Click += new System.EventHandler(this.NotesBtn_Click);
             // 
-            // TitleLabel
+            // titleLabel
             // 
-            this.TitleLabel.AutoSize = true;
-            this.TitleLabel.Location = new System.Drawing.Point(9, 9);
-            this.TitleLabel.Name = "TitleLabel";
-            this.TitleLabel.Size = new System.Drawing.Size(260, 17);
-            this.TitleLabel.TabIndex = 5;
-            this.TitleLabel.Text = "New graphics card drivers are available!\r\n";
+            this.titleLabel.AutoSize = true;
+            this.titleLabel.Location = new System.Drawing.Point(9, 9);
+            this.titleLabel.Name = "titleLabel";
+            this.titleLabel.Size = new System.Drawing.Size(260, 17);
+            this.titleLabel.TabIndex = 5;
+            this.titleLabel.Text = "New graphics card drivers are available!\r\n";
             // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.SizeLabel);
-            this.groupBox1.Controls.Add(this.ReleasedLabel);
-            this.groupBox1.Controls.Add(this.VersionLabel);
+            this.groupBox1.Controls.Add(this.sizeLabel);
+            this.groupBox1.Controls.Add(this.releasedLabel);
+            this.groupBox1.Controls.Add(this.versionLabel);
             this.groupBox1.Location = new System.Drawing.Point(315, 40);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(200, 154);
@@ -105,33 +105,33 @@ namespace TinyNvidiaUpdateChecker
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "File Information";
             // 
-            // SizeLabel
+            // sizeLabel
             // 
-            this.SizeLabel.Location = new System.Drawing.Point(6, 104);
-            this.SizeLabel.Name = "SizeLabel";
-            this.SizeLabel.Size = new System.Drawing.Size(188, 44);
-            this.SizeLabel.TabIndex = 6;
-            this.SizeLabel.Text = "Size: ";
-            this.SizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.sizeLabel.Location = new System.Drawing.Point(6, 104);
+            this.sizeLabel.Name = "sizeLabel";
+            this.sizeLabel.Size = new System.Drawing.Size(188, 44);
+            this.sizeLabel.TabIndex = 6;
+            this.sizeLabel.Text = "Size: ";
+            this.sizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // ReleasedLabel
+            // releasedLabel
             // 
-            this.ReleasedLabel.Location = new System.Drawing.Point(6, 62);
-            this.ReleasedLabel.Name = "ReleasedLabel";
-            this.ReleasedLabel.Size = new System.Drawing.Size(188, 44);
-            this.ReleasedLabel.TabIndex = 5;
-            this.ReleasedLabel.Text = "Released: ";
-            this.ReleasedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.releasedLabel.Location = new System.Drawing.Point(6, 62);
+            this.releasedLabel.Name = "releasedLabel";
+            this.releasedLabel.Size = new System.Drawing.Size(188, 44);
+            this.releasedLabel.TabIndex = 5;
+            this.releasedLabel.Text = "Released: ";
+            this.releasedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // VersionLabel
+            // versionLabel
             // 
-            this.VersionLabel.Location = new System.Drawing.Point(6, 18);
-            this.VersionLabel.Name = "VersionLabel";
-            this.VersionLabel.Size = new System.Drawing.Size(188, 44);
-            this.VersionLabel.TabIndex = 5;
-            this.VersionLabel.Text = "Version: ";
-            this.VersionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.VersionLabel, "The version of the graphics drivers");
+            this.versionLabel.Location = new System.Drawing.Point(6, 18);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(188, 44);
+            this.versionLabel.TabIndex = 5;
+            this.versionLabel.Text = "Version: ";
+            this.versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.versionLabel, "The version of the graphics drivers");
             // 
             // IgnoreBtn
             // 
@@ -141,12 +141,12 @@ namespace TinyNvidiaUpdateChecker
             this.IgnoreBtn.Size = new System.Drawing.Size(109, 55);
             this.IgnoreBtn.TabIndex = 3;
             this.IgnoreBtn.Text = "Ignore";
-            this.toolTip1.SetToolTip(this.IgnoreBtn, "Ignore the update this time");
             this.IgnoreBtn.UseVisualStyleBackColor = true;
             this.IgnoreBtn.Click += new System.EventHandler(this.IgnoreBtn_Click);
             // 
             // webBrowser1
             // 
+            this.webBrowser1.AllowNavigation = false;
             this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.webBrowser1.IsWebBrowserContextMenuEnabled = false;
@@ -166,7 +166,7 @@ namespace TinyNvidiaUpdateChecker
             this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.IgnoreBtn);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.TitleLabel);
+            this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.NotesBtn);
             this.Controls.Add(this.DownloadBtn);
             this.Controls.Add(this.DownloadInstallButton);
@@ -187,13 +187,13 @@ namespace TinyNvidiaUpdateChecker
         private System.Windows.Forms.Button DownloadInstallButton;
         private System.Windows.Forms.Button DownloadBtn;
         private System.Windows.Forms.Button NotesBtn;
-        private System.Windows.Forms.Label TitleLabel;
+        private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label VersionLabel;
-        private System.Windows.Forms.Label ReleasedLabel;
+        private System.Windows.Forms.Label versionLabel;
+        private System.Windows.Forms.Label releasedLabel;
         private System.Windows.Forms.Button IgnoreBtn;
         private System.Windows.Forms.WebBrowser webBrowser1;
         private ToolTip toolTip1;
-        private Label SizeLabel;
+        private Label sizeLabel;
     }
 }

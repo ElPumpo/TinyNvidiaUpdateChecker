@@ -55,7 +55,7 @@ namespace TinyNvidiaUpdateChecker
             ResetConfigMechanism(); // still needed 2017-09-24
 
             if (MainConsole.debug) {
-                Console.WriteLine("configFile: " + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+                Console.WriteLine($"configFile: {AppDomain.CurrentDomain.SetupInformation.ConfigurationFile}");
             }
 
             // create config file
@@ -84,9 +84,9 @@ namespace TinyNvidiaUpdateChecker
             string DOWNLOAD_LOCATION = ReadSetting("Download location");
 
             if (MainConsole.debug) {
-                Console.WriteLine("CHECK_UPDATE: " + CHECK_UPDATE);
-                Console.WriteLine("MINIMAL_INSTALL: " + MINIMAL_INSTALL);
-                Console.WriteLine("DOWNLOAD_LOCATION: " + DOWNLOAD_LOCATION);
+                Console.WriteLine($"CHECK_UPDATE: {CHECK_UPDATE}");
+                Console.WriteLine($"MINIMAL_INSTALL: {MINIMAL_INSTALL}");
+                Console.WriteLine($"DOWNLOAD_LOCATION: {DOWNLOAD_LOCATION}");
             }
         }
 
@@ -98,15 +98,14 @@ namespace TinyNvidiaUpdateChecker
             string result = null;
 
             try {
-                LogManager.Log("operation='read',key='" + key + "',val='" + ConfigurationManager.AppSettings[key] + "'", LogManager.Level.SETTING);
+                LogManager.Log($"operation='read',key='{key}',val='{ConfigurationManager.AppSettings[key]}'", LogManager.Level.SETTING);
 
                 if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
                 } else {
-
                     // error reading key
                     Console.WriteLine();
-                    Console.WriteLine("Error reading configuration file, attempting to repair key '" + key + "' . . .");
+                    Console.WriteLine($"Error reading configuration file, attempting to repair key '{key}' . . .");
                     SetupSetting(key);
 
                     result = ConfigurationManager.AppSettings[key];

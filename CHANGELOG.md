@@ -14,9 +14,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Download size in bytes are now properly grouped
 - Use string interpolation where available
 - Minor code improvements
+- Improved tooltips on the driver dialog
 
 ### Fixed
 - Minor typo
+- You can no longer navigate to other websites from the release description
 
 ## [1.13.0] - 2018-06-06
 ### Added
