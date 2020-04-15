@@ -1005,7 +1005,7 @@ namespace TinyNvidiaUpdateChecker
                     if (minimized) {
                         Process.Start(FULL_PATH_DRIVER, "/s /noreboot").WaitForExit();
                     } else {
-                        Process.Start(FULL_PATH_DRIVER, "/noeula").WaitForExit();
+                        Process.Start(FULL_PATH_DRIVER).WaitForExit();
                     }
                     
                 }
