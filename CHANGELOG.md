@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Minor typo
 - You can no longer navigate to other websites from the release description
 - Driver installer no longer hardcoded to run quiet if minimal installer is used
+- Replaced `/noeula` argument with `/nosplash` argument when minimal installer isn't used, which caused Gf Experience to install
 
 ## [1.13.0] - 2018-06-06
 ### Added
