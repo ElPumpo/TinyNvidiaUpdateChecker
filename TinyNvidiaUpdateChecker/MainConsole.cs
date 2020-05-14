@@ -31,7 +31,7 @@ namespace TinyNvidiaUpdateChecker
         /// Current client version
         /// </summary>
         private static string offlineVer = Application.ProductVersion;
-        
+
         /// <summary>
         /// Remote client version
         /// </summary>
@@ -144,7 +144,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (SettingManager.ReadSettingBool("Check for Updates")) {
                 SearchForUpdates();
-            }   
+            }
 
             GpuInfo();
 
@@ -395,7 +395,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                 }
             }
-            
+
             // show the args if debug mode
             if (debug) {
                 foreach (var arg in args) {
@@ -405,7 +405,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
             }
         }
-        
+
         /// <summary>
         /// Gets the local langauge used by operator and sets value 'langID'.
         /// </summary>
@@ -443,7 +443,7 @@ namespace TinyNvidiaUpdateChecker
                 case "fr-FR":  // French - France
                     langID = 12;
                     break;
-                case "it-IT":  // Italian - Italy 
+                case "it-IT":  // Italian - Italy
                     langID = 13;
                     break;
                 case "pl-PL":  // Polish - Poland
@@ -536,8 +536,7 @@ namespace TinyNvidiaUpdateChecker
             /// we can see that they're sharing drivers with other GPU families, the only thing we have to do is tell the website
             /// if we're running a mobile or desktop GPU.
 
-            int psID = 0;
-            int pfID = 0;
+            int psID = 0, pfID = 0;
 
             /// Get correct gpu drivers:
             /// you do not have to choose the exact GPU,
@@ -939,7 +938,7 @@ namespace TinyNvidiaUpdateChecker
                         }
 
                         progress.Dispose(); // dispone the progress bar
-                        
+
                         if (!error) {
                             Console.Write("OK!");
                             Console.WriteLine();

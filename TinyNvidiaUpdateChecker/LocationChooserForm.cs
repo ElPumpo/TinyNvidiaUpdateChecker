@@ -14,7 +14,7 @@ namespace TinyNvidiaUpdateChecker
         {
             InitializeComponent();
         }
-        
+
         public string OpenLocationChooserForm()
         {
             if (!MainConsole.confirmDL) {

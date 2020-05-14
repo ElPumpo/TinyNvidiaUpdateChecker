@@ -65,7 +65,7 @@ namespace TinyNvidiaUpdateChecker
             } else {
                 webBrowser1.Document.ExecCommand("FontSize", false, 2);
             }
-            
+
             webBrowser1.Document.ExecCommand("Unselect", false, "null");
         }
 
