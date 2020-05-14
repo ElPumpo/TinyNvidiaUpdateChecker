@@ -58,24 +58,25 @@ namespace TinyNvidiaUpdateChecker.Handlers
             /* Default installer */
 
             // amd64 installer on amd64 system, or x86 on x86 system
-            try
-            {
+            try {
                 using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", false)) {
-                    LogManager.Log($"7-Zip path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
-                    return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.SEVENZIP, true);
+                    if (regKey != null) {
+                        LogManager.Log($"7-Zip path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
+                        return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.SEVENZIP, true);
+                    }
                 }
-            }
-            catch { }
+            } catch { }
 
             // x86 intaller on amd64 system
             if (is64) {
                 try {
                     using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", false)) {
-                        LogManager.Log($"7-Zip path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
-                        return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.SEVENZIP, true);
+                        if (regKey != null) {
+                            LogManager.Log($"7-Zip path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
+                            return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.SEVENZIP, true);
+                        }
                     }
-                }
-                catch { }
+                } catch { }
             }
 
             /* MSI installer */
@@ -83,21 +84,23 @@ namespace TinyNvidiaUpdateChecker.Handlers
             // amd64 installer on amd64 system, or x86 on x86 system
             try {
                 using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\7-Zip", false)) {
-                    LogManager.Log($"7-Zip path: {regKey.GetValue("Path")}", LogManager.Level.INFO);
-                    return new LibaryFile(regKey.GetValue("Path").ToString(), Libary.SEVENZIP, true);
+                    if (regKey != null) {
+                        LogManager.Log($"7-Zip path: {regKey.GetValue("Path")}", LogManager.Level.INFO);
+                        return new LibaryFile(regKey.GetValue("Path").ToString(), Libary.SEVENZIP, true);
+                    }
                 }
-            }
-            catch { }
+            } catch { }
 
             // x86 intaller on amd64 system
             if (is64) {
                 try {
                     using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\7-Zip", false)) {
-                        LogManager.Log($"7-Zip path: {regKey.GetValue("Path")}", LogManager.Level.INFO);
-                        return new LibaryFile(regKey.GetValue("Path").ToString(), Libary.SEVENZIP, true);
+                        if (regKey != null) {
+                            LogManager.Log($"7-Zip path: {regKey.GetValue("Path")}", LogManager.Level.INFO);
+                            return new LibaryFile(regKey.GetValue("Path").ToString(), Libary.SEVENZIP, true);
+                        }
                     }
-                }
-                catch { }
+                } catch { }
             }
 
             /* Scoop support */
