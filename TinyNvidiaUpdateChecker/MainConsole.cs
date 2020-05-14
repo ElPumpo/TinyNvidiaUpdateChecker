@@ -980,21 +980,14 @@ namespace TinyNvidiaUpdateChecker
 
             try {
                 Console.WriteLine();
-                Console.Write("Running installer . . . ");
-                if (SettingManager.ReadSettingBool("Minimal install")) {
-                    Process.Start(FULL_PATH_DIRECTORY + "setup.exe", "/s /noreboot").WaitForExit();
-                } else {
-                    if (minimized) {
-                        Process.Start(FULL_PATH_DRIVER, "/s /noreboot").WaitForExit();
-                    } else {
-                        Process.Start(FULL_PATH_DRIVER, "/noeula").WaitForExit();
-                    }
-                    
-                }
-                
+                Console.Write("Executing driver installer . . . ");
+                var minimalInstaller = SettingManager.ReadSettingBool("Minimal install");
+                var arguments = minimized ? "/s /noreboot" : "/nosplash";
+
+                Process.Start(minimized ? FULL_PATH_DIRECTORY + "setup.exe" : FULL_PATH_DRIVER, arguments).WaitForExit();
                 Console.Write("OK!");
             } catch {
-                Console.WriteLine("Could not run driver installer!");
+                Console.WriteLine("An error occurred preventing the driver installer to execute!");
             }
 
             Console.WriteLine();
@@ -1014,7 +1007,7 @@ namespace TinyNvidiaUpdateChecker
         private static void MakeInstaller(bool silent)
         {
             Console.WriteLine();
-            Console.Write("Making installer . . . ");
+            Console.Write("Extracting drivers . . . ");
 
             bool error = false;
             LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
@@ -1117,8 +1110,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("This is free software, and you are welcome to redistribute it");
                 Console.WriteLine("under certain conditions. Licensed under GPLv3.");
                 Console.WriteLine();
-            } else {
-                LogManager.Log("Intro has already been run!", LogManager.Level.INFO);
             }
         }
 
