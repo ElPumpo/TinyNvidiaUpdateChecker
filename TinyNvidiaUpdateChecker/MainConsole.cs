@@ -575,22 +575,19 @@ namespace TinyNvidiaUpdateChecker
                 // HTMLAgilityPack
                 // thanks to http://www.codeproject.com/Articles/691119/Html-Agility-Pack-Massive-information-extraction-f for a great article
 
-                HtmlWeb htmlWeb = new HtmlWeb();
+                var htmlWeb = new HtmlWeb();
                 HtmlAgilityPack.HtmlDocument htmlDocument = htmlWeb.Load(processURL);
 
                 // get version
-                HtmlNode tdVer = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdVersion");
+                var tdVer = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdVersion");
                 OnlineGPUVersion = tdVer.InnerHtml.Trim().Substring(0, 6);
 
                 // get release date
-                HtmlNode tdReleaseDate = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdReleaseDate");
+                var tdReleaseDate = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "tdReleaseDate");
                 var dates = tdReleaseDate.InnerHtml.Trim();
 
                 // get driver release date
-                int status = 0;
-                int year = 0;
-                int month = 0;
-                int day = 0;
+                int status = 0, year = 0, month = 0, day = 0;
 
                 foreach (var substring in dates.Split('.')) {
                     status++; // goes up starting from 1, being the year, followed by month then day.
@@ -618,7 +615,6 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 releaseDate = new DateTime(year, month, day);
-
                 IEnumerable <HtmlNode> node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
 
                 // get driver URL
@@ -665,7 +661,7 @@ namespace TinyNvidiaUpdateChecker
                 downloadURL = $"http://{locationPrefix}{downloadURL}";
 
                 // get file size
-                using (WebResponse responce = WebRequest.Create(downloadURL).GetResponse()) {
+                using (var responce = WebRequest.Create(downloadURL).GetResponse()) {
                     downloadFileSize = responce.ContentLength;
                 }
 
@@ -704,19 +700,15 @@ namespace TinyNvidiaUpdateChecker
 
             // Check internet connection
             Console.Write("Verifying internet connection . . . ");
-            switch (NetworkInterface.GetIsNetworkAvailable()) {
-                case true:
-                    Console.Write("OK!");
-                    Console.WriteLine();
-                    break;
-
-                default:
-                    Console.Write("ERROR!");
-                    Console.WriteLine();
-                    Console.WriteLine("No internet connection was found, the application will now terminate!");
-                    if (showUI) Console.ReadKey();
-                    Environment.Exit(2);
-                    break;
+            if (NetworkInterface.GetIsNetworkAvailable()) {
+                Console.Write("OK!");
+                Console.WriteLine();
+            } else {
+                Console.Write("ERROR!");
+                Console.WriteLine();
+                Console.WriteLine("You are not connected to the internet, the application cannot function without it!");
+                if (showUI) Console.ReadKey();
+                Environment.Exit(2);
             }
 
             var hap = "HtmlAgilityPack.dll";
@@ -724,6 +716,7 @@ namespace TinyNvidiaUpdateChecker
             if (File.Exists(hap)) {
                 Console.WriteLine();
                 Console.Write("Verifying HAP MD5 hash . . . ");
+
                 var hash = HashHandler.CalculateMD5(hap);
 
                 if (hash.md5 != HashHandler.HAP_HASH && hash.error == false) {
@@ -756,14 +749,14 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (!File.Exists(hap)) {
-
                 Console.WriteLine();
                 Console.Write("Attempting to download HtmlAgilityPack.dll . . . ");
 
                 try {
-                    using (WebClient webClient = new WebClient()) {
+                    using (var webClient = new WebClient()) {
                         webClient.DownloadFile($"https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/download/v{offlineVer}/HtmlAgilityPack.dll", "HtmlAgilityPack.dll");
                     }
+
                     Console.Write("OK!");
                     Console.WriteLine();
                 } catch (Exception ex) {
@@ -772,29 +765,22 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine(ex.ToString());
                     Console.WriteLine();
                 }
-
             }
+
+            // compare HAP version, too
             var currentHapVersion = AssemblyName.GetAssemblyName(hap).Version.ToString();
 
-            // compare HAP version too
-            if (new Version(HashHandler.HAP_VERSION).CompareTo(new Version(currentHapVersion)) > 0) {
-                Console.WriteLine($"ERROR: The current HAP libary v{currentHapVersion} does not match the wanted v{HashHandler.HAP_VERSION}");
-                Console.WriteLine("The application has been terminated to prevent a error message by .NET");
+            if (new Version(HashHandler.HAP_VERSION).CompareTo(new Version(currentHapVersion)) != 0) {
+                Console.WriteLine($"ERROR: The current HAP libary v{currentHapVersion} does not match the required v{HashHandler.HAP_VERSION}");
+                Console.WriteLine("The application will not continue to prevent further errors");
                 if (showUI) Console.ReadKey();
                 Environment.Exit(1);
             }
 
-                if (SettingManager.ReadSettingBool("Minimal install")) {
+            if (SettingManager.ReadSettingBool("Minimal install")) {
                 if (LibaryHandler.EvaluateLibary() == null) {
-                    Console.WriteLine("Doesn't seem like either WinRAR or 7-Zip is installed!");
-                    DialogResult dialogUpdates = MessageBox.Show("Do you want to disable the minimal install feature and use the traditional way?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                    if (dialogUpdates == DialogResult.Yes) {
-                        SettingManager.SetSetting("Minimal install", "false");
-                    } else {
-                        Console.WriteLine("The application will terminate itself");
-                        if (showUI) Console.ReadKey();
-                        Environment.Exit(1);
-                    }
+                    Console.WriteLine("Doesn't seem like either WinRAR or 7-Zip is installed! We are disabling the minimal install feature for you.");
+                    SettingManager.SetSetting("Minimal install", "false");
                 }
             }
 
@@ -821,7 +807,7 @@ namespace TinyNvidiaUpdateChecker
                         message += " (you should select a empty folder)";
                     }
 
-                    FolderSelectDialog folderSelectDialog = new FolderSelectDialog();
+                    var folderSelectDialog = new FolderSelectDialog();
                     folderSelectDialog.Title = message;
 
                     if (folderSelectDialog.Show()) {
@@ -844,14 +830,12 @@ namespace TinyNvidiaUpdateChecker
                             var notifier = new AutoResetEvent(false);
                             var progress = new Handlers.ProgressBar();
 
-                            webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
-                            {
+                            webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
                                 progress.Report((double)e.ProgressPercentage / 100);
                             };
 
                             // Only set notifier here!
-                            webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e)
-                            {
+                            webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
                                 if(e.Cancelled || e.Error != null) {
                                     File.Delete(savePath + driverFileName);
                                 } else {
@@ -910,8 +894,8 @@ namespace TinyNvidiaUpdateChecker
             driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
             savePath = Path.GetTempPath();
 
-            string FULL_PATH_DIRECTORY = savePath + OnlineGPUVersion + @"\";
-            string FULL_PATH_DRIVER = FULL_PATH_DIRECTORY + driverFileName;
+            var FULL_PATH_DIRECTORY = savePath + OnlineGPUVersion + @"\";
+            var FULL_PATH_DRIVER = FULL_PATH_DIRECTORY + driverFileName;
 
             savePath = FULL_PATH_DIRECTORY;
 
@@ -926,19 +910,16 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("Downloading the driver . . . ");
 
                 if (showUI || confirmDL) {
-                    using (WebClient webClient = new WebClient()) {
+                    using (var webClient = new WebClient()) {
                         var notifier = new AutoResetEvent(false);
                         var progress = new Handlers.ProgressBar();
-                        bool error = false;
+                        var error = false;
 
-                        webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e)
-                        {
+                        webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
                             progress.Report((double)e.ProgressPercentage / 100);
                         };
 
-
-                        webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e)
-                        {
+                        webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
                             if (e.Cancelled || e.Error != null) {
                                 File.Delete(savePath + driverFileName);
                             } else {
@@ -1010,8 +991,8 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
             Console.Write("Extracting drivers . . . ");
 
-            bool error = false;
-            LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
+            var error = false;
+            var libaryFile = LibaryHandler.EvaluateLibary();
             string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
 
             try {
@@ -1026,7 +1007,7 @@ namespace TinyNvidiaUpdateChecker
             string fullDriverPath = @"""" + savePath + driverFileName + @"""";
 
             if (libaryFile.LibaryName() == LibaryHandler.Libary.WINRAR) {
-                using (Process WinRAR = new Process()) {
+                using (var WinRAR = new Process()) {
                     WinRAR.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "winrar.exe";
                     WinRAR.StartInfo.WorkingDirectory = savePath;
                     WinRAR.StartInfo.Arguments = $@"X {fullDriverPath} -N@""inclList.txt""";
@@ -1045,7 +1026,7 @@ namespace TinyNvidiaUpdateChecker
 
                 }
             } else if (libaryFile.LibaryName() == LibaryHandler.Libary.SEVENZIP) {
-                using (Process SevenZip = new Process()) {
+                using (var SevenZip = new Process()) {
                     if (silent) {
                         SevenZip.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7z.exe";
                     } else {
@@ -1076,17 +1057,20 @@ namespace TinyNvidiaUpdateChecker
             // remove new EULA files from the installer config, or else the installer throws error codes
             // author https://github.com/cywq
             if (!error) {
-                XmlDocument xmlDocument = new XmlDocument();
+                var xmlDocument = new XmlDocument();
                 string setupFile = savePath + "setup.cfg";
+                string[] linesToDelete = { "${{EulaHtmlFile}}", "${{FunctionalConsentFile}}", "${{PrivacyPolicyFile}}" };
+
                 xmlDocument.Load(setupFile);
 
-                string[] LinesToDelete = { "${{EulaHtmlFile}}", "${{FunctionalConsentFile}}", "${{PrivacyPolicyFile}}" };
-                foreach (string line in LinesToDelete) {
-                    XmlElement node = (XmlElement)xmlDocument.DocumentElement.SelectSingleNode("/setup/manifest/file[@name=\"" + line + "\"]");
+                foreach (var line in linesToDelete) {
+                    var node = (XmlElement)xmlDocument.DocumentElement.SelectSingleNode($"/setup/manifest/file[@name=\"{line}\"]");
+
                     if (node != null) {
                         node.ParentNode.RemoveChild(node);
                     }
                 }
+
                 xmlDocument.Save(setupFile);
             }
 

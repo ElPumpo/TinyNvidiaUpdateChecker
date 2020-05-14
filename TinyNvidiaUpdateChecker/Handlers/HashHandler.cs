@@ -21,13 +21,13 @@ namespace TinyNvidiaUpdateChecker.Handlers
         /// Calcluate the md5 hash of a file, we use it to verify the HTML Aglity Pack DLL so that people don't use the invalid version of it, 
         /// which causes the application to error out.
         /// </summary>
-        /// <param name="filename">file name, including filename extention</param>
+        /// <param name="fileName">file name, including filename extention</param>
         /// <returns></returns>
-        public static HashInfo CalculateMD5(string filename)
+        public static HashInfo CalculateMD5(string fileName)
         {
             using (var md5 = MD5.Create()) {
                 try {
-                    using (var stream = File.OpenRead(filename)) {
+                    using (var stream = File.OpenRead(fileName)) {
                         var hash = BitConverter.ToString(md5.ComputeHash(stream));
 
                         return new HashInfo(hash, false);

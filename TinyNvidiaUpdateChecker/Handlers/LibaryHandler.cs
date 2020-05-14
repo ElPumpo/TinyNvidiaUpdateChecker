@@ -17,8 +17,8 @@ namespace TinyNvidiaUpdateChecker.Handlers
         }
 
         public static LibaryFile EvaluateLibary() {
-            LibaryFile WinRAR = CheckWinRAR();
-            LibaryFile SevenZip = Check7Zip();
+            var WinRAR = CheckWinRAR();
+            var SevenZip = Check7Zip();
 
             if (WinRAR.IsInstalled()) {
                 return WinRAR;
@@ -31,14 +31,14 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
         private static LibaryFile CheckWinRAR() {
             try {
-                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
+                using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
                     LogManager.Log($"WinRAR path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
                     return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.WINRAR, true);
                 }
             } catch { }
 
             try {
-                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
+                using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
                     LogManager.Log($"WinRAR path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
                     return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.WINRAR, true);
                 }
@@ -60,7 +60,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
             // amd64 installer on amd64 system, or x86 on x86 system
             try
             {
-                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", false)) {
+                using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", false)) {
                     LogManager.Log($"7-Zip path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
                     return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.SEVENZIP, true);
                 }
@@ -70,7 +70,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
             // x86 intaller on amd64 system
             if (is64) {
                 try {
-                    using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", false)) {
+                    using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", false)) {
                         LogManager.Log($"7-Zip path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
                         return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.SEVENZIP, true);
                     }
@@ -82,7 +82,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
             
             // amd64 installer on amd64 system, or x86 on x86 system
             try {
-                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\7-Zip", false)) {
+                using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\7-Zip", false)) {
                     LogManager.Log($"7-Zip path: {regKey.GetValue("Path")}", LogManager.Level.INFO);
                     return new LibaryFile(regKey.GetValue("Path").ToString(), Libary.SEVENZIP, true);
                 }
@@ -92,7 +92,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
             // x86 intaller on amd64 system
             if (is64) {
                 try {
-                    using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\7-Zip", false)) {
+                    using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\7-Zip", false)) {
                         LogManager.Log($"7-Zip path: {regKey.GetValue("Path")}", LogManager.Level.INFO);
                         return new LibaryFile(regKey.GetValue("Path").ToString(), Libary.SEVENZIP, true);
                     }
