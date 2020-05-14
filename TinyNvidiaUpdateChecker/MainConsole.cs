@@ -1049,9 +1049,9 @@ namespace TinyNvidiaUpdateChecker
 
             string fullDriverPath = @"""" + savePath + driverFileName + @"""";
 
-            if (libaryFile.libary == LibaryHandler.Libary.WINRAR) {
+            if (libaryFile.LibaryName() == LibaryHandler.Libary.WINRAR) {
                 using (Process WinRAR = new Process()) {
-                    WinRAR.StartInfo.FileName = libaryFile.InstallLocation + "winrar.exe";
+                    WinRAR.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "winrar.exe";
                     WinRAR.StartInfo.WorkingDirectory = savePath;
                     WinRAR.StartInfo.Arguments = $@"X {fullDriverPath} -N@""inclList.txt""";
                     if (silent) WinRAR.StartInfo.Arguments += " -ibck -y";
@@ -1068,12 +1068,12 @@ namespace TinyNvidiaUpdateChecker
                     }
 
                 }
-            } else if (libaryFile.libary == LibaryHandler.Libary.SEVENZIP) {
+            } else if (libaryFile.LibaryName() == LibaryHandler.Libary.SEVENZIP) {
                 using (Process SevenZip = new Process()) {
                     if (silent) {
-                        SevenZip.StartInfo.FileName = libaryFile.InstallLocation + "7z.exe";
+                        SevenZip.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7z.exe";
                     } else {
-                        SevenZip.StartInfo.FileName = libaryFile.InstallLocation + "7zG.exe";
+                        SevenZip.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7zG.exe";
                     }
                     SevenZip.StartInfo.WorkingDirectory = savePath;
                     SevenZip.StartInfo.Arguments = $"x {fullDriverPath} @inclList.txt";
