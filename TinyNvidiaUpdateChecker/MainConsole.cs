@@ -981,6 +981,7 @@ namespace TinyNvidiaUpdateChecker
             try {
                 Console.WriteLine();
                 Console.Write("Executing driver installer . . . ");
+
                 var minimalInstaller = SettingManager.ReadSettingBool("Minimal install");
                 var arguments = minimized ? "/s /noreboot" : "/nosplash";
 

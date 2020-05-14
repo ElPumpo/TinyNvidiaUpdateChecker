@@ -51,7 +51,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
         private static LibaryFile Check7Zip() {
             /* Debug directory */
             if(Directory.Exists("7-Zip")) {
-                LogManager.Log("7-Zip path: " + Path.GetFullPath("7-Zip") + @"\", LogManager.Level.INFO);
+                LogManager.Log($"7-Zip path: {Path.GetFullPath("7-Zip") + @"\"}", LogManager.Level.INFO);
                 return new LibaryFile(Path.GetFullPath("7-Zip") + @"\", Libary.SEVENZIP, true);
             }
 

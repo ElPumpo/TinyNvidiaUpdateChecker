@@ -8,14 +8,14 @@ namespace TinyNvidiaUpdateChecker.Handlers
     class HashHandler
     {
         /// <summary>
-        /// The MD5 hash for HAP v1.8.9
+        /// The MD5 hash for HAP v1.11.23
         /// </summary>
-        public static string HAP_HASH = "2479dfcf6158f7bc951772a77fcbc3b6";
+        public static string HAP_HASH = "24-1D-D8-58-41-D3-4F-88-92-3C-5A-BA-FD-D6-56-FB";
 
         /// <summary>
         /// The HAP version currently used
         /// </summary>
-        public static string HAP_VERSION = "1.8.9.0";
+        public static string HAP_VERSION = "1.11.23.0";
 
         /// <summary>
         /// Calcluate the md5 hash of a file, we use it to verify the HTML Aglity Pack DLL so that people don't use the invalid version of it, 
@@ -28,7 +28,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
             using (var md5 = MD5.Create()) {
                 try {
                     using (var stream = File.OpenRead(filename)) {
-                        var hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
+                        var hash = BitConverter.ToString(md5.ComputeHash(stream));
 
                         return new HashInfo(hash, false);
                     }
@@ -44,7 +44,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
     class HashInfo
     {
-        public String md5;
+        public string md5;
         public bool error;
 
         /// <summary>
@@ -52,11 +52,9 @@ namespace TinyNvidiaUpdateChecker.Handlers
         /// </summary>
         /// <param name="md5">The MD5 hash value</param>
         /// <param name="error">has there been any errors?</param>
-        public HashInfo(String md5, bool error)
-        {
+        public HashInfo(string md5, bool error) {
             this.md5 = md5;
             this.error = error;
         }
-
     }
 }

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - We now run the NVIDIA installer with the `/noreboot` if the application is running quiet to prevent random reboots
 
 ### Changed
+- Updated HAP to v1.11.23
 - Download size in bytes are now properly grouped
 - Use string interpolation where available
 - Minor code improvements
