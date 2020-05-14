@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Improved tooltips on the driver dialog
 
 ### Fixed
+- Missing icon files for the forms
 - Minor typo
 - You can no longer navigate to other websites from the release description
 - Driver installer no longer hardcoded to run quiet if minimal installer is used

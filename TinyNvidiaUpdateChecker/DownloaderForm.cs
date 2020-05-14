@@ -8,9 +8,10 @@ namespace TinyNvidiaUpdateChecker
 {
     public partial class DownloaderForm : Form {
 
-        private Boolean isDownloadComplete = false;
+        private bool isDownloadComplete = false;
 
-        public DownloaderForm() {
+        public DownloaderForm()
+        {
             InitializeComponent();
         }
 

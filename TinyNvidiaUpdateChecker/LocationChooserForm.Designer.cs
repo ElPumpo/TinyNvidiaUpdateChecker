@@ -84,9 +84,10 @@
             this.Controls.Add(this.ConfirmBtn);
             this.Controls.Add(this.locationListView);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.Execut‌​ablePath);
             this.Name = "LocationChooserForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "LocationChooserForm";
+            this.Text = "TinyNvidiaUpdateChecker - Choose Download Location";
             this.Load += new System.EventHandler(this.LocationChooserForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
