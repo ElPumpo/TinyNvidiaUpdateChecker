@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Download selection form, you can now select the download server. Hopefully this resolves issue #45
 - Compare HAP versions, making sure downloaded one is the correct one (which also prevents a .NET error message)
 - We now run the NVIDIA installer with the `/noreboot` if the application is running quiet to prevent random reboots
+- Support for DCH drivers thanks to [grynnan](https://github.com/grynnan)
 
 ### Changed
 - Updated HAP to v1.11.23

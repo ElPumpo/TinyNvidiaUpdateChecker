@@ -15,6 +15,7 @@ using System.Net.NetworkInformation;
 using System.ComponentModel;
 using System.Xml;
 using TinyNvidiaUpdateChecker.Handlers;
+using Microsoft.Win32;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -73,6 +74,11 @@ namespace TinyNvidiaUpdateChecker
         /// OS ID for GPU driver download
         /// </summary>
         private static int osID;
+
+        /// <summary>
+        /// DCH ID, 1 indicates that the system requires DCH drivers, and 0 standard drivers
+        /// </summary>
+        private static int dchID = 0;
 
         /// <summary>
         /// Show UI or go quiet mode
@@ -550,9 +556,20 @@ namespace TinyNvidiaUpdateChecker
                 pfID = 756; // GTX 970
             }
 
+            // Check if system requires DCH drivers, thanks to https://github.com/Osspial
+            try {
+                using (var regKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\nvlddmkm", false)) {
+                    if (regKey != null) {
+                        if (regKey.GetValue("DCHUVen") != null) {
+                            dchID = 1;
+                        }
+                    }
+                }
+            } catch { }
+
             // finish request
             try {
-                gpuURL = $"https://www.nvidia.com/Download/processDriver.aspx?psid={psID.ToString()}&pfid={pfID.ToString()}&rpf=1&osid={osID.ToString()}&lid={langID.ToString()}&ctk=0";
+                gpuURL = $"https://www.nvidia.com/Download/processDriver.aspx?psid={psID}&pfid={pfID}&rpf=1&osid={osID}&lid={langID}&dtcid={dchID}&ctk=0";
 
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(gpuURL);
