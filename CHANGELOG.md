@@ -6,8 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Download selection form, you can now select the download server. Hopefully this resolves issue #45
-- Compare HAP versions, making sure downloaded one is the correct one (which also prevents a .NET error message)
+- Download selection form, you can now select the download server. Hopefully this resolves issues with slow downloads
+- Compare HAP versions, making sure downloaded one is the correct one (which also prevents further errors)
 - We now run the NVIDIA installer with the `/noreboot` if the application is running quiet to prevent random reboots
 - Support for DCH drivers thanks to [grynnan](https://github.com/grynnan)
 
