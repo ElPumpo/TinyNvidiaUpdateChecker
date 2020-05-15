@@ -14,7 +14,7 @@ I am back, sorry for being inactive the past years. I've been very busy with GTA
 - Download selection form, you can now select the download server. Hopefully this resolves issues with slow downloads
 - Compare HAP versions, making sure downloaded one is the correct one (which also prevents further errors)
 - We now run the NVIDIA installer with the `/noreboot` if the application is running quiet to prevent random reboots
-- Support for DCH drivers thanks to [grynnan](https://github.com/grynnan)
+- Support for DCH drivers thanks to [Osspial](https://github.com/Osspial)
 
 ### Changed
 - Updated HAP to v1.11.23
