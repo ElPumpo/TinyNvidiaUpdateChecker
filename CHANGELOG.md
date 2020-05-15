@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.14.1] - 2020-05-15
+### Fixed
+- Not launching extracted drivers when using minimal installer
+
 ## [1.14.0] - 2020-05-15
 I am back, sorry for being inactive the past years. I've been very busy with GTA related projects for years until recently where I got dropped out, and now focusing on my own side projects. I hope you all enjoy this new version!
 ### Added
