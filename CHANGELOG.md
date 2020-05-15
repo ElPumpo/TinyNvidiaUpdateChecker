@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Use string interpolation where available
 - Minor code improvements
 - Improved tooltips on the driver dialog
+- Disabled keyboard shortcuts in driver dialog
 
 ### Fixed
 - Missing icon files for the forms
