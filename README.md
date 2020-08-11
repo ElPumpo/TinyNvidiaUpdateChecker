@@ -6,11 +6,11 @@ TinyNvidiaUpdateChecker (TNUC for short) is a lightweight application that check
 
 It supports extracting drivers to only install the required driver files, which is useful since the default driver installer installs a bunch of bloatware on your computer that you don't need.
 
+**Visit the [Wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) page for detailed information about the application**
+
 ## Update
 
 Thanks to everyone making TNUC popular by staring the project here on GitHub and all the people writing articles about it! Many years ago I started this hobby project to automate checking driver updates, I know the codebase isn't proper and I've learned a lot since then. Even today there's nearly a hundred views on this page daily, which is huge for me, so thanks <3
-
-**Visit the [wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) for more information about the application!**
 
 # Download
 
