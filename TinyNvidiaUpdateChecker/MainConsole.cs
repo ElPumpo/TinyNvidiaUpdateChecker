@@ -673,8 +673,8 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 var locationPrefix = SettingManager.ReadSetting("Download location");
-                downloadURL = downloadURL.Substring(9);
-                downloadURL = $"http://{locationPrefix}{downloadURL}";
+                downloadURL = downloadURL.Substring(4);
+                downloadURL = $"https://{locationPrefix}{downloadURL}";
 
                 // get file size
                 using (var responce = WebRequest.Create(downloadURL).GetResponse()) {
