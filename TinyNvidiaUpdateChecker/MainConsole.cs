@@ -496,7 +496,9 @@ namespace TinyNvidiaUpdateChecker
                 foreach (ManagementObject obj in new ManagementObjectSearcher("SELECT * FROM Win32_VideoController").Get()) {
                     if (obj["Description"].ToString().ToLower().Contains("nvidia")) {
                         gpuName = obj["Description"].ToString().Trim();
-                        OfflineGPUVersion = obj["DriverVersion"].ToString().Replace(".", string.Empty).Substring(5);
+
+                        var extractedDriver = obj["DriverVersion"].ToString().Replace(".", string.Empty);
+                        OfflineGPUVersion = extractedDriver.Substring(extractedDriver.Length - 5, 5);
                         OfflineGPUVersion = OfflineGPUVersion.Substring(0, 3) + "." + OfflineGPUVersion.Substring(3); // add dot
                         foundGpu = true;
                         break;
