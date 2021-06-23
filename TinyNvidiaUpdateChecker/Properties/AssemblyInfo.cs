@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Hawaii_Beach")]
 [assembly: AssemblyProduct("TinyNvidiaUpdateChecker")]
-[assembly: AssemblyCopyright("Copyright © Hawaii_Beach 2016-2020")]
+[assembly: AssemblyCopyright("Copyright © Hawaii_Beach 2016-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,5 +19,5 @@ using System.Runtime.InteropServices;
 //      Minor Version 
 //      Patch
 // Following the Semantic Versioning 2.0.0 standard; see http://semver.org/spec/v2.0.0.html.
-[assembly: AssemblyVersion("1.14.2")]
-[assembly: AssemblyFileVersion("1.14.2")]
+[assembly: AssemblyVersion("1.14.3")]
+[assembly: AssemblyFileVersion("1.14.3")]

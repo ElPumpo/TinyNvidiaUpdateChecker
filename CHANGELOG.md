@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.14.3] - 2021-06-23
+### Fixed
+- Fixed a wrong assumption in the driver version fetch code. The code now reads it from right to left as it's always five digits (right?)
+
 ## [1.14.2] - 2020-08-18
 ### Fixed
 - Nvidia made a minor URL adjustment on their website
