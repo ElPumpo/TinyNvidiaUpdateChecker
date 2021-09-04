@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Missing "Press any key to exit" where applicable
+
 ### Fixed
 - HAP being verified and downloaded to the current directory, and not the TNUC binary directory
 - Nvidia URL response was not the latest driver version

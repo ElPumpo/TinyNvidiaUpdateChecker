@@ -190,7 +190,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             Console.WriteLine();
-            Console.WriteLine("Job done! Press any key to exit.");
+            Console.WriteLine("Press any key to exit...");
             if (showUI) Console.ReadKey();
             LogManager.Log("BYE!", LogManager.Level.INFO);
             Environment.Exit(0);
@@ -293,8 +293,10 @@ namespace TinyNvidiaUpdateChecker
                 }
 
             } else {
-                Console.WriteLine("You're running a non-supported version of Windows; the application will terminate itself.");
+                Console.WriteLine("You are not running a supported version of Windows!");
                 Console.WriteLine($"verOrg: {verOrg}");
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
                 if (showUI) Console.ReadKey();
                 Environment.Exit(1);
             }
@@ -522,7 +524,9 @@ namespace TinyNvidiaUpdateChecker
             } catch (InvalidDataException) {
                 Console.Write("ERROR!");
                 Console.WriteLine();
-                Console.WriteLine("No supported nvidia graphics cards were found, and the application will not continue!");
+                Console.WriteLine("No supported nvidia GPU was found!");
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
                 if (showUI) Console.ReadKey();
                 Environment.Exit(1);
             } catch (Exception ex) {
@@ -721,7 +725,9 @@ namespace TinyNvidiaUpdateChecker
             } else {
                 Console.Write("ERROR!");
                 Console.WriteLine();
-                Console.WriteLine("You are not connected to the internet, the application cannot function without it!");
+                Console.WriteLine("You are not connected to the internet!");
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
                 if (showUI) Console.ReadKey();
                 Environment.Exit(2);
             }
@@ -789,6 +795,8 @@ namespace TinyNvidiaUpdateChecker
             if (new Version(HashHandler.HAP_VERSION).CompareTo(new Version(currentHapVersion)) != 0) {
                 Console.WriteLine($"ERROR: The current HAP libary v{currentHapVersion} does not match the required v{HashHandler.HAP_VERSION}");
                 Console.WriteLine("The application will not continue to prevent further errors");
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
                 if (showUI) Console.ReadKey();
                 Environment.Exit(1);
             }
