@@ -76,11 +76,6 @@ namespace TinyNvidiaUpdateChecker
         private static int osID;
 
         /// <summary>
-        /// DCH ID, 1 indicates that the system requires DCH drivers, and 0 standard drivers
-        /// </summary>
-        private static int dchID = 0;
-
-        /// <summary>
         /// Show UI or go quiet mode
         /// </summary>
         public static bool showUI = true;
@@ -563,7 +558,13 @@ namespace TinyNvidiaUpdateChecker
                 using (var regKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\nvlddmkm", false)) {
                     if (regKey != null) {
                         if (regKey.GetValue("DCHUVen") != null) {
-                            dchID = 1;
+                            Console.Write("ERROR!");
+                            Console.WriteLine();
+                            Console.WriteLine("Your GPU uses DCH drivers which are not supported by this application. You are able to update it via Windows Update");
+                            Console.WriteLine();
+                            Console.WriteLine("Press any key to exit...");
+                            if (showUI) Console.ReadKey();
+                            Environment.Exit(1);
                         }
                     }
                 }
@@ -571,7 +572,7 @@ namespace TinyNvidiaUpdateChecker
 
             // finish request
             try {
-                gpuURL = $"https://www.nvidia.com/Download/processDriver.aspx?psid={psID}&pfid={pfID}&osid={osID}&lid={langID}&dtcid={dchID}&ctk=0";
+                gpuURL = $"https://www.nvidia.com/Download/processDriver.aspx?psid={psID}&pfid={pfID}&osid={osID}&lid={langID}&dtcid=0&ctk=0";
 
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(gpuURL);

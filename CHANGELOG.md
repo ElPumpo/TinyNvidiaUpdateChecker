@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - HAP being verified and downloaded to the current directory, and not the TNUC binary directory
 - Nvidia URL response was not the latest driver version
 
+### Removed
+- Support for DCH drivers, use Windows Update instead
+
 ## [1.14.3] - 2021-06-23
 ### Fixed
 - Fixed a wrong assumption in the driver version fetch code. The code now reads it from right to left as it's always five digits (right?)
