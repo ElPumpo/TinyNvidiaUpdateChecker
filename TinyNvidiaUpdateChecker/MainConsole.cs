@@ -571,7 +571,7 @@ namespace TinyNvidiaUpdateChecker
 
             // finish request
             try {
-                gpuURL = $"https://www.nvidia.com/Download/processDriver.aspx?psid={psID}&pfid={pfID}&rpf=1&osid={osID}&lid={langID}&dtcid={dchID}&ctk=0";
+                gpuURL = $"https://www.nvidia.com/Download/processDriver.aspx?psid={psID}&pfid={pfID}&osid={osID}&lid={langID}&dtcid={dchID}&ctk=0";
 
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(gpuURL);
@@ -652,11 +652,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 if (pdfURL == null) {
-                    if (psID == 98) { // if desktop
-                        pdfURL = $"https://us.download.nvidia.com/Windows/{OnlineGPUVersion}/{OnlineGPUVersion}-win10-win8-win7-desktop-release-notes.pdf";
-                    } else {
-                        pdfURL = $"https://us.download.nvidia.com/Windows/{OnlineGPUVersion}/{OnlineGPUVersion}-win10-win8-win7-notebook-release-notes.pdf";
-                    }
+                    pdfURL = $"https://us.download.nvidia.com/Windows/{OnlineGPUVersion}/{OnlineGPUVersion}-win11-win10-win8-win7-release-notes.pdf";
                     LogManager.Log("No release notes found, but a link to the notes has been crafted by following the template Nvidia uses.", LogManager.Level.INFO);
                 }
 
