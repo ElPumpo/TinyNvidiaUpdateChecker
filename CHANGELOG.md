@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Fixed
 - HAP being verified and downloaded to the current directory, and not the TNUC binary directory
-- Newest drivers not appearing
+- Nvidia URL response was not the latest driver version
 
 ## [1.14.3] - 2021-06-23
 ### Fixed
