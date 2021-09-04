@@ -729,13 +729,14 @@ namespace TinyNvidiaUpdateChecker
                 Environment.Exit(2);
             }
 
-            var hap = "HtmlAgilityPack.dll";
-
-            if (File.Exists(hap)) {
+            var workingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var hapPath = Path.Combine(workingDirectory, "HtmlAgilityPack.dll");
+            Console.WriteLine(hapPath);
+            if (File.Exists(hapPath)) {
                 Console.WriteLine();
                 Console.Write("Verifying HAP MD5 hash . . . ");
 
-                var hash = HashHandler.CalculateMD5(hap);
+                var hash = HashHandler.CalculateMD5(hapPath);
 
                 if (hash.md5 != HashHandler.HAP_HASH && hash.error == false) {
                     Console.Write("ERROR!");
@@ -743,7 +744,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("Deleting the invalid HAP file.");
 
                     try {
-                        File.Delete(hap);
+                        File.Delete(hapPath);
                     } catch (Exception ex) {
                         Console.WriteLine(ex.ToString());
                     }
@@ -751,7 +752,7 @@ namespace TinyNvidiaUpdateChecker
                 // delete HAP file as it couldn't be verified
                 } else if (hash.error) {
                     try {
-                        File.Delete(hap);
+                        File.Delete(hapPath);
                     } catch (Exception ex) {
                         Console.WriteLine(ex.ToString());
                     }
@@ -766,13 +767,13 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            if (!File.Exists(hap)) {
+            if (!File.Exists(hapPath)) {
                 Console.WriteLine();
                 Console.Write("Attempting to download HtmlAgilityPack.dll . . . ");
 
                 try {
                     using (var webClient = new WebClient()) {
-                        webClient.DownloadFile($"https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/download/v{offlineVer}/HtmlAgilityPack.dll", "HtmlAgilityPack.dll");
+                        webClient.DownloadFile($"https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/download/v{offlineVer}/HtmlAgilityPack.dll", hapPath);
                     }
 
                     Console.Write("OK!");
@@ -786,7 +787,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // compare HAP version, too
-            var currentHapVersion = AssemblyName.GetAssemblyName(hap).Version.ToString();
+            var currentHapVersion = AssemblyName.GetAssemblyName(hapPath).Version.ToString();
 
             if (new Version(HashHandler.HAP_VERSION).CompareTo(new Version(currentHapVersion)) != 0) {
                 Console.WriteLine($"ERROR: The current HAP libary v{currentHapVersion} does not match the required v{HashHandler.HAP_VERSION}");
