@@ -22,11 +22,16 @@ Thanks to everyone making TNUC popular by staring the project here on GitHub and
 
 # Requirements
 
-+ Windows 10, 8.x or 7
-+ .NET framework 4.6.1
-+ `HtmlAgilityPack.dll` in same folder as the executable (automatic download from v1.8.0 and up)
-+ Stable internet connection
-+ (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org)
+- Windows 10, 8.x or 7
+- .NET framework 4.6.1
+- `HtmlAgilityPack.dll` in same folder as the executable (automatic download from v1.8.0 and up)
+- Stable internet connection
+- (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org)
+
+# Alternatives
+
+- [EnvyUpdate](https://github.com/fyr77/EnvyUpdate)
+- [nvidia-update](https://github.com/lord-carlos/nvidia-update)
 
 # Legal
 
@@ -34,7 +39,7 @@ Thanks to everyone making TNUC popular by staring the project here on GitHub and
 
 TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
 
-Copyright (C) 2016-2020 Hawaii_Beach
+Copyright (C) 2016-present Hawaii_Beach
 
 This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.
 
