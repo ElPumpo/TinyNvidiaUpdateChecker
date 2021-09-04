@@ -727,7 +727,7 @@ namespace TinyNvidiaUpdateChecker
 
             var workingDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var hapPath = Path.Combine(workingDirectory, "HtmlAgilityPack.dll");
-            Console.WriteLine(hapPath);
+
             if (File.Exists(hapPath)) {
                 Console.WriteLine();
                 Console.Write("Verifying HAP MD5 hash . . . ");
