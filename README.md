@@ -31,7 +31,7 @@ Thanks to everyone making TNUC popular by staring the project here on GitHub and
 # Alternatives
 
 - [EnvyUpdate](https://github.com/fyr77/EnvyUpdate)
-- [nvidia-update](https://github.com/lord-carlos/nvidia-update)
+- [nvidia-update](https://github.com/ZenitH-AT/nvidia-update)
 
 # Legal
 
