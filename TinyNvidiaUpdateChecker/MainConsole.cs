@@ -833,28 +833,10 @@ namespace TinyNvidiaUpdateChecker
                     // don't download driver if it already exists
                     Console.Write("Downloading the driver . . . ");
                     if (showUI && !File.Exists(savePath + driverFileName)) {
+                        var ex = HandleDownload(downloadURL, savePath + driverFileName);
 
-                        using (WebClient webClient = new WebClient()) {
-                            var notifier = new AutoResetEvent(false);
-                            var progress = new Handlers.ProgressBar();
-
-                            webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
-                                progress.Report((double)e.ProgressPercentage / 100);
-                            };
-
-                            // Only set notifier here!
-                            webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
-                                if(e.Cancelled || e.Error != null) {
-                                    File.Delete(savePath + driverFileName);
-                                } else {
-                                    notifier.Set();
-                                }
-                            };
-
-                            webClient.DownloadFileAsync(new Uri(downloadURL), savePath + driverFileName);
-
-                            notifier.WaitOne(); // sync with the above
-                            progress.Dispose(); // get rid of the progress bar
+                        if (ex != null) {
+                            throw ex;
                         }
                     }
                     // show the progress bar gui
@@ -918,40 +900,20 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("Downloading the driver . . . ");
 
                 if (showUI || confirmDL) {
-                    using (var webClient = new WebClient()) {
-                        var notifier = new AutoResetEvent(false);
-                        var progress = new Handlers.ProgressBar();
-                        var error = false;
+                    try {
+                        var ex = HandleDownload(downloadURL, FULL_PATH_DRIVER);
 
-                        webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
-                            progress.Report((double)e.ProgressPercentage / 100);
-                        };
-
-                        webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
-                            if (e.Cancelled || e.Error != null) {
-                                File.Delete(savePath + driverFileName);
-                            } else {
-                                notifier.Set();
-                            }
-                        };
-
-                        try {
-                            webClient.DownloadFileAsync(new Uri(downloadURL), FULL_PATH_DRIVER);
-                            notifier.WaitOne();
-                        } catch (Exception ex) {
-                            error = true;
-                            Console.Write("ERROR!");
-                            Console.WriteLine();
-                            Console.WriteLine(ex.ToString());
-                            Console.WriteLine();
+                        if (ex != null) {
+                            throw ex;
                         }
 
-                        progress.Dispose(); // dispone the progress bar
-
-                        if (!error) {
-                            Console.Write("OK!");
-                            Console.WriteLine();
-                        }
+                        Console.Write("OK!");
+                        Console.WriteLine();
+                    } catch (Exception ex) {
+                        Console.Write("ERROR!");
+                        Console.WriteLine();
+                        Console.WriteLine(ex.ToString());
+                        Console.WriteLine();
                     }
                 } else {
                     using (DownloaderForm dlForm = new DownloaderForm()) {
@@ -989,6 +951,52 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine($"Could not cleanup: {FULL_PATH_DIRECTORY}");
             }
 
+        }
+
+        /// <summary>
+        /// Shared method for the accual downloading of a file with the command line progress bar.
+        /// </summary>
+        /// <param name="url">URL path for download</param>
+        /// <param name="path">Absolute file path</param>
+        /// <returns></returns>
+        private static Exception HandleDownload(string url, string path)
+        {
+            Exception ex = null;
+            path += ".part"; // add 'partial' to file name making it easier to identify as an incomplete download
+
+            // if a partial file download exists, delete it now
+            if (File.Exists(path)) {
+                File.Delete(path);
+            }
+
+            try {
+                using (var webClient = new WebClient()) {
+                    var notifier = new AutoResetEvent(false);
+                    var progress = new Handlers.ProgressBar();
+
+                    webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
+                        progress.Report((double)e.ProgressPercentage / 100);
+                    };
+
+                    webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
+                        if (e.Cancelled || e.Error != null) {
+                            File.Delete(path);
+                            ex = e.Error;
+                        }
+
+                        File.Move(path, path.Substring(0, path.Length - 5)); // rename back
+                        notifier.Set();
+                    };
+
+                    webClient.DownloadFileAsync(new Uri(url), path);
+                    notifier.WaitOne();
+                    progress.Dispose();
+
+                    return ex;
+                }
+            } catch (Exception ex2) {
+                return ex2;
+            }
         }
 
         /// <summary>
