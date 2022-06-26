@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.14.6] - 2022-06-26
 ### Fixed
 - Non-DCH drivers are no longer supported by NVIDIA. So they are always opted to be installed. See issue #101
 
 ### Changed
 - Merged duplicate code, and improved driver download code (more improvements are needed)
+- Updated HAP to 1.11.43
 
 ## [1.14.5] - 2021-09-06
 ### Added
