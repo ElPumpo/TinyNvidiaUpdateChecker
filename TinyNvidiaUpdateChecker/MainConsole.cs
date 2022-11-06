@@ -560,11 +560,11 @@ namespace TinyNvidiaUpdateChecker
             // finish request
             try {
                 gpuURL = $"https://www.nvidia.com/Download/processDriver.aspx?psid={psID}&pfid={pfID}&osid={osID}&lid={langID}&dtcid=1&ctk=0";
-
                 WebClient client = new WebClient();
                 Stream stream = client.OpenRead(gpuURL);
                 StreamReader reader = new StreamReader(stream);
                 processURL = reader.ReadToEnd();
+                processURL = "https:" + processURL; // NVIDIA broke this around 2022-10 so this is a quick fix until I rewrite this code
                 reader.Close();
                 stream.Close();
             } catch (Exception ex) {
@@ -625,7 +625,7 @@ namespace TinyNvidiaUpdateChecker
 
                 // get driver URL
                 foreach (var child in node) {
-                    if (child.Attributes["href"].Value.Contains("/content/DriverDownload-March2009/")) {
+                    if (child.Attributes["href"].Value.Contains("/content/DriverDownloads/")) {
                         confirmURL = "https://www.nvidia.com" + child.Attributes["href"].Value.Trim();
                         break;
                     }

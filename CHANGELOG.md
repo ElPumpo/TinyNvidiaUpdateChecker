@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.14.7] - 2022-11-06
+### Fixed
+- NVIDIA changed their website code, breaking TNUC. I've fixed it for now but a complete rewrite is needed to use their API... See issue #114
+
+### Changed
+- Bumped to .NET Framework 4.8
+
 ## [1.14.6] - 2022-06-26
 ### Fixed
 - Non-DCH drivers are no longer supported by NVIDIA. So they are always opted to be installed. See issue #101
