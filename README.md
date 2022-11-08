@@ -10,7 +10,7 @@ It supports extracting drivers to only install the required driver files, which 
 
 ## Update
 
-Thanks to everyone making TNUC popular by staring the project here on GitHub and all the people writing articles about it! Many years ago I started this hobby project to automate checking driver updates, I know the codebase isn't proper and I've learned a lot since then. Even today there's nearly a hundred views on this page daily, which is huge for me, so thanks <3
+Thanks to everyone making TNUC popular by starring the project here on GitHub and all the people writing articles about it! Many years ago I started this as a hobby project to automate checking driver updates. I know the codebase isn't proper and I've learned a lot since then. Even today there's nearly hundreds of views on this page daily, which is huge for me, so thanks <3
 
 # Download
 
@@ -41,9 +41,9 @@ TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
 
 Copyright (C) 2016-present Hawaii_Beach
 
-This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.
+This program is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.
 
-This program Is distributed In the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty Of MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License For more details.
+This program is distributed In the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty Of MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License For more details.
 
 You should have received a copy Of the GNU General Public License along with this program. If Not, see <http://www.gnu.org/licenses/>.
 
