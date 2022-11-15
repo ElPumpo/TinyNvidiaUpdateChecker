@@ -564,7 +564,7 @@ namespace TinyNvidiaUpdateChecker
                 Stream stream = client.OpenRead(gpuURL);
                 StreamReader reader = new StreamReader(stream);
                 processURL = reader.ReadToEnd();
-                processURL = "https:" + processURL; // NVIDIA broke this around 2022-10 so this is a quick fix until I rewrite this code
+                processURL = "https://www.nvidia.com/Download/" + processURL; // NVIDIA broke this around 2022-10 so this is a quick fix until I rewrite this code
                 reader.Close();
                 stream.Close();
             } catch (Exception ex) {
