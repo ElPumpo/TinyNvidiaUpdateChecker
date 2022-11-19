@@ -87,7 +87,6 @@
     </Compile>
     <Compile Include="Handlers\FolderSelectDialog.cs" />
     <Compile Include="Handlers\GenericHandler.cs" />
-    <Compile Include="Handlers\HashHandler.cs" />
     <Compile Include="Handlers\LibaryHandler.cs" />
     <Compile Include="LocationChooserForm.cs">
       <SubType>Form</SubType>

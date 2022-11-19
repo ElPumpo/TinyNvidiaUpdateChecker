@@ -88,9 +88,9 @@ namespace TinyNvidiaUpdateChecker
             this.titleLabel.AutoSize = true;
             this.titleLabel.Location = new System.Drawing.Point(9, 9);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(260, 17);
+            this.titleLabel.Size = new System.Drawing.Size(240, 16);
             this.titleLabel.TabIndex = 5;
-            this.titleLabel.Text = "New graphics card drivers are available!\r\n";
+            this.titleLabel.Text = "A new graphics card driver is available!\r\n";
             // 
             // groupBox1
             // 
