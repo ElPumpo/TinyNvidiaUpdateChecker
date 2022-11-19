@@ -73,7 +73,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// The file size of downloadURL in bytes
         /// </summary>
-        public static string downloadFileSize;
+        public static long downloadFileSize;
 
         /// <summary>
         /// Show UI or go quiet mode
@@ -146,10 +146,15 @@ namespace TinyNvidiaUpdateChecker
 
             OnlineGPUVersion = downloadInfo["Version"].ToString();
             downloadURL = downloadInfo["DownloadURL"].ToString();
-            downloadFileSize = downloadInfo["DownloadURLFileSize"].ToString();
             releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
             releaseDesc = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
             pdfURL = $"https://us.download.nvidia.com/Windows/{OnlineGPUVersion}/{OnlineGPUVersion}-win11-win10-release-notes.pdf"; // todo regex downloadInfo["OtherNotes"]
+
+            // Get real file size in bytes
+            using (var responce = WebRequest.Create(downloadURL).GetResponse()) {
+                downloadFileSize = responce.ContentLength;
+            }
+
             Console.Write("OK!");
             Console.WriteLine();
 
@@ -157,7 +162,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine($"downloadURL: {downloadURL}");
                 Console.WriteLine($"pdfURL:      {pdfURL}");
                 Console.WriteLine($"releaseDate: {releaseDate.ToShortDateString()}");
-                Console.WriteLine($"downloadFileSize:  {downloadFileSize}");
+                Console.WriteLine($"downloadFileSize:  {Math.Round((downloadFileSize / 1024f) / 1024f)} MiB");
                 Console.WriteLine($"OfflineGPUVersion: {OfflineGPUVersion}");
                 Console.WriteLine($"OnlineGPUVersion:  {OnlineGPUVersion}");
             }
@@ -344,33 +349,30 @@ namespace TinyNvidiaUpdateChecker
             string gpuName = "";
             var regex = new Regex(@"(?<=NVIDIA )(.*(?= [0-9]+GB)|.*(?= \([A-Z]+\))|.*)");
 
+            // Check for notebook
             foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
                 foreach (int chassisType in (ushort[])(obj["ChassisTypes"])) {
                     isNotebook = chassisType == 9 || chassisType == 10 || chassisType == 14;
                 }
             }
 
-            // query local driver version
-            try {
-                var gpus = new ManagementObjectSearcher("SELECT Name, DriverVersion FROM Win32_VideoController").Get();
+            // Get the local GPU metadata
+            var gpus = new ManagementObjectSearcher("SELECT Name, DriverVersion FROM Win32_VideoController").Get();
 
-                foreach (var gpu in gpus) {
-                    var name = gpu["Name"].ToString();
+            foreach (var gpu in gpus) {
+                var name = gpu["Name"].ToString();
 
-                    if (Regex.IsMatch(name, @"^NVIDIA") && regex.IsMatch(name)) {
-                        gpuName = regex.Match(name).Value.Trim();
-                        var rawDriverVersion = gpu["DriverVersion"].ToString().Replace(".", string.Empty);
-                        OfflineGPUVersion = rawDriverVersion.Substring(rawDriverVersion.Length - 5, 5).Insert(3, ".");
-                        foundCompatibleGpu = true;
-                        break;
-                    }
-                    
+                if (Regex.IsMatch(name, @"^NVIDIA") && regex.IsMatch(name)) {
+                    gpuName = regex.Match(name).Value.Trim();
+                    var rawDriverVersion = gpu["DriverVersion"].ToString().Replace(".", string.Empty);
+                    OfflineGPUVersion = rawDriverVersion.Substring(rawDriverVersion.Length - 5, 5).Insert(3, ".");
+                    foundCompatibleGpu = true;
+                    break;
                 }
 
-                if (!foundCompatibleGpu) {
-                    throw new InvalidDataException();
-                }
-            } catch (InvalidDataException) {
+            }
+
+            if (!foundCompatibleGpu) {
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 // todo use pcilookup API https://www.pcilookup.com/api.php?action=search&vendor=10DE&device=13C2
@@ -379,19 +381,9 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Press any key to exit...");
                 if (showUI) Console.ReadKey();
                 Environment.Exit(1);
-            } catch (Exception ex) {
-                Console.Write("ERROR!");
-                LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
-                Console.WriteLine();
-                Console.WriteLine(ex.ToString());
-                Console.WriteLine();
-                Console.WriteLine("Press any key to exit...");
-                if (showUI) Console.ReadKey();
-                Environment.Exit(1);
             }
 
             return (gpuName, isNotebook);
-
         }
 
 
@@ -423,43 +415,14 @@ namespace TinyNvidiaUpdateChecker
                 Environment.Exit(1);
             }
 
-
             // Get operating system ID
+            var osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
+            var osBit = Environment.Is64BitOperatingSystem ? "64" : "32";
+            OSClassRoot osData = null;
+
             try {
-                var osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
-                var osBit = Environment.Is64BitProcess ? "64" : "32";
                 var response = ReadURL(gpuMetadataRepo + "/os-data.json");
-                var osData = JsonConvert.DeserializeObject<OSClassRoot>(response);
-
-                foreach (var os in osData) {
-                    if (os.code == osVersion && Regex.IsMatch(os.name, osBit)) {
-                        osId = os.id;
-                        break;
-                    }
-                }
-
-                if (osId == 0) {
-                    Console.Write("ERROR!");
-                    Console.WriteLine();
-                    Console.WriteLine("Could not find a supported driver by your operating system.");
-                    Console.WriteLine();
-                    Console.WriteLine($"gpuName:   {gpuName}");
-                    Console.WriteLine($"osVersion: {osVersion}");
-                    Console.WriteLine($"osBit:     {osBit}");
-                    Console.WriteLine();
-                    Console.WriteLine("Press any key to exit...");
-                    if (showUI) Console.ReadKey();
-                    Environment.Exit(1);
-                }
-
-                // Check for DCH for newer drivers
-                using (var regKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\nvlddmkm", false)) {
-                    if (regKey != null && regKey.GetValue("DCHUVen") != null) {
-                        isDchDriver = 1;
-                    }
-                }
-
-
+                osData = JsonConvert.DeserializeObject<OSClassRoot>(response);
             } catch {
                 Console.Write("ERROR!");
                 Console.WriteLine();
@@ -470,8 +433,34 @@ namespace TinyNvidiaUpdateChecker
                 Environment.Exit(1);
             }
 
+            foreach (var os in osData) {
+                if (os.code == osVersion && Regex.IsMatch(os.name, osBit)) {
+                    osId = os.id;
+                    break;
+                }
+            }
 
-            //gpuId, int osId, int dch
+            if (osId == 0) {
+                Console.Write("ERROR!");
+                Console.WriteLine();
+                Console.WriteLine("Could not find a supported driver by your operating system.");
+                Console.WriteLine();
+                Console.WriteLine($"gpuName:   {gpuName}");
+                Console.WriteLine($"osVersion: {osVersion}");
+                Console.WriteLine($"osBit:     {osBit}");
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
+                if (showUI) Console.ReadKey();
+                Environment.Exit(1);
+            }
+
+            // Check for DCH for newer drivers
+            using (var regKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\nvlddmkm", false)) {
+                if (regKey != null && regKey.GetValue("DCHUVen") != null) {
+                    isDchDriver = 1;
+                }
+            }
+
             return (gpuId, osId, isDchDriver);
         }
         private static JObject GetDriverDownloadInfo(int gpuId, int osId, int isDchDriver) {
@@ -555,8 +544,9 @@ namespace TinyNvidiaUpdateChecker
                         return;
                     }
 
-                    if (File.Exists(savePath + driverFileName)) {
-                        // reimplement hash check?
+                    if (File.Exists(savePath + driverFileName) && !DoesDriverFileSizeMatch(savePath + driverFileName)) {
+                        LogManager.Log($"Deleting {savePath}{driverFileName} because its length doesn't match!", LogManager.Level.INFO);
+                        File.Delete(savePath + driverFileName);
                     }
 
                     // don't download driver if it already exists
@@ -620,8 +610,7 @@ namespace TinyNvidiaUpdateChecker
 
             Directory.CreateDirectory(FULL_PATH_DIRECTORY);
 
-            if (File.Exists(FULL_PATH_DRIVER)) {
-                // todo redo hash check
+            if (File.Exists(FULL_PATH_DRIVER) && !DoesDriverFileSizeMatch(FULL_PATH_DRIVER)) {
                 LogManager.Log($"Deleting {FULL_PATH_DRIVER} because its length doesn't match!", LogManager.Level.INFO);
                 File.Delete(savePath + driverFileName);
             }
@@ -837,6 +826,10 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine($"TinyNvidiaUpdateChecker v{offlineVer}");
                 Console.WriteLine();
             }
+        }
+
+        private static bool DoesDriverFileSizeMatch(string absoluteFilePath) {
+            return new FileInfo(absoluteFilePath).Length == downloadFileSize;
         }
     }
 }
