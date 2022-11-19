@@ -16,16 +16,11 @@ Thanks to everyone making TNUC popular by starring the project here on GitHub an
 
 [Go to the releases page](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases) for all downloads
 
-## Forkers
-
-[HTML Agility Pack](https://www.nuget.org/packages/HtmlAgilityPack) will automatically install when attempting to debug the project (make sure you're running the latest version of VS2017), or you may manually install it by doing the following: Open up your Package Manager Console and type in `Install-Package HtmlAgilityPack`.
-
 # Requirements
 
 - Windows 10, 8.x or 7
-- .NET framework 4.6.1
-- `HtmlAgilityPack.dll` in same folder as the executable (automatic download from v1.8.0 and up)
-- Stable internet connection
+- .NET framework 4.8
+- Internet connection
 - (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org)
 
 # Alternatives
