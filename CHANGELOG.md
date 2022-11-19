@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.5.0] - 2022-11-19
+## [1.15.0] - 2022-11-19
 ### Changed
 - Now querying NVIDIA API to properly get the latest GPU driver for your card. Much lower risk of code stopping to work if they change their website, URL format or whatever. Thanks to [ZenitH-AT](https://github.com/ZenitH-AT/) for his NVIDIA research and data repo. This new query code is based of his [nvidia-update](https://github.com/ZenitH-AT/nvidia-update) project. This also means that most GPUs are now supported. Still need to write code to get driver for GPUs that don't have a driver installed and named generic in device manager.
 - Minor code cleanup
