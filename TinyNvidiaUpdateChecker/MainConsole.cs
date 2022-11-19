@@ -32,16 +32,15 @@ namespace TinyNvidiaUpdateChecker
 
     class MainConsole
     {
-
-        /// <summary>
-        /// Server adress
-        /// </summary>
-        private readonly static string serverURL = "https://elpumpo.github.io/TinyNvidiaUpdateChecker/";
-
         /// <summary>
         /// GPU metadata repo
         /// </summary>
         private readonly static string gpuMetadataRepo = "https://raw.githubusercontent.com/ZenitH-AT/nvidia-data/main";
+
+        /// <summary>
+        /// URL for client update
+        /// </summary>
+        private readonly static string updateUrl = "https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/latest";
 
         /// <summary>
         /// Current client version
@@ -143,9 +142,13 @@ namespace TinyNvidiaUpdateChecker
             (string gpuName, bool isNotebook) = GetGpuData();
             (int gpuId, int osId, int isDchDriver) = GetDriverMetadata(gpuName, isNotebook);
             var downloadInfo = GetDriverDownloadInfo(gpuId, osId, isDchDriver);
+            var dlPrefix = SettingManager.ReadSetting("Download location");
+
+            downloadURL = downloadInfo["DownloadURL"].ToString();
+            downloadURL = downloadURL.Substring(10);
+            downloadURL = $"https://{dlPrefix}{downloadURL}";
 
             OnlineGPUVersion = downloadInfo["Version"].ToString();
-            downloadURL = downloadInfo["DownloadURL"].ToString();
             releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
             releaseDesc = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
             pdfURL = $"https://us.download.nvidia.com/Windows/{OnlineGPUVersion}/{OnlineGPUVersion}-win11-win10-release-notes.pdf"; // todo regex downloadInfo["OtherNotes"]
@@ -168,8 +171,8 @@ namespace TinyNvidiaUpdateChecker
             }
 
             var updateAvailable = false;
-            var iOffline = Convert.ToInt32(OfflineGPUVersion.Replace(".", string.Empty));
-            var iOnline = Convert.ToInt32(OnlineGPUVersion.Replace(".", string.Empty));
+            var iOffline = int.Parse(OfflineGPUVersion.Replace(".", string.Empty));
+            var iOnline = int.Parse(OnlineGPUVersion.Replace(".", string.Empty));
 
             if (iOnline == iOffline) {
                 Console.WriteLine("There is no new GPU driver available, you are up to date.");
@@ -179,7 +182,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("There is a new GPU driver available to download!");
                 updateAvailable = true;
             }
-            
 
             if (updateAvailable || forceDL) {
                 if (confirmDL) {
@@ -205,14 +207,10 @@ namespace TinyNvidiaUpdateChecker
             bool error = false;
 
             try {
-                //hHtmlWeb htmlWeb = new HtmlWeb();
-                // HtmlAgilityPack.HtmlDocument htmlDocument = htmlWeb.Load(serverURL);
-
-                // get version
-                //HtmlNode tdVer = htmlDocument.DocumentNode.Descendants().SingleOrDefault(x => x.Id == "currentVersion");
-
-                //onlineVer = tdVer.InnerText.Trim();
-                onlineVer = "0.0.0";
+                using (var responce = WebRequest.Create(updateUrl).GetResponse()) {
+                    string responseUri = responce.ResponseUri.ToString();
+                    onlineVer = responseUri.Substring(responseUri.LastIndexOf("/") + 1).Substring(1);
+                }
             } catch (Exception ex) {
                 error = true;
                 onlineVer = "0.0.0";
@@ -221,6 +219,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
             }
+
             if (!error) {
                 Console.Write("OK!");
                 Console.WriteLine();
@@ -233,7 +232,7 @@ namespace TinyNvidiaUpdateChecker
                     DialogResult dialog = MessageBox.Show("There is a new client update available to download, do you want to be navigate to the official GitHub download section?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (dialog == DialogResult.Yes) {
-                        Process.Start("https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases");
+                        Process.Start(updateUrl);
                     }
                 }
             }
