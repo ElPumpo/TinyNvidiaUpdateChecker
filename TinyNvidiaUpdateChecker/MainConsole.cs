@@ -105,11 +105,6 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static bool hasRunIntro = false;
 
-        /// <summary>
-        /// Should we ignore that no compatible gpu were found?
-        /// </summary>
-        private static bool ignoreMissingGpu = false;
-
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AllocConsole();
 
@@ -154,8 +149,7 @@ namespace TinyNvidiaUpdateChecker
             downloadFileSize = downloadInfo["DownloadURLFileSize"].ToString();
             releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
             releaseDesc = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
-
-            //pdfURL = $"https://us.download.nvidia.com/Windows/{OnlineGPUVersion}/{OnlineGPUVersion}-win11-win10-win8-win7-release-notes.pdf";
+            pdfURL = $"https://us.download.nvidia.com/Windows/{OnlineGPUVersion}/{OnlineGPUVersion}-win11-win10-release-notes.pdf"; // todo regex downloadInfo["OtherNotes"]
             Console.Write("OK!");
             Console.WriteLine();
 
@@ -168,39 +162,21 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine($"OnlineGPUVersion:  {OnlineGPUVersion}");
             }
 
-            bool hasSelected = false;
-            int iOffline = 0;
-
-            try {
-                iOffline = Convert.ToInt32(OfflineGPUVersion.Replace(".", string.Empty));
-            } catch(Exception ex) {
-                OfflineGPUVersion = "Unknown";
-                Console.WriteLine("Could not retrive OfflineGPUVersion!");
-                Console.WriteLine(ex.ToString());
-            }
-
-            int iOnline = Convert.ToInt32(OnlineGPUVersion.Replace(".", string.Empty));
+            var updateAvailable = false;
+            var iOffline = Convert.ToInt32(OfflineGPUVersion.Replace(".", string.Empty));
+            var iOnline = Convert.ToInt32(OnlineGPUVersion.Replace(".", string.Empty));
 
             if (iOnline == iOffline) {
-                Console.WriteLine("Your GPU drivers are up-to-date!");
+                Console.WriteLine("There is no new GPU driver available, you are up to date.");
+            } else if (iOffline > iOnline) {
+                Console.WriteLine("Your current GPU driver is newer than what NVIDIA reports!");
             } else {
-                if (iOffline > iOnline) {
-                    Console.WriteLine("Your current GPU driver is newer than remote!");
-                } if (iOnline < iOffline) {
-                    Console.WriteLine("Your GPU drivers are up-to-date!");
-                } else {
-                    Console.WriteLine("There are new drivers available to download!");
-                    hasSelected = true;
-
-                    if (confirmDL) {
-                        DownloadDriverQuiet(true);
-                    } else {
-                        DownloadDriver();
-                    }
-                }
+                Console.WriteLine("There is a new GPU driver available to download!");
+                updateAvailable = true;
             }
+            
 
-            if (!hasSelected && forceDL) {
+            if (updateAvailable || forceDL) {
                 if (confirmDL) {
                     DownloadDriverQuiet(true);
                 } else {
@@ -323,11 +299,6 @@ namespace TinyNvidiaUpdateChecker
                     configSwitch = true;
                 }
 
-                // ignore incompatible gpu
-                else if (arg.ToLower() == "--ignore-missing-gpu") {
-                    ignoreMissingGpu = true;
-                }
-
                 // help menu
                 else if (arg.ToLower() == "--help") {
                     RunIntro();
@@ -340,7 +311,6 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("--version             View version number.");
                     Console.WriteLine("--confirm-dl          Automatically download and install the driver quietly without any user interaction at all. should be used with '--quiet' for the optimal solution.");
                     Console.WriteLine("--config-here         Use the working directory as path to the config file.");
-                    Console.WriteLine("--ignore-missing-gpu  Ignore the fact that no compatible were found.");
                     Console.WriteLine("--help                Displays this message.");
                     Environment.Exit(0);
                 }
@@ -400,11 +370,11 @@ namespace TinyNvidiaUpdateChecker
                 if (!foundCompatibleGpu) {
                     throw new InvalidDataException();
                 }
-
             } catch (InvalidDataException) {
                 Console.Write("ERROR!");
                 Console.WriteLine();
-                Console.WriteLine("No supported nvidia GPU was found!");
+                // todo use pcilookup API https://www.pcilookup.com/api.php?action=search&vendor=10DE&device=13C2
+                Console.WriteLine("No supported NVIDIA GPU was found! If you have a NVIDIA GPU then manually install a driver for it first, then use TNUC to keep it updated.");
                 Console.WriteLine();
                 Console.WriteLine("Press any key to exit...");
                 if (showUI) Console.ReadKey();
@@ -508,9 +478,8 @@ namespace TinyNvidiaUpdateChecker
             var ajaxDriverLink = "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup";
             ajaxDriverLink += $"&pfid={gpuId}&osID={osId}&dch={isDchDriver}";
             var response = ReadURL(ajaxDriverLink);
+
             return (JObject)JObject.Parse(response)["IDS"][0]["downloadInfo"];
-
-
         }
 
         private static string ReadURL(string url)
