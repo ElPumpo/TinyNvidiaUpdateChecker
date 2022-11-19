@@ -17,6 +17,7 @@ using Microsoft.Win32;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using HtmlAgilityPack;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -151,11 +152,24 @@ namespace TinyNvidiaUpdateChecker
             OnlineGPUVersion = downloadInfo["Version"].ToString();
             releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
             releaseDesc = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
-            pdfURL = $"https://us.download.nvidia.com/Windows/{OnlineGPUVersion}/{OnlineGPUVersion}-win11-win10-release-notes.pdf"; // todo regex downloadInfo["OtherNotes"]
 
             // Get real file size in bytes
             using (var responce = WebRequest.Create(downloadURL).GetResponse()) {
                 downloadFileSize = responce.ContentLength;
+            }
+
+            // Get PDF release notes
+            var otherNotes = Uri.UnescapeDataString(downloadInfo["OtherNotes"].ToString());
+            var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+
+            htmlDocument.LoadHtml(otherNotes);
+            IEnumerable<HtmlNode> node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
+
+            foreach (var child in node) {
+                if (child.Attributes["href"].Value.Contains("release-notes.pdf")) {
+                    pdfURL = child.Attributes["href"].Value.Trim();
+                    break;
+                }
             }
 
             Console.Write("OK!");
@@ -204,25 +218,21 @@ namespace TinyNvidiaUpdateChecker
         private static void SearchForUpdates()
         {
             Console.Write("Searching for Updates . . . ");
-            bool error = false;
 
             try {
                 using (var responce = WebRequest.Create(updateUrl).GetResponse()) {
                     string responseUri = responce.ResponseUri.ToString();
                     onlineVer = responseUri.Substring(responseUri.LastIndexOf("/") + 1).Substring(1);
+
+                    Console.Write("OK!");
+                    Console.WriteLine();
                 }
             } catch (Exception ex) {
-                error = true;
                 onlineVer = "0.0.0";
                 Console.Write("ERROR!");
                 LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
-            }
-
-            if (!error) {
-                Console.Write("OK!");
-                Console.WriteLine();
             }
 
             if (new Version(onlineVer).CompareTo(new Version(offlineVer)) > 0) {

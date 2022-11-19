@@ -43,6 +43,10 @@ namespace TinyNvidiaUpdateChecker
 
             versionLabel.Text += MainConsole.OnlineGPUVersion + $" (you're on {MainConsole.OfflineGPUVersion})";
             sizeLabel.Text += Math.Round((MainConsole.downloadFileSize / 1024f) / 1024f) + " MiB";
+
+            if (MainConsole.pdfURL == null) {
+                NotesBtn.Enabled = false;
+            }
         }
 
         private void NotesBtn_Click(object sender, EventArgs e)
