@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 - Ditched HAP as it's no longer needed. DLLs will be packaged in the EXE for the future (such as JSON package)
-- `--ignore-missing-gpu` command line argument. A replacement is coming in the future, it was removed because the old implementation would download drivers for GTX 970 (hardcoded). Replacement code coming soon.
+- `--ignore-missing-gpu` command line argument. A replacement is coming in the future, it was removed because the old implementation would download drivers for GTX 970 (hardcoded). Replacement code coming soon
 
 ## [1.14.7] - 2022-11-06
 ### Fixed
