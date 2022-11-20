@@ -349,14 +349,14 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// A lot of things going on inside: gets current gpu driver, fetches latest gpu driver from NVIDIA server and fetches download link for latest drivers.
+        /// Finds the GPU, the version and queries up to date information
         /// </summary>
         private static (string, bool) GetGpuData()
         {
             bool foundCompatibleGpu = false;
             bool isNotebook = false;
             string gpuName = "";
-            var regex = new Regex(@"(?<=NVIDIA )(.*(?= [0-9]+GB)|.*(?= \([A-Z]+\))|.*)");
+            var regex = new Regex(@"(?<=NVIDIA )(.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= \([A-Z]+\))|.*)");
 
             // Check for notebook
             foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
@@ -372,7 +372,7 @@ namespace TinyNvidiaUpdateChecker
                 var name = gpu["Name"].ToString();
 
                 if (Regex.IsMatch(name, @"^NVIDIA") && regex.IsMatch(name)) {
-                    gpuName = regex.Match(name).Value.Trim();
+                    gpuName = regex.Match(name).Value.Trim().Replace("Super", "SUPER");
                     var rawDriverVersion = gpu["DriverVersion"].ToString().Replace(".", string.Empty);
                     OfflineGPUVersion = rawDriverVersion.Substring(rawDriverVersion.Length - 5, 5).Insert(3, ".");
                     foundCompatibleGpu = true;
@@ -394,7 +394,6 @@ namespace TinyNvidiaUpdateChecker
 
             return (gpuName, isNotebook);
         }
-
 
         /// <summary>
         /// Get GPU metadata
