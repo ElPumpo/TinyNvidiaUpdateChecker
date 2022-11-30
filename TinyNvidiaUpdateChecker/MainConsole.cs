@@ -373,7 +373,7 @@ namespace TinyNvidiaUpdateChecker
                 var name = gpu["Name"].ToString();
 
                 if (Regex.IsMatch(name, @"^NVIDIA") && regex.IsMatch(name)) {
-                    gpuName = regex.Match(name).Value.Trim();
+                    gpuName = regex.Match(name).Value.Trim().Replace("Super", "SUPER");
                     var rawDriverVersion = gpu["DriverVersion"].ToString().Replace(".", string.Empty);
                     OfflineGPUVersion = rawDriverVersion.Substring(rawDriverVersion.Length - 5, 5).Insert(3, ".");
                     foundCompatibleGpu = true;
