@@ -43,6 +43,12 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private readonly static string updateUrl = "https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/latest";
 
+
+        /// <summary>
+        /// List of operating system NVIDIA ID with DCH driver compability
+        /// </summary>
+        private static readonly List<int> OSDchCompatiableList = new List<int>() { 56, 57, 135 };
+
         /// <summary>
         /// Current client version
         /// </summary>
@@ -361,7 +367,7 @@ namespace TinyNvidiaUpdateChecker
 
             // Check for notebook
             foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
-                foreach (int chassisType in (ushort[])(obj["ChassisTypes"])) {
+                foreach (int chassisType in (ushort[])obj["ChassisTypes"]) {
                     isNotebook = notebookChassisTypes.Contains(chassisType);
                 }
             }
@@ -475,9 +481,27 @@ namespace TinyNvidiaUpdateChecker
         private static JObject GetDriverDownloadInfo(int gpuId, int osId, int isDchDriver) {
             var ajaxDriverLink = "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup";
             ajaxDriverLink += $"&pfid={gpuId}&osID={osId}&dch={isDchDriver}";
-            var response = ReadURL(ajaxDriverLink);
 
-            return (JObject)JObject.Parse(response)["IDS"][0]["downloadInfo"];
+            JObject driverObj = JObject.Parse(ReadURL(ajaxDriverLink));
+
+            // Check if driver was found
+            if ((int)driverObj["Success"] == 1) {
+
+                // If the operating system has support for DCH drivers, and DCH drivers are currently not installed, then serach for DCH drivers too.
+                // Non-DCH drivers are discontinued. Not searching for DCH drivers will result in users having outdated graphics drivers, and we don't want that.
+                if (OSDchCompatiableList.Contains(osId) && isDchDriver == 0) {
+                    ajaxDriverLink = ajaxDriverLink.Substring(0, ajaxDriverLink.Length - 1) + "1";
+                    JObject driverObjDCH = JObject.Parse(ReadURL(ajaxDriverLink));
+
+                    if ((int)driverObjDCH["Success"] == 1) {
+                        return (JObject)driverObjDCH["IDS"][0]["downloadInfo"];
+                    }
+                }
+
+                return (JObject)driverObj["IDS"][0]["downloadInfo"];
+            }
+
+            return null;
         }
 
         private static string ReadURL(string url)

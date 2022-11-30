@@ -4,8 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- DCH driver migration, if user currently has non-DCH drivers and operating system supports it. We had this issue a while ago as NVIDIA discontinued non-DCH drivers where no new updates would be found. And assuming DCH support is a bad idea.
+
+### Fixed
+- Adjustment to GPU name to match metadata in nvidia-data repo for `Super` GPU variants
+
 ## [1.15.2] - 2022-11-26
-## Fixed
+### Fixed
 - Some notebooks recognized as desktop
 
 ## [1.15.1] - 2022-11-20
