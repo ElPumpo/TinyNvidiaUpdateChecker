@@ -47,7 +47,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// List of operating system NVIDIA ID with DCH driver compability
         /// </summary>
-        private static readonly List<int> OSDchCompatiableList = new List<int>() { 56, 57, 135 };
+        private static readonly List<int> compatiableDCHOSList = new List<int>() { 56, 57, 135 };
 
         /// <summary>
         /// Current client version
@@ -478,6 +478,7 @@ namespace TinyNvidiaUpdateChecker
 
             return (gpuId, osId, isDchDriver);
         }
+
         private static JObject GetDriverDownloadInfo(int gpuId, int osId, int isDchDriver) {
             var ajaxDriverLink = "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup";
             ajaxDriverLink += $"&pfid={gpuId}&osID={osId}&dch={isDchDriver}";
@@ -489,7 +490,7 @@ namespace TinyNvidiaUpdateChecker
 
                 // If the operating system has support for DCH drivers, and DCH drivers are currently not installed, then serach for DCH drivers too.
                 // Non-DCH drivers are discontinued. Not searching for DCH drivers will result in users having outdated graphics drivers, and we don't want that.
-                if (OSDchCompatiableList.Contains(osId) && isDchDriver == 0) {
+                if (compatiableDCHOSList.Contains(osId) && isDchDriver == 0) {
                     ajaxDriverLink = ajaxDriverLink.Substring(0, ajaxDriverLink.Length - 1) + "1";
                     JObject driverObjDCH = JObject.Parse(ReadURL(ajaxDriverLink));
 

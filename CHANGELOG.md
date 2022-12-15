@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.15.3] - 2022-12-15
+Merry Christmas! Here is a early gift from me.
 ### Added
-- DCH driver migration, if user currently has non-DCH drivers and operating system supports it. We had this issue a while ago as NVIDIA discontinued non-DCH drivers where no new updates would be found. And assuming DCH support is a bad idea.
+- DCH driver migration, if user currently has non-DCH drivers and operating system supports it. They were discontinued after version 472.12
 
 ### Fixed
 - Adjustment to GPU name to match metadata in nvidia-data repo for `Super` GPU variants
