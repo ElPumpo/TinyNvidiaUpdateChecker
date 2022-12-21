@@ -362,7 +362,7 @@ namespace TinyNvidiaUpdateChecker
             bool foundCompatibleGpu = false;
             bool isNotebook = false;
             string gpuName = "";
-            var regex = new Regex(@"(?<=NVIDIA )(.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= \([A-Z]+\))|.*)");
+            var regex = new Regex(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
             List<int> notebookChassisTypes = new List<int>() { 8, 9, 10, 11, 12, 14, 18, 21, 31, 32 };
 
             // Check for notebook
