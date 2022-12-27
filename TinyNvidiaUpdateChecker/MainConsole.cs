@@ -44,11 +44,6 @@ namespace TinyNvidiaUpdateChecker
         private readonly static string updateUrl = "https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/latest";
 
         /// <summary>
-        /// List of operating system NVIDIA ID with DCH driver compability
-        /// </summary>
-        private static readonly List<int> compatiableDCHOSList = new List<int>() { 56, 57, 135 };
-
-        /// <summary>
         /// Current client version
         /// </summary>
         private static string offlineVer = Application.ProductVersion;
@@ -496,7 +491,7 @@ namespace TinyNvidiaUpdateChecker
 
                 // If the operating system has support for DCH drivers, and DCH drivers are currently not installed, then serach for DCH drivers too.
                 // Non-DCH drivers are discontinued. Not searching for DCH drivers will result in users having outdated graphics drivers, and we don't want that.
-                if (compatiableDCHOSList.Contains(osId) && isDchDriver == 0) {
+                if (Environment.Version.Build > 10240 && isDchDriver == 0) {
                     ajaxDriverLink = ajaxDriverLink.Substring(0, ajaxDriverLink.Length - 1) + "1";
                     JObject driverObjDCH = JObject.Parse(ReadURL(ajaxDriverLink));
 
