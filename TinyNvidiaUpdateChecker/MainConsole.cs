@@ -43,7 +43,6 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private readonly static string updateUrl = "https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/latest";
 
-
         /// <summary>
         /// List of operating system NVIDIA ID with DCH driver compability
         /// </summary>
@@ -152,7 +151,14 @@ namespace TinyNvidiaUpdateChecker
             var dlPrefix = SettingManager.ReadSetting("Download location");
 
             downloadURL = downloadInfo["DownloadURL"].ToString();
-            downloadURL = downloadURL.Substring(10);
+            
+            // Some GPUs, such as 970M (Win10) URLs (including release notes URL) are HTTP and not HTTPS
+            if (downloadURL.Contains("https://")) {
+                downloadURL = downloadURL.Substring(10);
+            } else {
+                downloadURL = downloadURL.Substring(9);
+            }
+
             downloadURL = $"https://{dlPrefix}{downloadURL}";
 
             OnlineGPUVersion = downloadInfo["Version"].ToString();
