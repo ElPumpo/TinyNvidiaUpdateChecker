@@ -2,15 +2,11 @@
 
 # TinyNvidiaUpdateChecker
 
-TinyNvidiaUpdateChecker (TNUC for short) is a lightweight application that checks for NVIDIA GPU drivers, written in C-sharp (C#) for Windows. When executed it will check for new driver updates. You can customize TNUC making it execute when logging in your computer, and have it only pop up if there's a new driver available.
+TinyNvidiaUpdateChecker (TNUC for short) is a lightweight tool that checks for NVIDIA GPU drivers for Windows. You can configure TNUC executing it when logging in, and have it only pop up if there's a new driver available.
 
-It supports extracting drivers to only install the required driver files, which is useful since the default driver installer installs a bunch of bloatware on your computer that you don't need.
+It has a minimal install feature that extracts the GPU drivers from the otherwise bloated bundle which contains GeForce Experience, 3d drivers and other components. Nothing except the required drivers will be installed.
 
-**Visit the [Wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) page for detailed information about the application**
-
-## Update
-
-Thanks to everyone making TNUC popular by starring the project here on GitHub and all the people writing articles about it! Many years ago I started this as a hobby project to automate checking driver updates. I know the codebase isn't proper and I've learned a lot since then. Even today there's nearly hundreds of views on this page daily, which is huge for me, so thanks <3
+Uses a NVIDIA API to get the latest driver, and there is support for the majority of their GPUs. Thanks to [ZenitH-AT](https://github.com/ZenitH-AT) for their research and metadata repo used by this project.
 
 # Download
 
