@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.15.4] - 2022-12-27
+Happy new years everyone. Here is another minor update that wont change much for most people
 ### Fixed
 - Some GPUs such as 970M download URLs begin with HTTP and not HTTPS which broke the code. See issue #139
 
 ### Changed
-- Update regex to filter "COLLECTORS EDITION" GPUs
+- Update regex to filter "COLLECTORS EDITION" GPUs. See issue #140
 
 ## [1.15.3] - 2022-12-15
 Merry Christmas! Here is a early gift from me.
