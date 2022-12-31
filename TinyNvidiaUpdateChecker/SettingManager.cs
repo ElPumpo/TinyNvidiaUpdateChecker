@@ -36,7 +36,7 @@ namespace TinyNvidiaUpdateChecker
             ResetConfigMechanism(); // still needed 2017-09-24
 
             if (MainConsole.debug) {
-                Console.WriteLine($"configFile: {AppDomain.CurrentDomain.SetupInformation.ConfigurationFile}");
+                Console.WriteLine($"configFile: {configFile}");
             }
 
             // create config file

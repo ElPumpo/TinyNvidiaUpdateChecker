@@ -570,17 +570,20 @@ namespace TinyNvidiaUpdateChecker
                 driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
 
                 try {
-                   string message = "Where do you want to save the drivers?";
+                   string title = "Where do you want to save the driver?";
 
                     if (SettingManager.ReadSettingBool("Minimal install")) {
-                        message += " (you should select a empty folder)";
+                        title += " (you should select a empty folder)";
                     }
 
-                    var folderSelectDialog = new FolderSelectDialog();
-                    folderSelectDialog.Title = message;
+                    using var dialog = new FolderBrowserDialog {
+                        Description = title,
+                        UseDescriptionForTitle = true,
+                        ShowNewFolderButton = true
+                    };
 
-                    if (folderSelectDialog.Show()) {
-                        savePath = folderSelectDialog.FileName + @"\";
+                    if (dialog.ShowDialog() == DialogResult.OK) {
+                        savePath = dialog.SelectedPath + @"\";
                     } else {
                         Console.WriteLine("User closed dialog!");
                         return;

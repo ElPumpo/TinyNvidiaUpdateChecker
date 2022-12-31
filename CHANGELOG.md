@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - `--config-override=<path>` command line argument. `<path>` is absolute file path
 
+### Changed
+- Migrated from discontinued .NET Framework to .NET
+
 ## [1.15.4] - 2022-12-27
 Happy new years everyone. Here is another minor update that wont change much for most people
 ### Fixed
