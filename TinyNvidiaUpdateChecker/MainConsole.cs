@@ -18,6 +18,8 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using HtmlAgilityPack;
+using System.Net.Http;
+using Microsoft.VisualBasic;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -104,6 +106,8 @@ namespace TinyNvidiaUpdateChecker
         /// Has the intro been displayed? Because we do not want to display the intro multiple times.
         /// </summary>
         private static bool hasRunIntro = false;
+
+        static HttpClient httpClient = new HttpClient();
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AllocConsole();
@@ -425,13 +429,23 @@ namespace TinyNvidiaUpdateChecker
                 var response = ReadURL(gpuMetadataRepo + "/gpu-data.json");
                 var gpuData = JObject.Parse(response);
                 gpuId = (int)gpuData[isNotebook ? "notebook" : "desktop"][gpuName];
-            } catch {
+            } catch (ArgumentNullException) {
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine("GPU metadata for your card does not exist! Please file an issue on GitHub and include the following information:");
                 Console.WriteLine();
                 Console.WriteLine($"gpuName:    {gpuName}");
                 Console.WriteLine($"isNotebook: {isNotebook}");
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
+                if (showUI) Console.ReadKey();
+                Environment.Exit(1);
+            } catch (Exception ex) {
+                Console.Write("ERROR!");
+                Console.WriteLine();
+                Console.WriteLine("Unable to retrieve GPU data. Do you have working internet connectivity?");
+                Console.WriteLine();
+                Console.WriteLine(ex.ToString());
                 Console.WriteLine();
                 Console.WriteLine("Press any key to exit...");
                 if (showUI) Console.ReadKey();
@@ -446,10 +460,12 @@ namespace TinyNvidiaUpdateChecker
             try {
                 var response = ReadURL(gpuMetadataRepo + "/os-data.json");
                 osData = JsonConvert.DeserializeObject<OSClassRoot>(response);
-            } catch {
+            } catch (Exception ex) {
                 Console.Write("ERROR!");
                 Console.WriteLine();
-                Console.WriteLine("Unable to retrive OS data. Try again later.");
+                Console.WriteLine("Unable to retrieve OS data.");
+                Console.WriteLine();
+                Console.WriteLine(ex.ToString());
                 Console.WriteLine();
                 Console.WriteLine("Press any key to exit...");
                 if (showUI) Console.ReadKey();
@@ -488,41 +504,65 @@ namespace TinyNvidiaUpdateChecker
         }
 
         private static JObject GetDriverDownloadInfo(int gpuId, int osId, int isDchDriver) {
-            var ajaxDriverLink = "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup";
-            ajaxDriverLink += $"&pfid={gpuId}&osID={osId}&dch={isDchDriver}";
+            try {
+                var ajaxDriverLink = "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup";
+                ajaxDriverLink += $"&pfid={gpuId}&osID={osId}&dch={isDchDriver}";
 
-            JObject driverObj = JObject.Parse(ReadURL(ajaxDriverLink));
+                JObject driverObj = JObject.Parse(ReadURL(ajaxDriverLink));
 
-            // Check if driver was found
-            if ((int)driverObj["Success"] == 1) {
+                // Check if driver was found
+                if ((int)driverObj["Success"] == 1) {
 
-                // If the operating system has support for DCH drivers, and DCH drivers are currently not installed, then serach for DCH drivers too.
-                // Non-DCH drivers are discontinued. Not searching for DCH drivers will result in users having outdated graphics drivers, and we don't want that.
-                if (Environment.Version.Build > 10240 && isDchDriver == 0) {
-                    ajaxDriverLink = ajaxDriverLink.Substring(0, ajaxDriverLink.Length - 1) + "1";
-                    JObject driverObjDCH = JObject.Parse(ReadURL(ajaxDriverLink));
+                    // If the operating system has support for DCH drivers, and DCH drivers are currently not installed, then serach for DCH drivers too.
+                    // Non-DCH drivers are discontinued. Not searching for DCH drivers will result in users having outdated graphics drivers, and we don't want that.
+                    if (Environment.Version.Build > 10240 && isDchDriver == 0) {
+                        ajaxDriverLink = ajaxDriverLink.Substring(0, ajaxDriverLink.Length - 1) + "1";
+                        JObject driverObjDCH = JObject.Parse(ReadURL(ajaxDriverLink));
 
-                    if ((int)driverObjDCH["Success"] == 1) {
-                        return (JObject)driverObjDCH["IDS"][0]["downloadInfo"];
+                        if ((int)driverObjDCH["Success"] == 1) {
+                            return (JObject)driverObjDCH["IDS"][0]["downloadInfo"];
+                        }
                     }
-                }
 
-                return (JObject)driverObj["IDS"][0]["downloadInfo"];
+                    return (JObject)driverObj["IDS"][0]["downloadInfo"];
+                } else {
+                    throw new ArgumentOutOfRangeException();
+                }
+            } catch (ArgumentOutOfRangeException) {
+                Console.Write("ERROR!");
+                Console.WriteLine();
+                Console.WriteLine("No NVIDIA driver was found for your system configuration.");
+                Console.WriteLine();
+                Console.WriteLine($"gpuId:       {gpuId}");
+                Console.WriteLine($"osId:        {osId}");
+                Console.WriteLine($"isDchDriver: {isDchDriver}");
+            } catch (Exception ex) {
+                Console.Write("ERROR!");
+                Console.WriteLine();
+                Console.WriteLine("Unable to interact with NVIDIA API.");
+                Console.WriteLine();
+                Console.WriteLine(ex.ToString());
             }
+
+            Console.WriteLine();
+            Console.WriteLine("Press any key to exit...");
+            if (showUI) Console.ReadKey();
+            Environment.Exit(1);
 
             return null;
         }
 
         private static string ReadURL(string url)
         {
-            WebClient client = new WebClient();
-            Stream stream = client.OpenRead(url);
-            StreamReader reader = new StreamReader(stream);
-            var data = reader.ReadToEnd();
-            reader.Dispose();
-            stream.Dispose();
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url)) {
+                var response = httpClient.Send(request);
 
-            return data;
+                response.EnsureSuccessStatusCode();
+
+                using var stream = response.Content.ReadAsStream();
+                using var reader = new StreamReader(stream);
+                return reader.ReadToEnd();
+            }
         }
 
         /// <summary>
