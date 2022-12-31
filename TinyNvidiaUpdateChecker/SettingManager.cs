@@ -16,23 +16,22 @@ namespace TinyNvidiaUpdateChecker
     {
 
         /// <summary>
-        /// Direction for configuration folder, blueprint: <local-appdata><author><project-name>
+        /// Configuration file location, blueprint: <local-appdata><author><project-name>
         /// </summary>
-        private static string configDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName, FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName);
-
-        public static string configFile = Path.Combine(configDir, "app.config");
+        public static string configFile = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName,
+            FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName,
+            "app.config"
+        );
 
         /// <summary>
         /// Check if all the keys are OK before we use them
         /// </summary>
-        public static void ConfigInit()
+        public static void ConfigInit(string overrideConfigFileLocation)
         {
-
-            if (!MainConsole.configSwitch) {
-                AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFile); // set config dir
-            } else {
-                configFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile; // in case we wipe the config (see below)
-            }
+            if (overrideConfigFileLocation != null) { configFile = overrideConfigFileLocation; }
+            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFile);
 
             ResetConfigMechanism(); // still needed 2017-09-24
 
@@ -41,8 +40,8 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // create config file
-            if (!MainConsole.configSwitch && !File.Exists(configFile)) {
-                Console.WriteLine("Generating configuration file, this only happens once.");
+            if (!File.Exists(configFile)) {
+                Console.WriteLine("Generating configuration file.");
 
                 SetupSetting("Check for Updates");
                 SetupSetting("Minimal install");

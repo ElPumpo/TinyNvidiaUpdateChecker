@@ -96,9 +96,9 @@ namespace TinyNvidiaUpdateChecker
         public static bool confirmDL = false;
 
         /// <summary>
-        /// Should the application use the working directory as the path for the config file?
+        /// If this value is set then it will override the default configuration file location
         /// </summary>
-        public static bool configSwitch = false;
+        public static string overrideConfigFileLocation = null;
 
         /// <summary>
         /// Has the intro been displayed? Because we do not want to display the intro multiple times.
@@ -130,7 +130,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            SettingManager.ConfigInit();
+            SettingManager.ConfigInit(overrideConfigFileLocation);
 
             CheckDependencies();
 
@@ -315,9 +315,15 @@ namespace TinyNvidiaUpdateChecker
                     confirmDL = true;
                 }
 
-                // change the config path to the same path as application
+                // override the config path to working directory
                 else if (arg.ToLower() == "--config-here") {
-                    configSwitch = true;
+                    overrideConfigFileLocation = Path.Combine(Directory.GetCurrentDirectory(), "app.config");
+                }
+
+                // overide config file path
+                else if (arg.StartsWith("--config-override=")) {
+                    var locationArg = arg.Substring(18);
+                    overrideConfigFileLocation = locationArg;
                 }
 
                 // help menu
@@ -325,14 +331,15 @@ namespace TinyNvidiaUpdateChecker
                     RunIntro();
                     Console.WriteLine($"Usage: {Path.GetFileName(Assembly.GetEntryAssembly().Location)} [ARGS]");
                     Console.WriteLine();
-                    Console.WriteLine("--quiet               Runs the application quietly in the background, and will only notify the user if an update is available.");
-                    Console.WriteLine("--erase-config        Erase local configuration file.");
-                    Console.WriteLine("--debug               Turn debugging on, will output more information that can be used for debugging.");
-                    Console.WriteLine("--force-dl            Force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
-                    Console.WriteLine("--version             View version number.");
-                    Console.WriteLine("--confirm-dl          Automatically download and install the driver quietly without any user interaction at all. should be used with '--quiet' for the optimal solution.");
-                    Console.WriteLine("--config-here         Use the working directory as path to the config file.");
-                    Console.WriteLine("--help                Displays this message.");
+                    Console.WriteLine("--quiet                      Runs the application quietly in the background, and will only notify the user if an update is available.");
+                    Console.WriteLine("--erase-config               Erase configuration file.");
+                    Console.WriteLine("--debug                      Turn debugging on, will output more information that can be used for debugging.");
+                    Console.WriteLine("--force-dl                   Force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
+                    Console.WriteLine("--version                    View version.");
+                    Console.WriteLine("--confirm-dl                 Automatically download and install the driver quietly without any user interaction at all. should be used with '--quiet' for the optimal solution.");
+                    Console.WriteLine("--config-here                Use the working directory as path to the configuration file.");
+                    Console.WriteLine("--config-override=<path>     Override configuration file location with absolute file path.");
+                    Console.WriteLine("--help                       Shows help.");
                     Environment.Exit(0);
                 }
 
