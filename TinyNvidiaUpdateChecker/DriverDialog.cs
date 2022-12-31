@@ -52,7 +52,7 @@ namespace TinyNvidiaUpdateChecker
         private void NotesBtn_Click(object sender, EventArgs e)
         {
             try {
-                Process.Start(MainConsole.pdfURL);
+                Process.Start(new ProcessStartInfo(MainConsole.pdfURL) { UseShellExecute = true });
             } catch (Exception ex) {
                 Console.WriteLine(ex.ToString());
             }

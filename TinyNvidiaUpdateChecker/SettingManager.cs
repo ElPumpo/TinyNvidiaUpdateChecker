@@ -20,8 +20,8 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         public static string configFile = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).CompanyName,
-            FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductName,
+            "Hawaii_Beach",
+            "TinyNvidiaUpdateChecker",
             "app.config"
         );
 
@@ -32,8 +32,6 @@ namespace TinyNvidiaUpdateChecker
         {
             if (overrideConfigFileLocation != null) { configFile = overrideConfigFileLocation; }
             AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFile);
-
-            ResetConfigMechanism(); // still needed 2017-09-24
 
             if (MainConsole.debug) {
                 Console.WriteLine($"configFile: {configFile}");
@@ -190,29 +188,6 @@ namespace TinyNvidiaUpdateChecker
             else {
                 return defaultValue;
             }
-        }
-
-        /// <summary>
-        /// Credit goes to Daniel Hilgarth,
-        /// fixes the bug where the config strait up refuses to be read
-        /// </summary>
-        private static void ResetConfigMechanism()
-        {
-            typeof(ConfigurationManager)
-            .GetField("s_initState", BindingFlags.NonPublic | BindingFlags.Static)
-            .SetValue(null, 0);
-
-            typeof(ConfigurationManager)
-            .GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static)
-            .SetValue(null, null);
-
-            typeof(ConfigurationManager)
-            .Assembly.GetTypes()
-            .Where(x => x.FullName ==
-               "System.Configuration.ClientConfigPaths")
-            .First()
-            .GetField("s_current", BindingFlags.NonPublic | BindingFlags.Static)
-            .SetValue(null, null);
         }
 
         public static bool ReadSettingBool(string key)
