@@ -430,8 +430,16 @@ namespace TinyNvidiaUpdateChecker
 
             // Get graphics card ID
             try {
-                var response = ReadURL(gpuMetadataRepo + "/gpu-data.json");
-                var gpuData = JObject.Parse(response);
+                string gpuDataRaw;
+
+                if (File.Exists("gpu-data.json")) {
+                    gpuDataRaw = File.ReadAllText("gpu-data.json");
+                    LogManager.Log("Using local gpu-data.json", LogManager.Level.INFO);
+                } else {
+                    gpuDataRaw = ReadURL(gpuMetadataRepo + "/gpu-data.json");
+                }
+
+                var gpuData = JObject.Parse(gpuDataRaw);
                 gpuId = (int)gpuData[isNotebook ? "notebook" : "desktop"][gpuName];
             } catch (ArgumentNullException) {
                 Console.Write("ERROR!");
@@ -462,8 +470,16 @@ namespace TinyNvidiaUpdateChecker
             OSClassRoot osData = null;
 
             try {
-                var response = ReadURL(gpuMetadataRepo + "/os-data.json");
-                osData = JsonConvert.DeserializeObject<OSClassRoot>(response);
+                string osDataRaw;
+
+                if (File.Exists("os-data.json")) {
+                    osDataRaw = File.ReadAllText("os-data.json");
+                    LogManager.Log("Using local os-data.json", LogManager.Level.INFO);
+                } else {
+                    osDataRaw = ReadURL(gpuMetadataRepo + "/os-data.json");
+                }
+
+                osData = JsonConvert.DeserializeObject<OSClassRoot>(osDataRaw);
             } catch (Exception ex) {
                 Console.Write("ERROR!");
                 Console.WriteLine();

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - `--config-override=<path>` command line argument. `<path>` is absolute file path
+- Support for local GPU metadata files `gpu-data.json` and `os-data.json`. They must be in the working directory, and used in special cases where GitHub is a blocked domain
 
 ### Changed
 - Migrated from discontinued .NET Framework to .NET
