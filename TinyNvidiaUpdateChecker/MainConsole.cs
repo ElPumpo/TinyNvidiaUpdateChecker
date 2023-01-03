@@ -19,7 +19,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using HtmlAgilityPack;
 using System.Net.Http;
-using Microsoft.VisualBasic;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -107,7 +106,7 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static bool hasRunIntro = false;
 
-        static HttpClient httpClient = new HttpClient();
+        public static HttpClient httpClient = new HttpClient();
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AllocConsole();
@@ -165,8 +164,10 @@ namespace TinyNvidiaUpdateChecker
             releaseDesc = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
 
             // Get real file size in bytes
-            using (var responce = WebRequest.Create(downloadURL).GetResponse()) {
-                downloadFileSize = responce.ContentLength;
+            using (var request = new HttpRequestMessage(HttpMethod.Head, downloadURL)) {
+                using var response = httpClient.Send(request);
+                response.EnsureSuccessStatusCode();
+                downloadFileSize = response.Content.Headers.ContentLength.Value;
             }
 
             // Get PDF release notes
@@ -231,8 +232,11 @@ namespace TinyNvidiaUpdateChecker
             Console.Write("Searching for Updates . . . ");
 
             try {
-                using (var responce = WebRequest.Create(updateUrl).GetResponse()) {
-                    string responseUri = responce.ResponseUri.ToString();
+                using (var request = new HttpRequestMessage(HttpMethod.Head, updateUrl)) {
+                    using var response = httpClient.Send(request);
+                    response.EnsureSuccessStatusCode();
+
+                    var responseUri = response.RequestMessage.RequestUri.ToString();
                     onlineVer = responseUri.Substring(responseUri.LastIndexOf("/") + 1).Substring(1);
 
                     Console.Write("OK!");
@@ -555,8 +559,7 @@ namespace TinyNvidiaUpdateChecker
         private static string ReadURL(string url)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url)) {
-                var response = httpClient.Send(request);
-
+                using var response = httpClient.Send(request);
                 response.EnsureSuccessStatusCode();
 
                 using var stream = response.Content.ReadAsStream();
