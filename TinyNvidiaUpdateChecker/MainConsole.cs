@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Management;
 using System.Net.NetworkInformation;
@@ -337,7 +336,7 @@ namespace TinyNvidiaUpdateChecker
                 // help menu
                 else if (arg.ToLower() == "--help") {
                     RunIntro();
-                    Console.WriteLine($"Usage: {Path.GetFileName(Assembly.GetEntryAssembly().Location)} [ARGS]");
+                    Console.WriteLine($"Usage: {Path.GetFileName(Environment.ProcessPath)} [ARGS]");
                     Console.WriteLine();
                     Console.WriteLine("--quiet                      Runs the application quietly in the background, and will only notify the user if an update is available.");
                     Console.WriteLine("--erase-config               Erase configuration file.");
