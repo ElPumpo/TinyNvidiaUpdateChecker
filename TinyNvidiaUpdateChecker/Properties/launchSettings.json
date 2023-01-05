@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TinyNvidiaUpdateChecker": {
+      "commandName": "Project",
+      "commandLineArgs": "--debug --force-dl"
+    }
+  }
+}
