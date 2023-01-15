@@ -18,24 +18,24 @@ namespace TinyNvidiaUpdateChecker
         public void DownloadFile(Uri downloadURL, string savePath)
         {
             isDownloadComplete = false;
-            using (WebClient webClient = new WebClient()) {
+            using WebClient webClient = new();
 
-                webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
-                    progressBar1.Value = e.ProgressPercentage;
-                };
+            webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
+                progressBar1.Value = e.ProgressPercentage;
+            };
 
-                webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
-                    if (e.Cancelled) {
-                        File.Delete(savePath);
-                    }
-                    isDownloadComplete = true;
-                };
-
-                webClient.DownloadFileAsync(downloadURL, savePath); // begin download
-
-                while(!isDownloadComplete) {
-                    Application.DoEvents(); // TODO: causes high CPU usage!
+            webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
+                if (e.Cancelled) {
+                    File.Delete(savePath);
                 }
+
+                isDownloadComplete = true;
+            };
+
+            webClient.DownloadFileAsync(downloadURL, savePath); // begin download
+
+            while (!isDownloadComplete) {
+                Application.DoEvents(); // TODO: causes high CPU usage!
             }
         }
     }

@@ -105,7 +105,7 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static bool hasRunIntro = false;
 
-        public static HttpClient httpClient = new HttpClient();
+        public static HttpClient httpClient = new();
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool AllocConsole();
@@ -245,16 +245,15 @@ namespace TinyNvidiaUpdateChecker
             Console.Write("Searching for Updates . . . ");
 
             try {
-                using (var request = new HttpRequestMessage(HttpMethod.Head, updateUrl)) {
-                    using var response = httpClient.Send(request);
-                    response.EnsureSuccessStatusCode();
+                using var request = new HttpRequestMessage(HttpMethod.Head, updateUrl);
+                using var response = httpClient.Send(request);
+                response.EnsureSuccessStatusCode();
 
-                    var responseUri = response.RequestMessage.RequestUri.ToString();
-                    onlineVer = responseUri.Substring(responseUri.LastIndexOf("/") + 1).Substring(1);
+                var responseUri = response.RequestMessage.RequestUri.ToString();
+                onlineVer = responseUri.Substring(responseUri.LastIndexOf("/") + 1).Substring(1);
 
-                    Console.Write("OK!");
-                    Console.WriteLine();
-                }
+                Console.Write("OK!");
+                Console.WriteLine();
             } catch (Exception ex) {
                 onlineVer = "0.0.0";
                 Console.Write("ERROR!");
@@ -392,11 +391,11 @@ namespace TinyNvidiaUpdateChecker
             bool isNotebook = false;
             string gpuName = "";
             var regex = new Regex(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
-            List<int> notebookChassisTypes = new List<int>() { 8, 9, 10, 11, 12, 14, 18, 21, 31, 32 };
+            List<int> notebookChassisTypes = new() { 8, 9, 10, 11, 12, 14, 18, 21, 31, 32 };
 
             // Check for notebook
             foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
-                foreach (int chassisType in (ushort[])obj["ChassisTypes"]) {
+                foreach (int chassisType in obj["ChassisTypes"] as ushort[]) {
                     isNotebook = notebookChassisTypes.Contains(chassisType);
                 }
             }
@@ -414,7 +413,6 @@ namespace TinyNvidiaUpdateChecker
                     foundCompatibleGpu = true;
                     break;
                 }
-
             }
 
             if (!foundCompatibleGpu) {
@@ -587,14 +585,13 @@ namespace TinyNvidiaUpdateChecker
 
         private static string ReadURL(string url)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, url)) {
-                using var response = httpClient.Send(request);
-                response.EnsureSuccessStatusCode();
+            using var request = new HttpRequestMessage(HttpMethod.Get, url);
+            using var response = httpClient.Send(request);
+            response.EnsureSuccessStatusCode();
 
-                using var stream = response.Content.ReadAsStream();
-                using var reader = new StreamReader(stream);
-                return reader.ReadToEnd();
-            }
+            using var stream = response.Content.ReadAsStream();
+            using var reader = new StreamReader(stream);
+            return reader.ReadToEnd();
         }
 
         /// <summary>
@@ -677,12 +674,11 @@ namespace TinyNvidiaUpdateChecker
                     }
                     // show the progress bar gui
                     else if(!showUI && !File.Exists(savePath + driverFileName)) {
-                        using (DownloaderForm dlForm = new DownloaderForm()) {
-                            dlForm.Show();
-                            dlForm.Focus();
-                            dlForm.DownloadFile(new Uri(downloadURL), savePath + driverFileName);
-                            dlForm.Close();
-                        }
+                        using DownloaderForm dlForm = new();
+                        dlForm.Show();
+                        dlForm.Focus();
+                        dlForm.DownloadFile(new Uri(downloadURL), savePath + driverFileName);
+                        dlForm.Close();
                     } else {
                         LogManager.Log("Driver is already downloaded", LogManager.Level.INFO);
                     }
@@ -752,12 +748,11 @@ namespace TinyNvidiaUpdateChecker
                         Console.WriteLine();
                     }
                 } else {
-                    using (DownloaderForm dlForm = new DownloaderForm()) {
-                        dlForm.Show();
-                        dlForm.Focus();
-                        dlForm.DownloadFile(new Uri(downloadURL), FULL_PATH_DRIVER);
-                        dlForm.Close();
-                    }
+                    using DownloaderForm dlForm = new();
+                    dlForm.Show();
+                    dlForm.Focus();
+                    dlForm.DownloadFile(new Uri(downloadURL), FULL_PATH_DRIVER);
+                    dlForm.Close();
                 }
             }
 
@@ -806,30 +801,29 @@ namespace TinyNvidiaUpdateChecker
             }
 
             try {
-                using (var webClient = new WebClient()) {
-                    var notifier = new AutoResetEvent(false);
-                    var progress = new Handlers.ProgressBar();
+                using WebClient webClient = new();
+                var notifier = new AutoResetEvent(false);
+                var progress = new Handlers.ProgressBar();
 
-                    webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
-                        progress.Report((double)e.ProgressPercentage / 100);
-                    };
+                webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
+                    progress.Report((double)e.ProgressPercentage / 100);
+                };
 
-                    webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
-                        if (e.Cancelled || e.Error != null) {
-                            File.Delete(path);
-                            ex = e.Error;
-                        }
+                webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
+                    if (e.Cancelled || e.Error != null) {
+                        File.Delete(path);
+                        ex = e.Error;
+                    }
 
-                        File.Move(path, path.Substring(0, path.Length - 5)); // rename back
-                        notifier.Set();
-                    };
+                    File.Move(path, path.Substring(0, path.Length - 5)); // rename back
+                    notifier.Set();
+                };
 
-                    webClient.DownloadFileAsync(new Uri(url), path);
-                    notifier.WaitOne();
-                    progress.Dispose();
+                webClient.DownloadFileAsync(new Uri(url), path);
+                notifier.WaitOne();
+                progress.Dispose();
 
-                    return ex;
-                }
+                return ex;
             } catch (Exception ex2) {
                 return ex2;
             }
@@ -859,47 +853,45 @@ namespace TinyNvidiaUpdateChecker
             string fullDriverPath = @"""" + savePath + driverFileName + @"""";
 
             if (libaryFile.LibaryName() == LibaryHandler.Libary.WINRAR) {
-                using (var WinRAR = new Process()) {
-                    WinRAR.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "winrar.exe";
-                    WinRAR.StartInfo.WorkingDirectory = savePath;
-                    WinRAR.StartInfo.Arguments = $@"X {fullDriverPath} -N@""inclList.txt""";
-                    if (silent) WinRAR.StartInfo.Arguments += " -ibck -y";
-                    WinRAR.StartInfo.UseShellExecute = false;
+                using var WinRAR = new Process();
+                WinRAR.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "winrar.exe";
+                WinRAR.StartInfo.WorkingDirectory = savePath;
+                WinRAR.StartInfo.Arguments = $@"X {fullDriverPath} -N@""inclList.txt""";
+                if (silent) WinRAR.StartInfo.Arguments += " -ibck -y";
+                WinRAR.StartInfo.UseShellExecute = false;
 
-                    try {
-                        WinRAR.Start();
-                        WinRAR.WaitForExit();
-                    } catch (Exception ex) {
-                        error = true;
-                        Console.Write("ERROR!");
-                        Console.WriteLine();
-                        Console.WriteLine(ex.ToString());
-                    }
-
+                try {
+                    WinRAR.Start();
+                    WinRAR.WaitForExit();
+                } catch (Exception ex) {
+                    error = true;
+                    Console.Write("ERROR!");
+                    Console.WriteLine();
+                    Console.WriteLine(ex.ToString());
                 }
             } else if (libaryFile.LibaryName() == LibaryHandler.Libary.SEVENZIP) {
-                using (var SevenZip = new Process()) {
-                    if (silent) {
-                        SevenZip.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7z.exe";
-                    } else {
-                        SevenZip.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7zG.exe";
-                    }
-                    SevenZip.StartInfo.WorkingDirectory = savePath;
-                    SevenZip.StartInfo.Arguments = $"x {fullDriverPath} @inclList.txt";
-                    if (silent) SevenZip.StartInfo.Arguments += " -y";
-                    SevenZip.StartInfo.UseShellExecute = false;
-                    SevenZip.StartInfo.CreateNoWindow = true; // don't show the console in our console!
+                using var SevenZip = new Process();
+                if (silent) {
+                    SevenZip.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7z.exe";
+                } else {
+                    SevenZip.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7zG.exe";
+                }
 
-                    try {
-                        Thread.Sleep(1000);
-                        SevenZip.Start();
-                        SevenZip.WaitForExit();
-                    } catch (Exception ex) {
-                        error = true;
-                        Console.Write("ERROR!");
-                        Console.WriteLine();
-                        Console.WriteLine(ex.ToString());
-                    }
+                SevenZip.StartInfo.WorkingDirectory = savePath;
+                SevenZip.StartInfo.Arguments = $"x {fullDriverPath} @inclList.txt";
+                if (silent) SevenZip.StartInfo.Arguments += " -y";
+                SevenZip.StartInfo.UseShellExecute = false;
+                SevenZip.StartInfo.CreateNoWindow = true; // don't show the console in our console!
+
+                try {
+                    Thread.Sleep(1000);
+                    SevenZip.Start();
+                    SevenZip.WaitForExit();
+                } catch (Exception ex) {
+                    error = true;
+                    Console.Write("ERROR!");
+                    Console.WriteLine();
+                    Console.WriteLine(ex.ToString());
                 }
             } else {
                 Console.WriteLine("Could not identify a possible extractor! We should panic.");
