@@ -162,6 +162,21 @@ namespace TinyNvidiaUpdateChecker
             releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
             releaseDesc = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
 
+            // Cleanup release description
+            var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+            htmlDocument.LoadHtml(releaseDesc);
+
+            // Remove image nodes
+            var nodes = htmlDocument.DocumentNode.SelectNodes("//img");
+            foreach (var child in nodes) child.Remove();
+
+            // Remove all links
+            var hrefNodes = htmlDocument.DocumentNode.SelectNodes("//a").Where(x => x.Attributes.Contains("href"));
+            foreach (var child in hrefNodes) child.Remove();
+
+            // Finally set new release description
+            releaseDesc = htmlDocument.DocumentNode.OuterHtml;
+
             // Get real file size in bytes
             using (var request = new HttpRequestMessage(HttpMethod.Head, downloadURL)) {
                 using var response = httpClient.Send(request);
@@ -171,7 +186,6 @@ namespace TinyNvidiaUpdateChecker
 
             // Get PDF release notes
             var otherNotes = Uri.UnescapeDataString(downloadInfo["OtherNotes"].ToString());
-            var htmlDocument = new HtmlAgilityPack.HtmlDocument();
 
             htmlDocument.LoadHtml(otherNotes);
             IEnumerable<HtmlNode> node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
