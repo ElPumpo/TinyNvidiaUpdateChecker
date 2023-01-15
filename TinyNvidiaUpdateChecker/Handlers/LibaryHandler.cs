@@ -60,18 +60,31 @@ namespace TinyNvidiaUpdateChecker.Handlers
             WINRAR
         }
 
-        public static LibaryFile EvaluateLibary() {
+        public static LibaryFile EvaluateLibary()
+        {
             foreach (var entry in libaryRegistryList)
             {
                 try
                 {
-                    using (var regKey = entry.key.OpenSubKey(entry.path, false))
+                    string path;
+
+                    // since TNUC is built for x86 we need to use RegistryView.Registry64
+                    if (is64)
                     {
-                        string path = regKey.GetValue(entry.name).ToString();
-                        LogManager.Log($"Found {entry.libary} path: {path}", LogManager.Level.INFO);
-                        return new LibaryFile(path, entry.libary, true);
+                        using var key = RegistryKey.OpenBaseKey(entry.getRegistryHive(), RegistryView.Registry64);
+                        using var localKey = key.OpenSubKey(entry.path, false);
+                        path = localKey.GetValue(entry.name).ToString();
                     }
-                } catch { }
+                    else
+                    {
+                        using var regKey = entry.key.OpenSubKey(entry.path, false);
+                        path = regKey.GetValue(entry.name).ToString();
+                    }
+
+                    LogManager.Log($"Found {entry.libary} path: {path}", LogManager.Level.INFO);
+                    return new LibaryFile(path, entry.libary, true);
+                }
+                catch { }
             }
 
             foreach (var entry in libaryPathList)
@@ -116,6 +129,19 @@ namespace TinyNvidiaUpdateChecker.Handlers
             this.name = name;
             this.libary = libary;
         }
+
+        public RegistryHive getRegistryHive()
+        {
+            switch (key.Name)
+            {
+                case "HKEY_LOCAL_MACHINE":
+                    return RegistryHive.LocalMachine;
+                default:
+                    LogManager.Log($"Missing registry hive entry for {key.Name}", LogManager.Level.ERROR);
+                    return RegistryHive.LocalMachine;
+            }
+
+        }
     }
 
     /// <summary>
@@ -127,13 +153,15 @@ namespace TinyNvidiaUpdateChecker.Handlers
         LibaryHandler.Libary libary;
         bool isInstalled;
 
-        public LibaryFile(string installationDirectory, LibaryHandler.Libary libary, bool isInstalled) {
+        public LibaryFile(string installationDirectory, LibaryHandler.Libary libary, bool isInstalled)
+        {
             this.installationDirectory = installationDirectory;
             this.libary = libary;
             this.isInstalled = isInstalled;
         }
 
-        public LibaryFile(LibaryHandler.Libary libary, bool isInstalled) {
+        public LibaryFile(LibaryHandler.Libary libary, bool isInstalled)
+        {
             this.libary = libary;
             this.isInstalled = isInstalled;
         }
@@ -141,25 +169,29 @@ namespace TinyNvidiaUpdateChecker.Handlers
         /// <summary>
         /// Is the libary installed?
         /// </summary>
-        public bool IsInstalled() {
-            return this.isInstalled;
+        public bool IsInstalled()
+        {
+            return isInstalled;
         }
 
         /// <summary>
         /// Libary name
         /// </summary>
-        public LibaryHandler.Libary LibaryName() {
+        public LibaryHandler.Libary LibaryName()
+        {
             return libary;
         }
 
         /// <summary>
         /// Get the absolute path to the libary, ending with a backslash
         /// </summary>
-        public string GetInstallationDirectory() {
+        public string GetInstallationDirectory()
+        {
             return installationDirectory;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return $"installationDirectory: {installationDirectory} | libary: {libary} | isInstalled: {isInstalled}";
         }
     }
