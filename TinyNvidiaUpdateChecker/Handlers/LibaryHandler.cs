@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace TinyNvidiaUpdateChecker.Handlers
@@ -10,6 +11,49 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
         private static bool is64 = Environment.Is64BitOperatingSystem;
 
+        static List<LibaryRegistryPath> libaryRegistryList = new()
+            {
+                /* WinRAR */
+
+                new(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", "InstallLocation", Libary.WINRAR),
+                new(Registry.LocalMachine, @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", "InstallLocation", Libary.WINRAR),
+
+                /* 7-Zip */
+
+                // amd64 installer on amd64 system, or x86 on x86 system
+                new(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", "InstallLocation", Libary.SEVENZIP),
+
+                // x86 intaller on amd64 system
+                new(Registry.LocalMachine, @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", "InstallLocation", Libary.SEVENZIP),
+
+                // MSI amd64 installer on amd64 system, or x86 on x86 system
+                new(Registry.LocalMachine, @"SOFTWARE\7-Zip", "Path", Libary.SEVENZIP),
+
+                // MSI x86 intaller on amd64 system
+                new (Registry.LocalMachine, @"SOFTWARE\WOW6432Node\7-Zip", "Path", Libary.SEVENZIP),
+            };
+
+
+        static List<LibaryPath> libaryPathList = new()
+            {
+                /* 7-Zip */
+
+                // scoop in user profile
+                new(new[] { Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps", "7zip", "current" }, Libary.SEVENZIP),
+
+                // scoop in Program Data
+                new(new[] { Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "scoop", "apps", "7zip", "current" }, Libary.SEVENZIP),
+
+                // amd64 on amd64 system, or x86 on x86 system
+                new(new[] { Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip" }, Libary.SEVENZIP),
+
+                // x86 on amd64 system
+                new(new[] { Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "7-Zip" }, Libary.SEVENZIP),
+                
+                // debug directory
+                new(new[] { Path.GetFullPath("7-Zip") }, Libary.SEVENZIP)
+            };
+
         public enum Libary
         {
             SEVENZIP,
@@ -17,133 +61,63 @@ namespace TinyNvidiaUpdateChecker.Handlers
         }
 
         public static LibaryFile EvaluateLibary() {
-            var WinRAR = CheckWinRAR();
-            var SevenZip = Check7Zip();
-
-            if (WinRAR.IsInstalled()) {
-                return WinRAR;
-            } else if (SevenZip.IsInstalled()) {
-                return SevenZip;
-            } else {
-                return null;
-            }
-        }
-
-        private static LibaryFile CheckWinRAR() {
-            try {
-                using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
-                    LogManager.Log($"WinRAR path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
-                    return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.WINRAR, true);
-                }
-            } catch { }
-
-            try {
-                using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", false)) {
-                    LogManager.Log($"WinRAR path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
-                    return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.WINRAR, true);
-                }
-            }
-            catch { }
-
-            return new LibaryFile(Libary.WINRAR, false);
-        }
-
-        private static LibaryFile Check7Zip() {
-            /* Debug directory */
-            if(Directory.Exists("7-Zip")) {
-                LogManager.Log($"7-Zip path: {Path.GetFullPath("7-Zip") + @"\"}", LogManager.Level.INFO);
-                return new LibaryFile(Path.GetFullPath("7-Zip") + @"\", Libary.SEVENZIP, true);
-            }
-
-            /* Default installer */
-
-            // amd64 installer on amd64 system, or x86 on x86 system
-            try {
-                using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", false)) {
-                    if (regKey != null) {
-                        LogManager.Log($"7-Zip path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
-                        return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.SEVENZIP, true);
-                    }
-                }
-            } catch { }
-
-            // x86 intaller on amd64 system
-            if (is64) {
-                try {
-                    using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", false)) {
-                        if (regKey != null) {
-                            LogManager.Log($"7-Zip path: {regKey.GetValue("InstallLocation")}", LogManager.Level.INFO);
-                            return new LibaryFile(regKey.GetValue("InstallLocation").ToString(), Libary.SEVENZIP, true);
-                        }
+            foreach (var entry in libaryRegistryList)
+            {
+                try
+                {
+                    using (var regKey = entry.key.OpenSubKey(entry.path, false))
+                    {
+                        string path = regKey.GetValue(entry.name).ToString();
+                        LogManager.Log($"Found {entry.libary} path: {path}", LogManager.Level.INFO);
+                        return new LibaryFile(path, entry.libary, true);
                     }
                 } catch { }
             }
 
-            /* MSI installer */
-            
-            // amd64 installer on amd64 system, or x86 on x86 system
-            try {
-                using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\7-Zip", false)) {
-                    if (regKey != null) {
-                        LogManager.Log($"7-Zip path: {regKey.GetValue("Path")}", LogManager.Level.INFO);
-                        return new LibaryFile(regKey.GetValue("Path").ToString(), Libary.SEVENZIP, true);
-                    }
+            foreach (var entry in libaryPathList)
+            {
+                string path = Path.Combine(entry.path);
+
+                if (Path.Exists(path))
+                {
+                    path += @"\";
+                    LogManager.Log($"Found {entry.libary} path: {path}", LogManager.Level.INFO);
+                    return new LibaryFile(path, entry.libary, true);
                 }
-            } catch { }
-
-            // x86 intaller on amd64 system
-            if (is64) {
-                try {
-                    using (var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\7-Zip", false)) {
-                        if (regKey != null) {
-                            LogManager.Log($"7-Zip path: {regKey.GetValue("Path")}", LogManager.Level.INFO);
-                            return new LibaryFile(regKey.GetValue("Path").ToString(), Libary.SEVENZIP, true);
-                        }
-                    }
-                } catch { }
             }
 
-            /* Scoop support */
-            string path;
-            
-            // installed in user profile
-            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps", "7zip", "current");
-            if (Directory.Exists(path)) {
-                path += @"\";
-                LogManager.Log($"7-Zip path: {path}", LogManager.Level.INFO);
-                return new LibaryFile(path, Libary.SEVENZIP, true);
-            }
-
-            // installed in Program Data
-            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "scoop", "apps", "7zip", "current");
-            if (Directory.Exists(path)) {
-                path += @"\";
-                LogManager.Log($"7-Zip path: {path}", LogManager.Level.INFO);
-                return new LibaryFile(path, Libary.SEVENZIP, true);
-            }
-
-            /* Last resort checks */
-
-            // amd64 on amd64 system, or x86 on x86 system
-            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip");
-            if (Directory.Exists(path)) {
-                path += @"\";
-                LogManager.Log($"7-Zip path: {path}", LogManager.Level.INFO);
-                return new LibaryFile(path, Libary.SEVENZIP, true);
-            }
-
-            // x86 on amd64 system
-            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "7-Zip");
-            if (Directory.Exists(path)) {
-                path += @"\";
-                LogManager.Log($"7-Zip path: {path}", LogManager.Level.INFO);
-                return new LibaryFile(path, Libary.SEVENZIP, true);
-            }
-
-            return new LibaryFile(Libary.SEVENZIP, false);
+            return null;
         }
     }
-    
+
+    class LibaryPath
+    {
+        public string[] path;
+        public LibaryHandler.Libary libary;
+
+        public LibaryPath(string[] path, LibaryHandler.Libary libary)
+        {
+            this.path = path;
+            this.libary = libary;
+        }
+    }
+
+    class LibaryRegistryPath
+    {
+        public RegistryKey key;
+        public string path;
+        public string name;
+        public LibaryHandler.Libary libary;
+
+        public LibaryRegistryPath(RegistryKey key, string path, string name, LibaryHandler.Libary libary)
+        {
+            this.key = key;
+            this.path = path;
+            this.name = name;
+            this.libary = libary;
+        }
+    }
+
     /// <summary>
     /// Libaries that can extract the nvidia driver file
     /// </summary>

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Migrated from discontinued .NET Framework to .NET
 - Improved error handling for NVIDIA API and metadata repo
+- Improved libary detection code
 
 ## [1.15.4] - 2022-12-27
 Happy new years everyone. Here is another minor update that wont change much for most people
