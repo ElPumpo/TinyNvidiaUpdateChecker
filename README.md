@@ -2,7 +2,7 @@
 
 # TinyNvidiaUpdateChecker
 
-TinyNvidiaUpdateChecker (TNUC for short) is a lightweight tool that checks for NVIDIA GPU drivers for Windows. You can configure TNUC executing it when logging in, and have it only pop up if there's a new driver available.
+TinyNvidiaUpdateChecker (TNUC for short) is a lightweight tool that checks for NVIDIA GPU drivers for Windows. You can configure TNUC [executing it when logging in](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Quiet-runs-on-user-login), and have it only pop up if there's a new driver available.
 
 It has a minimal install feature that extracts the GPU drivers from the otherwise bloated bundle which contains GeForce Experience, 3d drivers and other components. Nothing except the required drivers will be installed.
 
@@ -18,6 +18,10 @@ Uses a NVIDIA API to get the latest driver, and there is support for the majorit
 - .NET framework 4.8
 - Internet connection
 - (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org)
+
+# How to use
+
+Be sure to [check out the wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) to learn more about how to use TNUC.
 
 # Alternatives
 
