@@ -269,7 +269,7 @@ namespace TinyNvidiaUpdateChecker
                     DialogResult dialog = MessageBox.Show("There is a new client update available to download, do you want to be navigate to the official GitHub download section?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (dialog == DialogResult.Yes) {
-                        Process.Start(updateUrl);
+                        Process.Start(new ProcessStartInfo(updateUrl) { UseShellExecute = true });
                     }
                 }
             }

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.16.1] - 2023-01-21
+### Fixed
+- Hotfix for navigate to GitHub prompt causing exception
+
 ## [1.16.0] - 2023-01-21
 This update migrated from the discontinued .NET Framework to .NET 7. TNUC will from this point forward require the .NET 7 Desktop Runtime x86. Windows versions below 10 are not supported by it. There might also be new bugs with this move so please report them if you find any. Thanks to .NET single file publish the false positive trojan is no longer an issue.
 
