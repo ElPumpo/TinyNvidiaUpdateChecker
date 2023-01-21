@@ -14,8 +14,8 @@ Uses a NVIDIA API to get the latest driver, and there is support for the majorit
 
 # Requirements
 
-- Windows 10, 8.x or 7
-- .NET framework 4.8
+- Windows 10 and higher
+- [.NET Desktop Runtime 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 - Internet connection
 - (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org)
 
