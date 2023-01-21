@@ -44,6 +44,12 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 // scoop in Program Data
                 new(new[] { Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "scoop", "apps", "7zip", "current" }, Libary.SEVENZIP),
 
+                // scoop local environment variable
+                new(new[] { Environment.GetEnvironmentVariable("SCOOP", EnvironmentVariableTarget.User), "apps", "7zip", "current" }, Libary.SEVENZIP),
+
+                // scoop global environment variable
+                new(new[] { Environment.GetEnvironmentVariable("SCOOP_GLOBAL", EnvironmentVariableTarget.Machine), "apps", "7zip", "current" }, Libary.SEVENZIP),
+
                 // amd64 on amd64 system, or x86 on x86 system
                 new(new[] { Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip" }, Libary.SEVENZIP),
 
