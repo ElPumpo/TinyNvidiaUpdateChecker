@@ -4,14 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.16.0] - 2023-01-21
+This update migrated from the discontinued .NET Framework to .NET 7. TNUC will from this point forward require the .NET 7 Desktop Runtime x86. Windows versions below 10 are not supported by it. There might also be new bugs with this move so please report them if you find any. Thanks to .NET single file publish the false positive trojan is no longer an issue.
+
 ### Added
 - `--config-override=<path>` command line argument. `<path>` is absolute file path
 - Support for local GPU metadata files `gpu-data.json` and `os-data.json`. They must be in the working directory, and used in special cases where GitHub is a blocked domain
 - Added Scoop environment variable to list for possible 7-Zip installations, see #97
 
 ### Changed
-- Migrated from discontinued .NET Framework to .NET 7. TNUC will from this point forward require the .NET 7 x86 Runtime
+- Migrated from discontinued .NET Framework to .NET 7. TNUC will from this point forward require the .NET 7 Desktop Runtime x86
 - Improved error handling for NVIDIA API and metadata repo
 - Improved libary detection code
 - Remove unwanted image tags and URLs from release description
