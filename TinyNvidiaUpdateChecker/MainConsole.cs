@@ -766,11 +766,18 @@ namespace TinyNvidiaUpdateChecker
 
                 var minimalInstaller = SettingManager.ReadSettingBool("Minimal install");
                 var arguments = minimized ? "/s /noreboot" : "/nosplash";
+                var fileName = minimalInstaller ? FULL_PATH_DIRECTORY + "setup.exe" : FULL_PATH_DRIVER;
 
-                Process.Start(SettingManager.ReadSettingBool("Minimal install") ? FULL_PATH_DIRECTORY + "setup.exe" : FULL_PATH_DRIVER, arguments).WaitForExit();
+                ProcessStartInfo startInfo = new(fileName);
+                startInfo.UseShellExecute = true;
+                startInfo.Arguments = arguments;
+
+                Process.Start(startInfo).WaitForExit();
                 Console.Write("OK!");
-            } catch {
+            } catch (Exception ex) {
                 Console.WriteLine("An error occurred preventing the driver installer to execute!");
+                Console.WriteLine();
+                Console.WriteLine(ex.ToString());
             }
 
             Console.WriteLine();
