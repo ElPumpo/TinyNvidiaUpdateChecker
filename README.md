@@ -1,4 +1,4 @@
-![Image preview](image.png)
+![TNUC Logo](image.png)
 
 # TinyNvidiaUpdateChecker
 
@@ -8,29 +8,40 @@ It has a minimal install feature that extracts the GPU drivers from the otherwis
 
 Uses a NVIDIA API to get the latest driver, and there is support for the majority of their GPUs. Thanks to [ZenitH-AT](https://github.com/ZenitH-AT) for their research and metadata repo used by this project.
 
-# Download
-
-[Go to the releases page](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases) for all downloads
-
-# Requirements
+## Requirements
 
 - Windows 10 or higher
 - [.NET Desktop Runtime 7 x86](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 - Internet connection
 - (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org)
 
-# How to use
+## Installation
+
+1. [Download the latest version](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases)
+2. Start TinyNvidiaUpdateChecker.exe
+3. (Optional) configure [execute when logging in](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Quiet-runs-on-user-login)
+
+If it does not run, or closes after a split second then you did not install the [.NET Desktop Runtime 7 x86](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+
+### Install with [Scoop](https://scoop.sh/#/apps?s=2&d=1&o=true&p=1&q=tinynvidiaupdatechecker)
+
+```
+scoop bucket add extras
+scoop install tinynvidiaupdatechecker
+```
+
+## How to use
 
 Be sure to [check out the wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) to learn more about how to use TNUC.
 
-# Alternatives
+## Alternatives
 
 - [EnvyUpdate](https://github.com/fyr77/EnvyUpdate)
 - [nvidia-update](https://github.com/ZenitH-AT/nvidia-update)
 
-# Legal
+## Legal
 
-## License
+### License
 
 TinyNvidiaUpdateChecker - Check for NVIDIA GPU driver updates!
 
@@ -42,14 +53,14 @@ This program is distributed In the hope that it will be useful, but WITHOUT ANY 
 
 You should have received a copy Of the GNU General Public License along with this program. If Not, see <http://www.gnu.org/licenses/>.
 
-## Project icon
+### Project icon
 
 [Project icon](https://github.com/Maddoc42/Android-Material-Icon-Generator) by [Maddoc42](https://github.com/Maddoc42) is licensed under [CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/)
 
-## HTML Agility Pack
+### HTML Agility Pack
 
 HTML Agility Pack by [zzzprojects](https://github.com/zzzprojects/html-agility-pack) is licensed under the [MIT license](https://opensource.org/licenses/MIT)
 
-## ASCII-alike Progress Bar
+### ASCII-alike Progress Bar
 
 [ASCII-alike Progress Bar](https://gist.github.com/DanielSWolf/0ab6a96899cc5377bf54) by [DanielSWolf](https://github.com/DanielSWolf) is licensed under the [MIT license](https://opensource.org/licenses/MIT)
