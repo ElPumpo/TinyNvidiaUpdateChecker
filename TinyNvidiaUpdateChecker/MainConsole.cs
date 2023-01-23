@@ -168,7 +168,10 @@ namespace TinyNvidiaUpdateChecker
 
             // Remove image nodes
             var nodes = htmlDocument.DocumentNode.SelectNodes("//img");
-            foreach (var child in nodes) child.Remove();
+            if (nodes != null && nodes.Count > 0)
+            {
+                foreach (var child in nodes) child.Remove();
+            }
 
             // Remove all links
             var hrefNodes = htmlDocument.DocumentNode.SelectNodes("//a").Where(x => x.Attributes.Contains("href"));
