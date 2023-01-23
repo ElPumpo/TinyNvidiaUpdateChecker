@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Fixed
+- Release notes without an image tag caused a NullReferenceException when retrieving GPU information. See issue #151
+
 ## [1.16.1] - 2023-01-21
 ### Fixed
 - Hotfix for navigate to GitHub prompt causing exception
