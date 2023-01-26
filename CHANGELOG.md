@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.16.2] - 2023-01-26
 ### Fixed
 - Release notes without an image tag caused a NullReferenceException when retrieving GPU information. See issue #151
 
