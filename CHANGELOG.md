@@ -4,12 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.16.3] - 2023-01-26
+### Fixed
+- Release notes without any links caused a `ArgumentNullException` when retrieving GPU information. See issue #159
+
 ## [1.16.2] - 2023-01-26
 ### Fixed
-- Release notes without an image tag caused a NullReferenceException when retrieving GPU information. See issue #151
+- Release notes without an image tag caused a `NullReferenceException` when retrieving GPU information. See issue #151
 
 ### Changed
-- Changed the URL of the update URL to show all versions because hotfixes updates wont show the full changelog for minor version update.
+- Changed the URL of the update URL to show all versions because hotfixes updates wont show the full changelog for minor version update
 
 ## [1.16.1] - 2023-01-21
 ### Fixed

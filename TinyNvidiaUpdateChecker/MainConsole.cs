@@ -174,8 +174,10 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // Remove all links
-            var hrefNodes = htmlDocument.DocumentNode.SelectNodes("//a").Where(x => x.Attributes.Contains("href"));
-            foreach (var child in hrefNodes) child.Remove();
+            try {
+                var hrefNodes = htmlDocument.DocumentNode.SelectNodes("//a").Where(x => x.Attributes.Contains("href"));
+                foreach (var child in hrefNodes) child.Remove();
+            } catch { }
 
             // Finally set new release description
             releaseDesc = htmlDocument.DocumentNode.OuterHtml;
