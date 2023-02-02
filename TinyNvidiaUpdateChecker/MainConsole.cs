@@ -36,7 +36,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// GPU metadata repo
         /// </summary>
-        private readonly static string gpuMetadataRepo = "https://raw.githubusercontent.com/ZenitH-AT/nvidia-data/main";
+        private readonly static string gpuMetadataRepo = "https://github.com/ZenitH-AT/nvidia-data/raw/main";
 
         /// <summary>
         /// URL for client update

@@ -19,5 +19,5 @@ using System.Runtime.InteropServices;
 //      Minor Version 
 //      Patch
 // Following the Semantic Versioning 2.0.0 standard; see http://semver.org/spec/v2.0.0.html.
-[assembly: AssemblyVersion("1.16.3")]
-[assembly: AssemblyFileVersion("1.16.3")]
+[assembly: AssemblyVersion("1.16.4")]
+[assembly: AssemblyFileVersion("1.16.4")]

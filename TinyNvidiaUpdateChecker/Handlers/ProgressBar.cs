@@ -7,7 +7,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
     /// <summary>
     /// An ASCII alike progress bar
-    /// By DanielSWolf, https://gist.github.com/DanielSWolf/0ab6a96899cc5377bf54
+    /// author https://github.com/DanielSWolf
     /// Licensed under the MIT license, https://opensource.org/licenses/MIT
     /// </summary>
     public class ProgressBar : IDisposable, IProgress<double>
