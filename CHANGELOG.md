@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Fixed
+- Invalid minimal install extract libary paths could cause a `ArgumentNullException`. See issue #168
+
 ## [1.16.4] - 2023-02-02
 ### Changed
 - Changed GPU metadata URL and credit URL in attempt to resolve AV false positives. See issue #131

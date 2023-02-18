@@ -95,13 +95,19 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
             foreach (var entry in libaryPathList)
             {
-                string path = Path.Combine(entry.path);
-
-                if (Path.Exists(path))
+                try
                 {
-                    path += @"\";
-                    LogManager.Log($"Found {entry.libary} path: {path}", LogManager.Level.INFO);
-                    return new LibaryFile(path, entry.libary, true);
+                    string path = Path.Combine(entry.path);
+
+                    if (Path.Exists(path))
+                    {
+                        path += @"\";
+                        LogManager.Log($"Found {entry.libary} path: {path}", LogManager.Level.INFO);
+                        return new LibaryFile(path, entry.libary, true);
+                    }
+                }
+                catch
+                {
                 }
             }
 
