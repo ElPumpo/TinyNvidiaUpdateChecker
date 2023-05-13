@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.16.5] - 2023-05-13
 ### Fixed
 - Invalid minimal install extract libary paths could cause a `ArgumentNullException`. See issue #168
 
