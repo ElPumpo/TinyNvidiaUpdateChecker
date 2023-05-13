@@ -8,12 +8,24 @@ It has a minimal install feature that extracts the GPU drivers from the otherwis
 
 Uses a NVIDIA API to get the latest driver, and there is support for the majority of their GPUs. Thanks to [ZenitH-AT](https://github.com/ZenitH-AT) for their research and metadata repo used by this project.
 
-## Requirements
+## Dependencies
 
 - Windows 10 or higher
 - [.NET Desktop Runtime 7 x86](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 - Internet connection
-- (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org)
+- (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org) for minimal install feature
+
+### .NET Desktop Runtime 7
+
+If TNUC does not run or closes after a split second then you did not install this runtime properly.
+
+There is two ways you can install it. The easiest and first way is with a privileged command prompt.
+
+`winget install Microsoft.DotNet.DesktopRuntime.7 --architecture x86`
+
+Or
+
+[Navigate to the download page](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and select the __.NET Desktop Runtime x86__ download
 
 ## Installation
 
@@ -21,7 +33,7 @@ Uses a NVIDIA API to get the latest driver, and there is support for the majorit
 2. Start TinyNvidiaUpdateChecker.exe
 3. (Optional) configure [execute when logging in](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Quiet-runs-on-user-login)
 
-If it does not run, or closes after a split second then you did not install the [.NET Desktop Runtime 7 x86](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+If it does not run or closes after a split second then you did not install the required runtime properly, see above.
 
 ### Install with [Scoop](https://scoop.sh/#/apps?s=2&d=1&o=true&p=1&q=tinynvidiaupdatechecker)
 
