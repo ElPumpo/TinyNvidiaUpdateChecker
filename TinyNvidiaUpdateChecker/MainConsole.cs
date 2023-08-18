@@ -240,17 +240,9 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            
-            if (!NoPrompt)
-            {
-                Console.WriteLine();
-                Console.WriteLine("Press any key to exit...");
-            }
-		
-            if (showUI & !NoPrompt) Console.ReadKey();
-		
             LogManager.Log("BYE!", LogManager.Level.INFO);
-            Environment.Exit(0);
+            callExit(0);
+	
         }
 
         /// <summary>
@@ -441,13 +433,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 // todo use pcilookup API https://www.pcilookup.com/api.php?action=search&vendor=10DE&device=13C2
                 Console.WriteLine("No supported NVIDIA GPU was found! If you have a NVIDIA GPU then manually install a driver for it first, then use TNUC to keep it updated.");
-		if (!NoPrompt)
-		{
-			Console.WriteLine();
-			Console.WriteLine("Press any key to exit...");
-		}
-                if (showUI & !NoPrompt) Console.ReadKey();
-                Environment.Exit(1);
+                callExit(1);		    
             }
 
             return (gpuName, isNotebook);
@@ -483,26 +469,14 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.WriteLine($"gpuName:    {gpuName}");
                 Console.WriteLine($"isNotebook: {isNotebook}");
-		if (!NoPrompt)
-		{	
-			Console.WriteLine();
-			Console.WriteLine("Press any key to exit...");
-		}
-                if (showUI & !NoPrompt) Console.ReadKey();
-                Environment.Exit(1);
+                callExit(1);
             } catch (Exception ex) {
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine("Unable to retrieve GPU data. Do you have working internet connectivity?");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
-		if (!NoPrompt)
-		{
-			Console.WriteLine();
-			Console.WriteLine("Press any key to exit...");
-		}
-                if (showUI & !NoPrompt) Console.ReadKey();
-                Environment.Exit(1);
+                callExit(1);
             }
 
             // Get operating system ID
@@ -527,13 +501,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Unable to retrieve OS data.");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
-		if (!NoPrompt)
-		{
-			Console.WriteLine();
-			Console.WriteLine("Press any key to exit...");
-		}
-                if (showUI & !NoPrompt) Console.ReadKey();
-                Environment.Exit(1);
+                callExit(1);
             }
 
             foreach (var os in osData) {
@@ -551,13 +519,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine($"gpuName:   {gpuName}");
                 Console.WriteLine($"osVersion: {osVersion}");
                 Console.WriteLine($"osBit:     {osBit}");
-		if (!NoPrompt)
-		{	
-			Console.WriteLine();
-			Console.WriteLine("Press any key to exit...");
-		}
-                if (showUI & !NoPrompt) Console.ReadKey();
-                Environment.Exit(1);
+                callExit(1);                    
             }
 
             // Check for DCH for newer drivers
@@ -610,15 +572,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
             }
-		
-	    if (!NoPrompt)
-	    {
-		Console.WriteLine();
-		Console.WriteLine("Press any key to exit...");
-	    }
-		
-            if (showUI & !NoPrompt) Console.ReadKey();
-            Environment.Exit(1);
+	
+            callExit(1);
 
             return null;
         }
@@ -649,13 +604,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine("You are not connected to the internet!");
-		if (!NoPrompt)
-		{
-			Console.WriteLine();
-			Console.WriteLine("Press any key to exit...");
-		}
-                if (showUI & !NoPrompt) Console.ReadKey();
-                Environment.Exit(2);
+                callExit(2);
             }
 
             if (SettingManager.ReadSettingBool("Minimal install")) {
@@ -987,6 +936,21 @@ namespace TinyNvidiaUpdateChecker
             }
         }
 
+        /// <summary>
+        /// Check for passed argument and prompt for exit if applicable
+        /// </summary>
+        /// 
+        private static void callExit(int exitnum)
+        {
+            if (!NoPrompt)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
+            }
+            if (showUI & !NoPrompt) Console.ReadKey();
+            Environment.Exit(exitnum);
+        }	    
+	    
         private static bool DoesDriverFileSizeMatch(string absoluteFilePath) {
             return new FileInfo(absoluteFilePath).Length == downloadFileSize;
         }
