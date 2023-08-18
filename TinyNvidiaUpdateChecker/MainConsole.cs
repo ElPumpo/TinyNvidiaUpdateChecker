@@ -83,7 +83,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Disable "Press any key to exit..." prompt
         /// </summary>
-	public static bool NoPrompt = false;
+	public static bool noPrompt = false;
 
         /// <summary>
         /// Enable extended information
@@ -309,7 +309,7 @@ namespace TinyNvidiaUpdateChecker
                 }
 				
 		else if (arg.ToLower() == "--noprompt") {
-                    NoPrompt = true;
+                    noPrompt = true;
                 }
 
                 // erase config
@@ -940,15 +940,16 @@ namespace TinyNvidiaUpdateChecker
         /// Check for passed argument and prompt for exit if applicable
         /// </summary>
         /// 
-        private static void callExit(int exitnum)
+        private static void callExit(int exitNum)
         {
-            if (!NoPrompt)
+            if (!noPrompt)
             {
                 Console.WriteLine();
                 Console.WriteLine("Press any key to exit...");
             }
-            if (showUI & !NoPrompt) Console.ReadKey();
-            Environment.Exit(exitnum);
+		
+            if (showUI & !noPrompt) Console.ReadKey();
+            Environment.Exit(exitNum);
         }	    
 	    
         private static bool DoesDriverFileSizeMatch(string absoluteFilePath) {
