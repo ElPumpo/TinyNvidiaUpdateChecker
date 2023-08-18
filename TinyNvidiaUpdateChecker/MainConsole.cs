@@ -129,7 +129,7 @@ namespace TinyNvidiaUpdateChecker
 
             RunIntro(); // will run intro if no args needs to output stuff
 
-            if (showUI & !NoPrompt) {
+            if (showUI) {
                 AllocConsole();
 
                 if (!debug) {
