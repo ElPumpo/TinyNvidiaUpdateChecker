@@ -83,7 +83,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Disable "Press any key to exit..." prompt
         /// </summary>
-		public static bool NoPrompt = false;
+	public static bool NoPrompt = false;
 
         /// <summary>
         /// Enable extended information
@@ -246,7 +246,9 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.WriteLine("Press any key to exit...");
             }
+		
             if (showUI & !NoPrompt) Console.ReadKey();
+		
             LogManager.Log("BYE!", LogManager.Level.INFO);
             Environment.Exit(0);
         }
@@ -314,7 +316,7 @@ namespace TinyNvidiaUpdateChecker
                     showUI = false;
                 }
 				
-				else if (arg.ToLower() == "--noprompt") {
+		else if (arg.ToLower() == "--noprompt") {
                     NoPrompt = true;
                 }
 
@@ -439,11 +441,11 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 // todo use pcilookup API https://www.pcilookup.com/api.php?action=search&vendor=10DE&device=13C2
                 Console.WriteLine("No supported NVIDIA GPU was found! If you have a NVIDIA GPU then manually install a driver for it first, then use TNUC to keep it updated.");
-				if (!NoPrompt)
-				{
-					Console.WriteLine();
-					Console.WriteLine("Press any key to exit...");
-				}
+		if (!NoPrompt)
+		{
+			Console.WriteLine();
+			Console.WriteLine("Press any key to exit...");
+		}
                 if (showUI & !NoPrompt) Console.ReadKey();
                 Environment.Exit(1);
             }
@@ -481,11 +483,11 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.WriteLine($"gpuName:    {gpuName}");
                 Console.WriteLine($"isNotebook: {isNotebook}");
-				if (!NoPrompt)
-				{	
-					Console.WriteLine();
-					Console.WriteLine("Press any key to exit...");
-				}
+		if (!NoPrompt)
+		{	
+			Console.WriteLine();
+			Console.WriteLine("Press any key to exit...");
+		}
                 if (showUI & !NoPrompt) Console.ReadKey();
                 Environment.Exit(1);
             } catch (Exception ex) {
@@ -494,11 +496,11 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Unable to retrieve GPU data. Do you have working internet connectivity?");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
-				if (!NoPrompt)
-				{
-					Console.WriteLine();
-					Console.WriteLine("Press any key to exit...");
-				}
+		if (!NoPrompt)
+		{
+			Console.WriteLine();
+			Console.WriteLine("Press any key to exit...");
+		}
                 if (showUI & !NoPrompt) Console.ReadKey();
                 Environment.Exit(1);
             }
@@ -525,11 +527,11 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Unable to retrieve OS data.");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
-				if (!NoPrompt)
-				{
-					Console.WriteLine();
-					Console.WriteLine("Press any key to exit...");
-				}
+		if (!NoPrompt)
+		{
+			Console.WriteLine();
+			Console.WriteLine("Press any key to exit...");
+		}
                 if (showUI & !NoPrompt) Console.ReadKey();
                 Environment.Exit(1);
             }
@@ -549,11 +551,11 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine($"gpuName:   {gpuName}");
                 Console.WriteLine($"osVersion: {osVersion}");
                 Console.WriteLine($"osBit:     {osBit}");
-				if (!NoPrompt)
-				{	
-					Console.WriteLine();
-					Console.WriteLine("Press any key to exit...");
-				}
+		if (!NoPrompt)
+		{	
+			Console.WriteLine();
+			Console.WriteLine("Press any key to exit...");
+		}
                 if (showUI & !NoPrompt) Console.ReadKey();
                 Environment.Exit(1);
             }
@@ -608,11 +610,13 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
             }
-			if (!NoPrompt)
-			{
-				Console.WriteLine();
-				Console.WriteLine("Press any key to exit...");
-			}
+		
+	    if (!NoPrompt)
+	    {
+		Console.WriteLine();
+		Console.WriteLine("Press any key to exit...");
+	    }
+		
             if (showUI & !NoPrompt) Console.ReadKey();
             Environment.Exit(1);
 
@@ -645,11 +649,11 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine("You are not connected to the internet!");
-				if (!NoPrompt)
-				{
-					Console.WriteLine();
-					Console.WriteLine("Press any key to exit...");
-				}
+		if (!NoPrompt)
+		{
+			Console.WriteLine();
+			Console.WriteLine("Press any key to exit...");
+		}
                 if (showUI & !NoPrompt) Console.ReadKey();
                 Environment.Exit(2);
             }
