@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - More GPU information for debugging
 
+### Changed
+- Chassis Type 1 now identify as notebook. Hopefully no desktop users have the same type... See issue #134
+
 ## [1.16.5] - 2023-05-13
 ### Fixed
 - Invalid minimal install extract libary paths could cause a `ArgumentNullException`. See issue #168

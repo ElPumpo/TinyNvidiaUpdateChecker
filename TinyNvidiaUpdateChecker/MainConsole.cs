@@ -400,7 +400,7 @@ namespace TinyNvidiaUpdateChecker
             bool isNotebook = false;
             string gpuName = "";
             var regex = new Regex(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
-            List<int> notebookChassisTypes = new() { 8, 9, 10, 11, 12, 14, 18, 21, 31, 32 };
+            List<int> notebookChassisTypes = new() { 1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32 };
 
             // Check for notebook
             foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
