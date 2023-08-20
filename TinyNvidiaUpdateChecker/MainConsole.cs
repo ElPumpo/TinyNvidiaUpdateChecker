@@ -541,6 +541,12 @@ namespace TinyNvidiaUpdateChecker
                 var ajaxDriverLink = "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup";
                 ajaxDriverLink += $"&pfid={gpuId}&osID={osId}&dch={isDchDriver}";
 
+                // Driver type (upCRD)
+                // - 0 is Game Ready Driver (GRD)
+                // - 1 is Studio Driver (SD)
+                int driverTypeInt = SettingManager.ReadSetting("Driver type") == "grd" ? 0 : 1;
+                ajaxDriverLink += $"&upCRD={driverTypeInt}";
+
                 JObject driverObj = JObject.Parse(ReadURL(ajaxDriverLink));
 
                 // Check if driver was found
@@ -562,13 +568,41 @@ namespace TinyNvidiaUpdateChecker
                     throw new ArgumentOutOfRangeException();
                 }
             } catch (ArgumentOutOfRangeException) {
+                string driverType = SettingManager.ReadSetting("Driver type");
+
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine("No NVIDIA driver was found for your system configuration.");
                 Console.WriteLine();
+                Console.WriteLine("Debugging information:");
                 Console.WriteLine($"gpuId:       {gpuId}");
                 Console.WriteLine($"osId:        {osId}");
                 Console.WriteLine($"isDchDriver: {isDchDriver}");
+                Console.WriteLine($"driverType:  {driverType}");
+
+                // Ask user to switch to GRD driver
+                if (driverType == "sd") {
+                    Console.WriteLine();
+                    Console.WriteLine("NOTICE: you have selected Studio Drivers (SD)");
+
+                    TaskDialogButton[] buttons = new TaskDialogButton[] {
+                        new("Change to Game Ready Driver (GRD)") { Tag = "change" },
+                        new("No") { Tag = "no" }
+                    };
+
+                    string text = @"No driver was found for your system and you have choosen Studio Drivers." +
+                        Environment.NewLine + Environment.NewLine +
+                        "TNUC does currently not support searching for GRD and SD drivers at the same time." +
+                        Environment.NewLine + Environment.NewLine +
+                        "Do you wish to change driver type to Game Ready Drivers (GRD)?";
+
+                    string result = SettingManager.ShowButtonDialog("Change driver type?", text, TaskDialogIcon.Warning, buttons);
+
+                    if (result == "change") {
+                        SettingManager.SetSetting("Driver type", "grd");
+                        Console.WriteLine("The driver type has now been changed to Game Ready Driver (GRD). Restart for changes to apply");
+                    }
+                }
             } catch (Exception ex) {
                 Console.Write("ERROR!");
                 Console.WriteLine();

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Configuration;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace TinyNvidiaUpdateChecker
@@ -44,6 +41,7 @@ namespace TinyNvidiaUpdateChecker
                 SetupSetting("Check for Updates");
                 SetupSetting("Minimal install");
                 SetupSetting("Download location");
+                SetupSetting("Driver type");
 
                 Console.WriteLine();
             }
@@ -61,11 +59,13 @@ namespace TinyNvidiaUpdateChecker
             string CHECK_UPDATE = ReadSetting("Check for Updates");
             string MINIMAL_INSTALL = ReadSetting("Minimal install");
             string DOWNLOAD_LOCATION = ReadSetting("Download location");
+            string DRIVER_TYPE = ReadSetting("Driver type");
 
             if (MainConsole.debug) {
                 Console.WriteLine($"CHECK_UPDATE: {CHECK_UPDATE}");
                 Console.WriteLine($"MINIMAL_INSTALL: {MINIMAL_INSTALL}");
                 Console.WriteLine($"DOWNLOAD_LOCATION: {DOWNLOAD_LOCATION}");
+                Console.WriteLine($"DRIVER_TYPE: {DRIVER_TYPE}");
             }
         }
 
@@ -151,22 +151,35 @@ namespace TinyNvidiaUpdateChecker
 
             switch (key) {
 
-                // check for update
                 case "Check for Updates":
-                    values = new string[] {"true", "false"};
+                    values = new string[] { "true", "false" };
                     value = SetupConfigYesNoMessagebox("Do you want to search for client updates?", values, "false");
                     break;
 
-                // minimal installer maker
                 case "Minimal install":
-                    values = new string[] {"true", "false"};
+                    values = new string[] { "true", "false" };
                     value = SetupConfigYesNoMessagebox("Do you want to perform a minimal install of the drivers? This will make sure you don't install telemetry and miscellaneous addons, but requires either WinRAR or 7-Zip to be installed.", values, "false");
                     break;
 
-                // download location
                 case "Download location":
                     var locationChooserForm = new LocationChooserForm();
                     value = locationChooserForm.OpenLocationChooserForm();
+                    break;
+
+                case "Driver type":
+                    TaskDialogButton[] buttons = new TaskDialogButton[] {
+                        new("Game Ready Driver (GRD)") { Tag = "grd" },
+                        new("Studio Driver (SD)") { Tag = "sd" }
+                    };
+
+                    var text = @"If you are a gamer who prioritizes day of launch support for the latest games, patches, and DLCs, choose Game Ready Drivers." +
+                            Environment.NewLine + Environment.NewLine +
+                            "If you are a content creator who prioritizes stability and quality for creative workflows including video editing, animation, photography, graphic design, and livestreaming, choose Studio Drivers." +
+                            Environment.NewLine + Environment.NewLine +
+                            "WARNING: not all GPUs support Studio Drivers.";
+
+
+                    value = ShowButtonDialog("Choose driver type", text, TaskDialogIcon.Information, buttons);
                     break;
 
                 default:
@@ -188,6 +201,28 @@ namespace TinyNvidiaUpdateChecker
             else {
                 return defaultValue;
             }
+        }
+
+        public static string ShowButtonDialog(string title, string text, TaskDialogIcon icon, TaskDialogButton[] buttonList)
+        {
+            var buttons = new TaskDialogButtonCollection();
+
+            foreach (TaskDialogButton button in buttonList)
+            {
+                buttons.Add(button);
+            }
+
+            TaskDialogPage page = new()
+            {
+                Heading = title,
+                Text = text,
+                Buttons = buttons,
+                Icon = icon,
+                Caption = "TinyNvidiaUpdateChecker"
+            };
+
+            TaskDialogButton result = TaskDialog.ShowDialog(page);
+            return result.Tag.ToString();
         }
 
         public static bool ReadSettingBool(string key)
