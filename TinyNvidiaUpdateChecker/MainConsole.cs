@@ -508,10 +508,19 @@ namespace TinyNvidiaUpdateChecker
                 callExit(1);
             }
 
-            foreach (var os in osData) {
-                if (os.code == osVersion && Regex.IsMatch(os.name, osBit)) {
-                    osId = os.id;
-                    break;
+            if (osVersion == "10.0" && Environment.OSVersion.Version.Build >= 22000) {
+                foreach (var os in osData) {
+                    if (Regex.IsMatch(os.name, "Windows 11")) {
+                        osId = os.id;
+                        break;
+                    }
+                }
+            } else {
+                foreach (var os in osData) {
+                    if (os.code == osVersion && Regex.IsMatch(os.name, osBit)) {
+                        osId = os.id;
+                        break;
+                    }
                 }
             }
 
