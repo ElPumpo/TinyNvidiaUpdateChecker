@@ -206,6 +206,10 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
 
             if (debug) {
+                Console.WriteLine($"gpuName:     {gpuName}");
+                Console.WriteLine($"gpuId:       {gpuId}");
+                Console.WriteLine($"osId:        {osId}");
+                Console.WriteLine($"isNotebook:  {isNotebook}");
                 Console.WriteLine($"downloadURL: {downloadURL}");
                 Console.WriteLine($"pdfURL:      {pdfURL}");
                 Console.WriteLine($"releaseDate: {releaseDate.ToShortDateString()}");
