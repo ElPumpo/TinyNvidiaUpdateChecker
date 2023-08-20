@@ -5,8 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Dialog to choose between Game Ready Drivers (GRD) and Studio Driver (SD), as NVIDIA added SD drivers to their list with no default opt out. See issue #187
+- `--noprompt` command line argument disabling exit prompt (author: [TomKranenburg](https://github.com/TomKranenburg)). See issue #188
+- More GPU information for debugging
+
 ### Fixed
 - Windows 11 systems identifying as Windows 10 (author: [jesseclvrt](https://github.com/jesseclvrt))
+
+### Changed
+- Chassis Type 1 now identify as notebook. Hopefully no desktop users have the same type... See issue #134
 
 ## [1.16.5] - 2023-05-13
 ### Fixed

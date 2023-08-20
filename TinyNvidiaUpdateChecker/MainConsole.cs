@@ -81,6 +81,11 @@ namespace TinyNvidiaUpdateChecker
         public static bool showUI = true;
 
         /// <summary>
+        /// Disable "Press any key to exit..." prompt
+        /// </summary>
+	public static bool noPrompt = false;
+
+        /// <summary>
         /// Enable extended information
         /// </summary>
         public static bool debug = false;
@@ -206,6 +211,10 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
 
             if (debug) {
+                Console.WriteLine($"gpuName:     {gpuName}");
+                Console.WriteLine($"gpuId:       {gpuId}");
+                Console.WriteLine($"osId:        {osId}");
+                Console.WriteLine($"isNotebook:  {isNotebook}");
                 Console.WriteLine($"downloadURL: {downloadURL}");
                 Console.WriteLine($"pdfURL:      {pdfURL}");
                 Console.WriteLine($"releaseDate: {releaseDate.ToShortDateString()}");
@@ -235,11 +244,9 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            Console.WriteLine();
-            Console.WriteLine("Press any key to exit...");
-            if (showUI) Console.ReadKey();
             LogManager.Log("BYE!", LogManager.Level.INFO);
-            Environment.Exit(0);
+            callExit(0);
+	
         }
 
         /// <summary>
@@ -304,6 +311,10 @@ namespace TinyNvidiaUpdateChecker
                     FreeConsole();
                     showUI = false;
                 }
+				
+		else if (arg.ToLower() == "--noprompt") {
+                    noPrompt = true;
+                }
 
                 // erase config
                 else if (arg.ToLower() == "--erase-config") {
@@ -357,6 +368,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine($"Usage: {Path.GetFileName(Environment.ProcessPath)} [ARGS]");
                     Console.WriteLine();
                     Console.WriteLine("--quiet                      Runs the application quietly in the background, and will only notify the user if an update is available.");
+                    Console.WriteLine("--noprompt                   Runs the application without prompting to exit.");
                     Console.WriteLine("--erase-config               Erase configuration file.");
                     Console.WriteLine("--debug                      Turn debugging on, will output more information that can be used for debugging.");
                     Console.WriteLine("--force-dl                   Force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
@@ -396,7 +408,7 @@ namespace TinyNvidiaUpdateChecker
             bool isNotebook = false;
             string gpuName = "";
             var regex = new Regex(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
-            List<int> notebookChassisTypes = new() { 8, 9, 10, 11, 12, 14, 18, 21, 31, 32 };
+            List<int> notebookChassisTypes = new() { 1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32 };
 
             // Check for notebook
             foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
@@ -425,10 +437,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 // todo use pcilookup API https://www.pcilookup.com/api.php?action=search&vendor=10DE&device=13C2
                 Console.WriteLine("No supported NVIDIA GPU was found! If you have a NVIDIA GPU then manually install a driver for it first, then use TNUC to keep it updated.");
-                Console.WriteLine();
-                Console.WriteLine("Press any key to exit...");
-                if (showUI) Console.ReadKey();
-                Environment.Exit(1);
+                callExit(1);		    
             }
 
             return (gpuName, isNotebook);
@@ -464,20 +473,14 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.WriteLine($"gpuName:    {gpuName}");
                 Console.WriteLine($"isNotebook: {isNotebook}");
-                Console.WriteLine();
-                Console.WriteLine("Press any key to exit...");
-                if (showUI) Console.ReadKey();
-                Environment.Exit(1);
+                callExit(1);
             } catch (Exception ex) {
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine("Unable to retrieve GPU data. Do you have working internet connectivity?");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
-                Console.WriteLine();
-                Console.WriteLine("Press any key to exit...");
-                if (showUI) Console.ReadKey();
-                Environment.Exit(1);
+                callExit(1);
             }
 
             // Get operating system ID
@@ -502,10 +505,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("Unable to retrieve OS data.");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
-                Console.WriteLine();
-                Console.WriteLine("Press any key to exit...");
-                if (showUI) Console.ReadKey();
-                Environment.Exit(1);
+                callExit(1);
             }
 
             if (osVersion == "10.0" && Environment.OSVersion.Version.Build >= 22000) {
@@ -532,10 +532,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine($"gpuName:   {gpuName}");
                 Console.WriteLine($"osVersion: {osVersion}");
                 Console.WriteLine($"osBit:     {osBit}");
-                Console.WriteLine();
-                Console.WriteLine("Press any key to exit...");
-                if (showUI) Console.ReadKey();
-                Environment.Exit(1);
+                callExit(1);                    
             }
 
             // Check for DCH for newer drivers
@@ -552,6 +549,12 @@ namespace TinyNvidiaUpdateChecker
             try {
                 var ajaxDriverLink = "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup";
                 ajaxDriverLink += $"&pfid={gpuId}&osID={osId}&dch={isDchDriver}";
+
+                // Driver type (upCRD)
+                // - 0 is Game Ready Driver (GRD)
+                // - 1 is Studio Driver (SD)
+                int driverTypeInt = SettingManager.ReadSetting("Driver type") == "grd" ? 0 : 1;
+                ajaxDriverLink += $"&upCRD={driverTypeInt}";
 
                 JObject driverObj = JObject.Parse(ReadURL(ajaxDriverLink));
 
@@ -574,13 +577,41 @@ namespace TinyNvidiaUpdateChecker
                     throw new ArgumentOutOfRangeException();
                 }
             } catch (ArgumentOutOfRangeException) {
+                string driverType = SettingManager.ReadSetting("Driver type");
+
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine("No NVIDIA driver was found for your system configuration.");
                 Console.WriteLine();
+                Console.WriteLine("Debugging information:");
                 Console.WriteLine($"gpuId:       {gpuId}");
                 Console.WriteLine($"osId:        {osId}");
                 Console.WriteLine($"isDchDriver: {isDchDriver}");
+                Console.WriteLine($"driverType:  {driverType}");
+
+                // Ask user to switch to GRD driver
+                if (driverType == "sd") {
+                    Console.WriteLine();
+                    Console.WriteLine("NOTICE: you have selected Studio Drivers (SD)");
+
+                    TaskDialogButton[] buttons = new TaskDialogButton[] {
+                        new("Change to Game Ready Driver (GRD)") { Tag = "change" },
+                        new("No") { Tag = "no" }
+                    };
+
+                    string text = @"No driver was found for your system and you have choosen Studio Drivers." +
+                        Environment.NewLine + Environment.NewLine +
+                        "TNUC does currently not support searching for GRD and SD drivers at the same time." +
+                        Environment.NewLine + Environment.NewLine +
+                        "Do you wish to change driver type to Game Ready Drivers (GRD)?";
+
+                    string result = SettingManager.ShowButtonDialog("Change driver type?", text, TaskDialogIcon.Warning, buttons);
+
+                    if (result == "change") {
+                        SettingManager.SetSetting("Driver type", "grd");
+                        Console.WriteLine("The driver type has now been changed to Game Ready Driver (GRD). Restart for changes to apply");
+                    }
+                }
             } catch (Exception ex) {
                 Console.Write("ERROR!");
                 Console.WriteLine();
@@ -588,11 +619,8 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
             }
-
-            Console.WriteLine();
-            Console.WriteLine("Press any key to exit...");
-            if (showUI) Console.ReadKey();
-            Environment.Exit(1);
+	
+            callExit(1);
 
             return null;
         }
@@ -623,10 +651,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine("You are not connected to the internet!");
-                Console.WriteLine();
-                Console.WriteLine("Press any key to exit...");
-                if (showUI) Console.ReadKey();
-                Environment.Exit(2);
+                callExit(2);
             }
 
             if (SettingManager.ReadSettingBool("Minimal install")) {
@@ -958,6 +983,22 @@ namespace TinyNvidiaUpdateChecker
             }
         }
 
+        /// <summary>
+        /// Check for passed argument and prompt for exit if applicable
+        /// </summary>
+        /// 
+        private static void callExit(int exitNum)
+        {
+            if (!noPrompt)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
+            }
+		
+            if (showUI & !noPrompt) Console.ReadKey();
+            Environment.Exit(exitNum);
+        }	    
+	    
         private static bool DoesDriverFileSizeMatch(string absoluteFilePath) {
             return new FileInfo(absoluteFilePath).Length == downloadFileSize;
         }
