@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - More GPU information for debugging
+- Add missing project build settings (author: [flawedworld](https://github.com/flawedworld))
 
 ### Changed
 - Chassis Type 1 now identify as notebook. Hopefully no desktop users have the same type... See issue #134
