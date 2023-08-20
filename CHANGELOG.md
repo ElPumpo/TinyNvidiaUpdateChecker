@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.16.6] - 2023-08-20
+## [Unreleased]
 ### Added
 - `--noprompt` command line argument disabling exit prompt (author: [TomKranenburg](https://github.com/TomKranenburg)). See issue #188
+- More GPU information for debugging
+
+### Changed
+- Chassis Type 1 now identify as notebook. Hopefully no desktop users have the same type... See issue #134
 
 ## [1.16.5] - 2023-05-13
 ### Fixed
