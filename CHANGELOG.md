@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Dialog to choose between Game Ready Drivers (GRD) and Studio Driver (SD), as NVIDIA added SD drivers to their list with no default opt out. See issue #187
 - `--noprompt` command line argument disabling exit prompt (author: [TomKranenburg](https://github.com/TomKranenburg)). See issue #188
 - More GPU information for debugging
+- Add missing project build settings (author: [flawedworld](https://github.com/flawedworld))
 
 ### Fixed
 - Windows 11 systems identifying as Windows 10 (author: [jesseclvrt](https://github.com/jesseclvrt))
