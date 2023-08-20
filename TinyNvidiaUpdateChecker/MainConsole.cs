@@ -85,6 +85,11 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
 	public static bool noPrompt = false;
 
+	/// <summary>
+        /// Just check for update. Don't install or download.
+        /// </summary>
+	public static bool justCheck = false;    
+
         /// <summary>
         /// Enable extended information
         /// </summary>
@@ -236,7 +241,7 @@ namespace TinyNvidiaUpdateChecker
                 updateAvailable = true;
             }
 
-            if (updateAvailable || forceDL) {
+            if ((updateAvailable || forceDL) && !justCheck) {
                 if (confirmDL) {
                     DownloadDriverQuiet(true);
                 } else {
@@ -277,7 +282,7 @@ namespace TinyNvidiaUpdateChecker
             if (new Version(onlineVer).CompareTo(new Version(offlineVer)) > 0) {
                 Console.WriteLine("There is a update available for TinyNvidiaUpdateChecker!");
 
-                if(!confirmDL) {
+                if(!confirmDL && !justCheck) {
                     DialogResult dialog = MessageBox.Show("There is a new client update available to download, do you want to be navigate to the official GitHub download section?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (dialog == DialogResult.Yes) {
@@ -314,6 +319,10 @@ namespace TinyNvidiaUpdateChecker
 				
 		else if (arg.ToLower() == "--noprompt") {
                     noPrompt = true;
+                }
+
+		else if (arg.ToLower() == "--justcheck") {
+                    justCheck = true;
                 }
 
                 // erase config
@@ -369,6 +378,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                     Console.WriteLine("--quiet                      Runs the application quietly in the background, and will only notify the user if an update is available.");
                     Console.WriteLine("--noprompt                   Runs the application without prompting to exit.");
+                    Console.WriteLine("--justcheck                  Just check to see if new updates are available. Don't download and update.");
                     Console.WriteLine("--erase-config               Erase configuration file.");
                     Console.WriteLine("--debug                      Turn debugging on, will output more information that can be used for debugging.");
                     Console.WriteLine("--force-dl                   Force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
