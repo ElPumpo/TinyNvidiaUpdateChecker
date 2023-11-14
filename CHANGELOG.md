@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.17.1] - 2023-11-14
+### Fixed
+- WinRAR 7 introduced registry edits which casued minimal install feature to error out. See issue #201
+
 ## [1.17.0] - 2023-08-20
 ### Added
 - Dialog to choose between Game Ready Drivers (GRD) and Studio Driver (SD), as NVIDIA added SD drivers to their list with no default opt out. See issue #187
