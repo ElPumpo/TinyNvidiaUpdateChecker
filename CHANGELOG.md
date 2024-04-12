@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Changed
+- Updated .NET Runtime to version 8
+- Replaced `Microsoft.Windows.Compatibility` package with `System.Management`
+
 ## [1.17.1] - 2023-11-14
 ### Fixed
 - WinRAR 7 introduced registry edits which casued minimal install feature to error out. See issue #201
