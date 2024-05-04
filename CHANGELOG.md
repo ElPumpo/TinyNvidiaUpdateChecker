@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- Internet connection failing whilst downloading driver is now properly communicated, see issue #204
 ### Changed
 - Updated .NET Runtime to version 8
 - Replaced `Microsoft.Windows.Compatibility` package with `System.Management`

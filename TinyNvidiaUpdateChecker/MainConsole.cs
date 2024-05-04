@@ -745,8 +745,11 @@ namespace TinyNvidiaUpdateChecker
                     error = true;
                     Console.Write("ERROR!");
                     Console.WriteLine();
+                    Console.WriteLine("Driver download failed.");
+                    Console.WriteLine();
                     Console.WriteLine(ex.ToString());
                     Console.WriteLine();
+                    callExit(1);
                 }
 
                 if (!error) {
@@ -804,6 +807,7 @@ namespace TinyNvidiaUpdateChecker
                         Console.WriteLine();
                         Console.WriteLine(ex.ToString());
                         Console.WriteLine();
+                        callExit(1);
                     }
                 } else {
                     using DownloaderForm dlForm = new();
@@ -836,6 +840,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("An error occurred preventing the driver installer to execute!");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
+                callExit(1);
             }
 
             Console.WriteLine();
@@ -878,9 +883,10 @@ namespace TinyNvidiaUpdateChecker
                     if (e.Cancelled || e.Error != null) {
                         File.Delete(path);
                         ex = e.Error;
+                    } else {
+                        File.Move(path, path.Substring(0, path.Length - 5)); // rename back
                     }
 
-                    File.Move(path, path.Substring(0, path.Length - 5)); // rename back
                     notifier.Set();
                 };
 
@@ -913,6 +919,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
+                callExit(1);
             }
 
             string fullDriverPath = @"""" + savePath + driverFileName + @"""";
@@ -933,6 +940,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.Write("ERROR!");
                     Console.WriteLine();
                     Console.WriteLine(ex.ToString());
+                    callExit(1);
                 }
             } else if (libaryFile.LibaryName() == LibaryHandler.Libary.SEVENZIP) {
                 using var SevenZip = new Process();
