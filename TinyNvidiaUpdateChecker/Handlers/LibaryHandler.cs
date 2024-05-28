@@ -87,6 +87,11 @@ namespace TinyNvidiaUpdateChecker.Handlers
                         path = regKey.GetValue(entry.name).ToString();
                     }
 
+                    if (!path.EndsWith(@"\"))
+                    {
+                        path += @"\";
+                    }
+
                     LogManager.Log($"Found {entry.libary} path: {path}", LogManager.Level.INFO);
                     return new LibaryFile(path, entry.libary, true);
                 }

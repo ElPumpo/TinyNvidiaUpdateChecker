@@ -83,7 +83,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Disable "Press any key to exit..." prompt
         /// </summary>
-	public static bool noPrompt = false;
+        public static bool noPrompt = false;
 
 	/// <summary>
         /// Just check for update. Don't install or download.
@@ -109,6 +109,11 @@ namespace TinyNvidiaUpdateChecker
         /// If this value is set then it will override the default configuration file location
         /// </summary>
         public static string overrideConfigFileLocation = null;
+
+        /// <summary>
+        /// Override chassis type. Used for example notebook systems with desktop e-GPUs
+        /// </summary>
+        public static int overrideChassisType = 0;
 
         /// <summary>
         /// Has the intro been displayed? Because we do not want to display the intro multiple times.
@@ -317,7 +322,7 @@ namespace TinyNvidiaUpdateChecker
                     showUI = false;
                 }
 				
-		else if (arg.ToLower() == "--noprompt") {
+		        else if (arg.ToLower() == "--noprompt") {
                     noPrompt = true;
                 }
 
@@ -387,7 +392,17 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine("--config-here                Use the working directory as path to the configuration file.");
                     Console.WriteLine("--config-override=<path>     Override configuration file location with absolute file path.");
                     Console.WriteLine("--help                       Shows help.");
+                    Console.WriteLine("--override-desktop           Override automatic desktop/notebook identification.");
+                    Console.WriteLine("--override-notebook          Override automatic desktop/notebook identification.");
                     Environment.Exit(0);
+                }
+
+                else if (arg.ToLower() == "--override-desktop") {
+                    overrideChassisType = 3;
+                }
+
+                else if (arg.ToLower() == "--override-notebook") {
+                    overrideChassisType = 9;
                 }
 
                 // unknown command, right?
@@ -421,10 +436,14 @@ namespace TinyNvidiaUpdateChecker
             List<int> notebookChassisTypes = new() { 1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32 };
 
             // Check for notebook
-            foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
-                foreach (int chassisType in obj["ChassisTypes"] as ushort[]) {
-                    isNotebook = notebookChassisTypes.Contains(chassisType);
+            if (overrideChassisType == 0) {
+                foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
+                    foreach (int chassisType in obj["ChassisTypes"] as ushort[]) {
+                        isNotebook = notebookChassisTypes.Contains(chassisType);
+                    }
                 }
+            } else {
+                isNotebook = notebookChassisTypes.Contains(overrideChassisType);
             }
 
             // Get the local GPU metadata
@@ -736,8 +755,11 @@ namespace TinyNvidiaUpdateChecker
                     error = true;
                     Console.Write("ERROR!");
                     Console.WriteLine();
+                    Console.WriteLine("Driver download failed.");
+                    Console.WriteLine();
                     Console.WriteLine(ex.ToString());
                     Console.WriteLine();
+                    callExit(1);
                 }
 
                 if (!error) {
@@ -795,6 +817,7 @@ namespace TinyNvidiaUpdateChecker
                         Console.WriteLine();
                         Console.WriteLine(ex.ToString());
                         Console.WriteLine();
+                        callExit(1);
                     }
                 } else {
                     using DownloaderForm dlForm = new();
@@ -827,6 +850,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine("An error occurred preventing the driver installer to execute!");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
+                callExit(1);
             }
 
             Console.WriteLine();
@@ -869,9 +893,10 @@ namespace TinyNvidiaUpdateChecker
                     if (e.Cancelled || e.Error != null) {
                         File.Delete(path);
                         ex = e.Error;
+                    } else {
+                        File.Move(path, path.Substring(0, path.Length - 5)); // rename back
                     }
 
-                    File.Move(path, path.Substring(0, path.Length - 5)); // rename back
                     notifier.Set();
                 };
 
@@ -904,6 +929,7 @@ namespace TinyNvidiaUpdateChecker
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
+                callExit(1);
             }
 
             string fullDriverPath = @"""" + savePath + driverFileName + @"""";
@@ -924,6 +950,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.Write("ERROR!");
                     Console.WriteLine();
                     Console.WriteLine(ex.ToString());
+                    callExit(1);
                 }
             } else if (libaryFile.LibaryName() == LibaryHandler.Libary.SEVENZIP) {
                 using var SevenZip = new Process();

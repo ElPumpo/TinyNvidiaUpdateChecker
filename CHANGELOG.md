@@ -5,11 +5,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- Internet connection failing whilst downloading driver is now properly communicated, see issue #204
+### Changed
+- Updated .NET Runtime to version 8
+- Replaced `Microsoft.Windows.Compatibility` package with `System.Management`
+
+## [1.17.1] - 2023-11-14
+### Fixed
+- WinRAR 7 introduced registry edits which casued minimal install feature to error out. See issue #201
+
+## [1.17.0] - 2023-08-20
 ### Added
 - Dialog to choose between Game Ready Drivers (GRD) and Studio Driver (SD), as NVIDIA added SD drivers to their list with no default opt out. See issue #187
 - `--noprompt` command line argument disabling exit prompt (author: [TomKranenburg](https://github.com/TomKranenburg)). See issue #188
+- Override desktop/notebook identify command line arguments for eGPUs: `--override-desktop` & `--override-notebook`. See issue #182
 - More GPU information for debugging
-- Add missing project build settings (author: [flawedworld](https://github.com/flawedworld))
+- Missing project build settings (author: [flawedworld](https://github.com/flawedworld))
 
 ### Fixed
 - Windows 11 systems identifying as Windows 10 (author: [jesseclvrt](https://github.com/jesseclvrt))
