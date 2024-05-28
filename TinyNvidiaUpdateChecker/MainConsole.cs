@@ -326,7 +326,7 @@ namespace TinyNvidiaUpdateChecker
                     noPrompt = true;
                 }
 
-		else if (arg.ToLower() == "--justcheck") {
+		else if (arg.ToLower() == "--dry-run") {
                     justCheck = true;
                 }
 
@@ -383,7 +383,7 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                     Console.WriteLine("--quiet                      Runs the application quietly in the background, and will only notify the user if an update is available.");
                     Console.WriteLine("--noprompt                   Runs the application without prompting to exit.");
-                    Console.WriteLine("--justcheck                  Just check to see if new updates are available. Don't download and update.");
+                    Console.WriteLine("--dry-run                  Just check to see if new updates are available. Don't download and update.");
                     Console.WriteLine("--erase-config               Erase configuration file.");
                     Console.WriteLine("--debug                      Turn debugging on, will output more information that can be used for debugging.");
                     Console.WriteLine("--force-dl                   Force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
