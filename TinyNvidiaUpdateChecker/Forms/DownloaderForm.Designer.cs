@@ -28,31 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DownloaderForm));
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.SuspendLayout();
+            progressBar1 = new System.Windows.Forms.ProgressBar();
+            SuspendLayout();
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 12);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(194, 32);
-            this.progressBar1.TabIndex = 0;
+            progressBar1.Location = new System.Drawing.Point(12, 15);
+            progressBar1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            progressBar1.Name = "progressBar1";
+            progressBar1.Size = new System.Drawing.Size(194, 40);
+            progressBar1.TabIndex = 0;
             // 
             // DownloaderForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(218, 56);
-            this.Controls.Add(this.progressBar1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.Execut‌​ablePath);
-            this.Name = "DownloaderForm";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TinyNvidiaUpdateChecker - Progress Bar";
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(218, 70);
+            Controls.Add(progressBar1);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            Name = "DownloaderForm";
+            ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "TinyNvidiaUpdateChecker - Progress Bar";
+            ResumeLayout(false);
         }
 
         #endregion

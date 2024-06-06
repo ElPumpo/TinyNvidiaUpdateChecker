@@ -30,157 +30,161 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DriverDialog));
-            this.DownloadInstallButton = new System.Windows.Forms.Button();
-            this.DownloadBtn = new System.Windows.Forms.Button();
-            this.NotesBtn = new System.Windows.Forms.Button();
-            this.titleLabel = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.sizeLabel = new System.Windows.Forms.Label();
-            this.releasedLabel = new System.Windows.Forms.Label();
-            this.versionLabel = new System.Windows.Forms.Label();
-            this.IgnoreBtn = new System.Windows.Forms.Button();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.groupBox1.SuspendLayout();
-            this.SuspendLayout();
+            DownloadInstallButton = new Button();
+            DownloadBtn = new Button();
+            NotesBtn = new Button();
+            titleLabel = new Label();
+            groupBox1 = new GroupBox();
+            sizeLabel = new Label();
+            releasedLabel = new Label();
+            versionLabel = new Label();
+            IgnoreBtn = new Button();
+            webBrowser1 = new WebBrowser();
+            toolTip1 = new ToolTip(components);
+            groupBox1.SuspendLayout();
+            SuspendLayout();
             // 
             // DownloadInstallButton
             // 
-            this.DownloadInstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.DownloadInstallButton.Location = new System.Drawing.Point(38, 214);
-            this.DownloadInstallButton.Name = "DownloadInstallButton";
-            this.DownloadInstallButton.Size = new System.Drawing.Size(109, 55);
-            this.DownloadInstallButton.TabIndex = 0;
-            this.DownloadInstallButton.Text = "Install Now";
-            this.toolTip1.SetToolTip(this.DownloadInstallButton, resources.GetString("DownloadInstallButton.ToolTip"));
-            this.DownloadInstallButton.UseVisualStyleBackColor = true;
-            this.DownloadInstallButton.Click += new System.EventHandler(this.DownloadInstallButton_Click);
+            DownloadInstallButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            DownloadInstallButton.Location = new System.Drawing.Point(38, 268);
+            DownloadInstallButton.Margin = new Padding(3, 4, 3, 4);
+            DownloadInstallButton.Name = "DownloadInstallButton";
+            DownloadInstallButton.Size = new System.Drawing.Size(109, 69);
+            DownloadInstallButton.TabIndex = 0;
+            DownloadInstallButton.Text = "Install Now";
+            toolTip1.SetToolTip(DownloadInstallButton, resources.GetString("DownloadInstallButton.ToolTip"));
+            DownloadInstallButton.UseVisualStyleBackColor = true;
+            DownloadInstallButton.Click += DownloadInstallButton_Click;
             // 
             // DownloadBtn
             // 
-            this.DownloadBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.DownloadBtn.Location = new System.Drawing.Point(153, 214);
-            this.DownloadBtn.Name = "DownloadBtn";
-            this.DownloadBtn.Size = new System.Drawing.Size(109, 55);
-            this.DownloadBtn.TabIndex = 1;
-            this.DownloadBtn.Text = "Download Only";
-            this.toolTip1.SetToolTip(this.DownloadBtn, resources.GetString("DownloadBtn.ToolTip"));
-            this.DownloadBtn.UseVisualStyleBackColor = true;
-            this.DownloadBtn.Click += new System.EventHandler(this.DownloadBtn_Click);
+            DownloadBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            DownloadBtn.Location = new System.Drawing.Point(153, 268);
+            DownloadBtn.Margin = new Padding(3, 4, 3, 4);
+            DownloadBtn.Name = "DownloadBtn";
+            DownloadBtn.Size = new System.Drawing.Size(109, 69);
+            DownloadBtn.TabIndex = 1;
+            DownloadBtn.Text = "Download Only";
+            toolTip1.SetToolTip(DownloadBtn, resources.GetString("DownloadBtn.ToolTip"));
+            DownloadBtn.UseVisualStyleBackColor = true;
+            DownloadBtn.Click += DownloadBtn_Click;
             // 
             // NotesBtn
             // 
-            this.NotesBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.NotesBtn.Location = new System.Drawing.Point(268, 214);
-            this.NotesBtn.Name = "NotesBtn";
-            this.NotesBtn.Size = new System.Drawing.Size(109, 55);
-            this.NotesBtn.TabIndex = 2;
-            this.NotesBtn.Text = "View Release Notes";
-            this.toolTip1.SetToolTip(this.NotesBtn, "View the full pdf release notes, which contains:\r\n- what\'s new\r\n- what\'s fixed\r\n-" +
-        " open issues\r\n\r\nand more!");
-            this.NotesBtn.UseVisualStyleBackColor = true;
-            this.NotesBtn.Click += new System.EventHandler(this.NotesBtn_Click);
+            NotesBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            NotesBtn.Location = new System.Drawing.Point(268, 268);
+            NotesBtn.Margin = new Padding(3, 4, 3, 4);
+            NotesBtn.Name = "NotesBtn";
+            NotesBtn.Size = new System.Drawing.Size(109, 69);
+            NotesBtn.TabIndex = 2;
+            NotesBtn.Text = "View Release Notes";
+            toolTip1.SetToolTip(NotesBtn, "View the full pdf release notes, which contains:\r\n- what's new\r\n- what's fixed\r\n- open issues\r\n\r\nand more!");
+            NotesBtn.UseVisualStyleBackColor = true;
+            NotesBtn.Click += NotesBtn_Click;
             // 
             // titleLabel
             // 
-            this.titleLabel.AutoSize = true;
-            this.titleLabel.Location = new System.Drawing.Point(9, 9);
-            this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(240, 16);
-            this.titleLabel.TabIndex = 5;
-            this.titleLabel.Text = "A new graphics card driver is available!\r\n";
+            titleLabel.AutoSize = true;
+            titleLabel.Location = new System.Drawing.Point(9, 11);
+            titleLabel.Name = "titleLabel";
+            titleLabel.Size = new System.Drawing.Size(267, 20);
+            titleLabel.TabIndex = 5;
+            titleLabel.Text = "A new graphics card driver is available!\r\n";
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.sizeLabel);
-            this.groupBox1.Controls.Add(this.releasedLabel);
-            this.groupBox1.Controls.Add(this.versionLabel);
-            this.groupBox1.Location = new System.Drawing.Point(315, 40);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 154);
-            this.groupBox1.TabIndex = 6;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "File Information";
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            groupBox1.Controls.Add(sizeLabel);
+            groupBox1.Controls.Add(releasedLabel);
+            groupBox1.Controls.Add(versionLabel);
+            groupBox1.Location = new System.Drawing.Point(315, 50);
+            groupBox1.Margin = new Padding(3, 4, 3, 4);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new Padding(3, 4, 3, 4);
+            groupBox1.Size = new System.Drawing.Size(200, 192);
+            groupBox1.TabIndex = 6;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "File Information";
             // 
             // sizeLabel
             // 
-            this.sizeLabel.Location = new System.Drawing.Point(6, 104);
-            this.sizeLabel.Name = "sizeLabel";
-            this.sizeLabel.Size = new System.Drawing.Size(188, 44);
-            this.sizeLabel.TabIndex = 6;
-            this.sizeLabel.Text = "Size: ";
-            this.sizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            sizeLabel.Location = new System.Drawing.Point(6, 130);
+            sizeLabel.Name = "sizeLabel";
+            sizeLabel.Size = new System.Drawing.Size(188, 55);
+            sizeLabel.TabIndex = 6;
+            sizeLabel.Text = "Size: ";
+            sizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // releasedLabel
             // 
-            this.releasedLabel.Location = new System.Drawing.Point(6, 62);
-            this.releasedLabel.Name = "releasedLabel";
-            this.releasedLabel.Size = new System.Drawing.Size(188, 44);
-            this.releasedLabel.TabIndex = 5;
-            this.releasedLabel.Text = "Released: ";
-            this.releasedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            releasedLabel.Location = new System.Drawing.Point(6, 78);
+            releasedLabel.Name = "releasedLabel";
+            releasedLabel.Size = new System.Drawing.Size(188, 55);
+            releasedLabel.TabIndex = 5;
+            releasedLabel.Text = "Released: ";
+            releasedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // versionLabel
             // 
-            this.versionLabel.Location = new System.Drawing.Point(6, 18);
-            this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(188, 44);
-            this.versionLabel.TabIndex = 5;
-            this.versionLabel.Text = "Version: ";
-            this.versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.versionLabel, "The version of the graphics drivers");
+            versionLabel.Location = new System.Drawing.Point(6, 22);
+            versionLabel.Name = "versionLabel";
+            versionLabel.Size = new System.Drawing.Size(188, 55);
+            versionLabel.TabIndex = 5;
+            versionLabel.Text = "Version: ";
+            versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            toolTip1.SetToolTip(versionLabel, "The version of the graphics drivers");
             // 
             // IgnoreBtn
             // 
-            this.IgnoreBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.IgnoreBtn.Location = new System.Drawing.Point(383, 214);
-            this.IgnoreBtn.Name = "IgnoreBtn";
-            this.IgnoreBtn.Size = new System.Drawing.Size(109, 55);
-            this.IgnoreBtn.TabIndex = 3;
-            this.IgnoreBtn.Text = "Ignore";
-            this.IgnoreBtn.UseVisualStyleBackColor = true;
-            this.IgnoreBtn.Click += new System.EventHandler(this.IgnoreBtn_Click);
+            IgnoreBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            IgnoreBtn.Location = new System.Drawing.Point(383, 268);
+            IgnoreBtn.Margin = new Padding(3, 4, 3, 4);
+            IgnoreBtn.Name = "IgnoreBtn";
+            IgnoreBtn.Size = new System.Drawing.Size(109, 69);
+            IgnoreBtn.TabIndex = 3;
+            IgnoreBtn.Text = "Ignore";
+            IgnoreBtn.UseVisualStyleBackColor = true;
+            IgnoreBtn.Click += IgnoreBtn_Click;
             // 
             // webBrowser1
             // 
-            this.webBrowser1.AllowNavigation = false;
-            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.webBrowser1.IsWebBrowserContextMenuEnabled = false;
-            this.webBrowser1.Location = new System.Drawing.Point(12, 29);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(300, 179);
-            this.webBrowser1.TabIndex = 4;
-            this.webBrowser1.WebBrowserShortcutsEnabled = false;
-            this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
+            webBrowser1.AllowNavigation = false;
+            webBrowser1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            webBrowser1.IsWebBrowserContextMenuEnabled = false;
+            webBrowser1.Location = new System.Drawing.Point(12, 36);
+            webBrowser1.Margin = new Padding(3, 4, 3, 4);
+            webBrowser1.MinimumSize = new System.Drawing.Size(20, 25);
+            webBrowser1.Name = "webBrowser1";
+            webBrowser1.ScriptErrorsSuppressed = true;
+            webBrowser1.Size = new System.Drawing.Size(300, 224);
+            webBrowser1.TabIndex = 4;
+            webBrowser1.WebBrowserShortcutsEnabled = false;
+            webBrowser1.DocumentCompleted += webBrowser1_DocumentCompleted;
             // 
             // DriverDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(527, 281);
-            this.Controls.Add(this.webBrowser1);
-            this.Controls.Add(this.IgnoreBtn);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.titleLabel);
-            this.Controls.Add(this.NotesBtn);
-            this.Controls.Add(this.DownloadBtn);
-            this.Controls.Add(this.DownloadInstallButton);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.Execut‌​ablePath);
-            this.Name = "DriverDialog";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TinyNvidiaUpdateChecker - Update Dialog";
-            this.Load += new System.EventHandler(this.DriverDialog_Load);
-            this.groupBox1.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(527, 351);
+            Controls.Add(webBrowser1);
+            Controls.Add(IgnoreBtn);
+            Controls.Add(groupBox1);
+            Controls.Add(titleLabel);
+            Controls.Add(NotesBtn);
+            Controls.Add(DownloadBtn);
+            Controls.Add(DownloadInstallButton);
+            FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "DriverDialog";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "TinyNvidiaUpdateChecker - Update Dialog";
+            Load += DriverDialog_Load;
+            groupBox1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
