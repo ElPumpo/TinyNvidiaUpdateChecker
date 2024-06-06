@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- `--dry-run` command line argumen (author: [TomKranenburg](https://github.com/TomKranenburg))
+- GPU metadata is now cached in the configuration directory instead of being fetched everytime it runs, this fixes issues for users in China due to the GFW. See issue #195
+- `--dry-run` command line argument (author: [TomKranenburg](https://github.com/TomKranenburg))
 ### Fixed
 - Internet connection failing whilst downloading driver is now properly communicated, see issue #204
 ### Changed

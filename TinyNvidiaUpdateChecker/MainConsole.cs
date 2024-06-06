@@ -36,7 +36,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// GPU metadata repo
         /// </summary>
-        private readonly static string gpuMetadataRepo = "https://github.com/ZenitH-AT/nvidia-data/raw/main";
+        public readonly static string gpuMetadataRepo = "https://github.com/ZenitH-AT/nvidia-data/raw/main";
 
         /// <summary>
         /// URL for client update
@@ -332,9 +332,9 @@ namespace TinyNvidiaUpdateChecker
 
                 // erase config
                 else if (arg.ToLower() == "--erase-config") {
-                    if (File.Exists(SettingManager.configFile)) {
+                    if (File.Exists(SettingManager.configFilePath)) {
                         try {
-                            File.Delete(SettingManager.configFile);
+                            File.Delete(SettingManager.configFilePath);
                         } catch (Exception ex) {
                             RunIntro();
                             Console.WriteLine(ex.ToString());
@@ -481,19 +481,10 @@ namespace TinyNvidiaUpdateChecker
             var gpuId = 0;
             var osId = 0;
             var isDchDriver = 0;
+            (JObject gpuData, OSClassRoot osData) = MetadataHandler.RetrieveMetadata(gpuName, isNotebook);
 
             // Get graphics card ID
             try {
-                string gpuDataRaw;
-
-                if (File.Exists("gpu-data.json")) {
-                    gpuDataRaw = File.ReadAllText("gpu-data.json");
-                    LogManager.Log("Using local gpu-data.json", LogManager.Level.INFO);
-                } else {
-                    gpuDataRaw = ReadURL(gpuMetadataRepo + "/gpu-data.json");
-                }
-
-                var gpuData = JObject.Parse(gpuDataRaw);
                 gpuId = (int)gpuData[isNotebook ? "notebook" : "desktop"][gpuName];
             } catch (ArgumentNullException) {
                 Console.Write("ERROR!");
@@ -515,27 +506,6 @@ namespace TinyNvidiaUpdateChecker
             // Get operating system ID
             var osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
             var osBit = Environment.Is64BitOperatingSystem ? "64" : "32";
-            OSClassRoot osData = null;
-
-            try {
-                string osDataRaw;
-
-                if (File.Exists("os-data.json")) {
-                    osDataRaw = File.ReadAllText("os-data.json");
-                    LogManager.Log("Using local os-data.json", LogManager.Level.INFO);
-                } else {
-                    osDataRaw = ReadURL(gpuMetadataRepo + "/os-data.json");
-                }
-
-                osData = JsonConvert.DeserializeObject<OSClassRoot>(osDataRaw);
-            } catch (Exception ex) {
-                Console.Write("ERROR!");
-                Console.WriteLine();
-                Console.WriteLine("Unable to retrieve OS data.");
-                Console.WriteLine();
-                Console.WriteLine(ex.ToString());
-                callExit(1);
-            }
 
             if (osVersion == "10.0" && Environment.OSVersion.Version.Build >= 22000) {
                 foreach (var os in osData) {
@@ -654,7 +624,7 @@ namespace TinyNvidiaUpdateChecker
             return null;
         }
 
-        private static string ReadURL(string url)
+        public static string ReadURL(string url)
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, url);
             using var response = httpClient.Send(request);

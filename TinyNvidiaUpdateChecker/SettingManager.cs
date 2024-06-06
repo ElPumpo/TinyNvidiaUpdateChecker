@@ -13,29 +13,33 @@ namespace TinyNvidiaUpdateChecker
     {
 
         /// <summary>
-        /// Configuration file location, blueprint: <local-appdata><author><project-name>
+        /// Configuration directory path, blueprint: <local-appdata><author><project-name>
         /// </summary>
-        public static string configFile = Path.Combine(
+        public static string configDirectoryPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Hawaii_Beach",
-            "TinyNvidiaUpdateChecker",
-            "app.config"
+            "TinyNvidiaUpdateChecker"
         );
+
+        /// <summary>
+        /// Configuration file path
+        /// </summary>
+        public static string configFilePath = Path.Combine(configDirectoryPath, "app.config");
 
         /// <summary>
         /// Check if all the keys are OK before we use them
         /// </summary>
         public static void ConfigInit(string overrideConfigFileLocation)
         {
-            if (overrideConfigFileLocation != null) { configFile = overrideConfigFileLocation; }
-            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFile);
+            if (overrideConfigFileLocation != null) { configFilePath = overrideConfigFileLocation; }
+            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFilePath);
 
             if (MainConsole.debug) {
-                Console.WriteLine($"configFile: {configFile}");
+                Console.WriteLine($"configFile: {configFilePath}");
             }
 
             // create config file
-            if (!File.Exists(configFile)) {
+            if (!File.Exists(configFilePath)) {
                 Console.WriteLine("Generating configuration file.");
 
                 SetupSetting("Check for Updates");
@@ -122,10 +126,10 @@ namespace TinyNvidiaUpdateChecker
 
             } catch (ConfigurationErrorsException ex) {
                 // clean config file
-                if (File.Exists(configFile)) {
+                if (File.Exists(configFilePath)) {
 
                     try {
-                        File.Delete(configFile);
+                        File.Delete(configFilePath);
                     } catch (Exception e) {
                         Console.WriteLine(e.ToString());
                     }
