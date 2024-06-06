@@ -7,8 +7,8 @@ namespace TinyNvidiaUpdateChecker
     {
 
         string selectedLanguageCode;
-        string[] locationLanguageCode = { "cn", "de", "uk", "us", "es", "fr", "it", "jp", "kr", "pl", "tr", "ru"};
-        string[] locationLabels = { "China", "Germany", "United Kingdom", "United States", "Spain", "France", "Italy", "Japan", "Korea", "Poland", "Turkish", "Russia" };
+        string[] locationLanguageCode = ["cn", "de", "uk", "us", "es", "fr", "it", "jp", "kr", "pl", "tr", "ru"];
+        string[] locationLabels = ["China", "Germany", "United Kingdom", "United States", "Spain", "France", "Italy", "Japan", "Korea", "Poland", "Turkish", "Russia"];
 
         public LocationChooserForm()
         {
@@ -29,22 +29,23 @@ namespace TinyNvidiaUpdateChecker
 
         private void LocationChooserForm_Load(object sender, EventArgs e)
         {
-            var index = 0;
+            int i = 0;
 
-            foreach (var item in locationLabels)
-            {
-                var list = new ListViewItem(item);
-                var child = locationListView.Items.Add(list).Name = locationLanguageCode[index];
-                index++;
+            foreach (var item in locationLabels) {
+                var child = comboBox.Items.Add(locationLabels[i]);
+                i++;
             }
         }
 
         private void ConfirmBtn_Click(object sender, EventArgs e)
         {
-            if (locationListView.SelectedIndices.Count == 1) {
-                selectedLanguageCode = locationListView.SelectedItems[0].Name;
-                Close();
-            }
+            selectedLanguageCode = locationLanguageCode[comboBox.SelectedIndex];
+            Close();
+        }
+
+        private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ConfirmBtn.Enabled = true;
         }
     }
 }
