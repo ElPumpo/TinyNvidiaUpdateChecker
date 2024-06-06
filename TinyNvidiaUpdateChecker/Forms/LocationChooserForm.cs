@@ -15,7 +15,7 @@ namespace TinyNvidiaUpdateChecker
             InitializeComponent();
         }
 
-        public string OpenLocationChooserForm()
+        public string OpenForm()
         {
             if (!MainConsole.confirmDL) {
                 selectedLanguageCode = "uk";

@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Multiple GPU support, when more than one GPU is detected a dialog is shown, allowing users to choose the proper GPU of their liking. See issue #177
+- NVIDIA devices with no drivers installed, it looks up the device name from a public API. See issue #163
 - GPU metadata is now cached in the configuration directory instead of being fetched everytime it runs, this fixes issues for users in China due to the GFW. See issue #195
 - `--dry-run` command line argument (author: [TomKranenburg](https://github.com/TomKranenburg))
 ### Fixed

@@ -39,25 +39,25 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 /* 7-Zip */
 
                 // scoop in user profile
-                new(new[] { Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps", "7zip", "current" }, Libary.SEVENZIP),
+                new([Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps", "7zip", "current"], Libary.SEVENZIP),
 
                 // scoop in Program Data
-                new(new[] { Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "scoop", "apps", "7zip", "current" }, Libary.SEVENZIP),
+                new([Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "scoop", "apps", "7zip", "current"], Libary.SEVENZIP),
 
                 // scoop local environment variable
-                new(new[] { Environment.GetEnvironmentVariable("SCOOP", EnvironmentVariableTarget.User), "apps", "7zip", "current" }, Libary.SEVENZIP),
+                new([Environment.GetEnvironmentVariable("SCOOP", EnvironmentVariableTarget.User), "apps", "7zip", "current"], Libary.SEVENZIP),
 
                 // scoop global environment variable
-                new(new[] { Environment.GetEnvironmentVariable("SCOOP_GLOBAL", EnvironmentVariableTarget.Machine), "apps", "7zip", "current" }, Libary.SEVENZIP),
+                new([Environment.GetEnvironmentVariable("SCOOP_GLOBAL", EnvironmentVariableTarget.Machine), "apps", "7zip", "current"], Libary.SEVENZIP),
 
                 // amd64 on amd64 system, or x86 on x86 system
-                new(new[] { Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip" }, Libary.SEVENZIP),
+                new([Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip"], Libary.SEVENZIP),
 
                 // x86 on amd64 system
-                new(new[] { Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "7-Zip" }, Libary.SEVENZIP),
+                new([Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "7-Zip"], Libary.SEVENZIP),
                 
                 // debug directory
-                new(new[] { Path.GetFullPath("7-Zip") }, Libary.SEVENZIP)
+                new([Path.GetFullPath("7-Zip")], Libary.SEVENZIP)
             };
 
         public enum Libary

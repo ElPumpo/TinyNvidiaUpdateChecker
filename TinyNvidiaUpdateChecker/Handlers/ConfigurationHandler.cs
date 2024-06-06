@@ -3,13 +3,13 @@ using System.Configuration;
 using System.IO;
 using System.Windows.Forms;
 
-namespace TinyNvidiaUpdateChecker
+namespace TinyNvidiaUpdateChecker.Handlers
 {
 
     /// <summary>
     /// Powered by .NET framework "Settings"
     /// </summary>
-    class SettingManager
+    class ConfigurationHandler
     {
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Reads setting from configuration file, and adds if requested key / value is missing - returns a string.</summary>
         /// <param name="key"> Config key to read value from.</param>
-        public static string ReadSetting(string key)
+        public static string ReadSetting(string key, dynamic data = null)
         {
             string result = null;
 
@@ -89,12 +89,11 @@ namespace TinyNvidiaUpdateChecker
                     // error reading key
                     Console.WriteLine();
                     Console.WriteLine($"Error reading configuration file, attempting to repair key '{key}' . . .");
-                    SetupSetting(key);
+                    SetupSetting(key, data);
 
                     result = ConfigurationManager.AppSettings[key];
                 }
-            }
-            catch (ConfigurationErrorsException ex) {
+            } catch (ConfigurationErrorsException ex) {
                 Console.WriteLine(ex.ToString());
                 Console.WriteLine();
             }
@@ -127,7 +126,6 @@ namespace TinyNvidiaUpdateChecker
             } catch (ConfigurationErrorsException ex) {
                 // clean config file
                 if (File.Exists(configFilePath)) {
-
                     try {
                         File.Delete(configFilePath);
                     } catch (Exception e) {
@@ -145,36 +143,36 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// Ask operator for setting value, not to be confused with setSetting. Only called from setSetting.</summary>
+        /// Ask operator for setting value, not to be confused with SetSetting.</summary>
         /// <param name="key"> Requested key name.</param>
         /// <seealso cref="SetSetting(string, string)"> Where settings are made.</seealso>
-        private static void SetupSetting(string key)
+        public static void SetupSetting(string key, dynamic data = null)
         {
-            string[] values;
+            string[] choices;
             string value;
 
             switch (key) {
 
                 case "Check for Updates":
-                    values = new string[] { "true", "false" };
-                    value = SetupConfigYesNoMessagebox("Do you want to search for client updates?", values, "false");
+                    choices = ["true", "false"];
+                    value = SetupConfigYesNoMessagebox("Do you want to search for client updates?", choices, "false");
                     break;
 
                 case "Minimal install":
-                    values = new string[] { "true", "false" };
-                    value = SetupConfigYesNoMessagebox("Do you want to perform a minimal install of the drivers? This will make sure you don't install telemetry and miscellaneous addons, but requires either WinRAR or 7-Zip to be installed.", values, "false");
+                    choices = ["true", "false"];
+                    value = SetupConfigYesNoMessagebox("Do you want to perform a minimal install of the drivers? This will make sure you don't install telemetry and miscellaneous addons, but requires either WinRAR or 7-Zip to be installed.", choices, "false");
                     break;
 
                 case "Download location":
-                    var locationChooserForm = new LocationChooserForm();
-                    value = locationChooserForm.OpenLocationChooserForm();
+                    LocationChooserForm locForm = new();
+                    value = locForm.OpenForm();
                     break;
 
                 case "Driver type":
-                    TaskDialogButton[] buttons = new TaskDialogButton[] {
+                    TaskDialogButton[] buttons = [
                         new("Game Ready Driver (GRD)") { Tag = "grd" },
                         new("Studio Driver (SD)") { Tag = "sd" }
-                    };
+                    ];
 
                     var text = @"If you are a gamer who prioritizes day of launch support for the latest games, patches, and DLCs, choose Game Ready Drivers." +
                             Environment.NewLine + Environment.NewLine +
@@ -184,6 +182,11 @@ namespace TinyNvidiaUpdateChecker
 
 
                     value = ShowButtonDialog("Choose driver type", text, TaskDialogIcon.Information, buttons);
+                    break;
+
+                case "GPU ID":
+                    GPUSelectorForm gpuForm = new();
+                    value = gpuForm.OpenForm(data);
                     break;
 
                 default:
@@ -200,9 +203,8 @@ namespace TinyNvidiaUpdateChecker
         {
             if (!MainConsole.confirmDL) {
                 DialogResult dialogResult = MessageBox.Show(text, "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                return (dialogResult == DialogResult.Yes) ? values[0] : values[1];
-            }
-            else {
+                return dialogResult == DialogResult.Yes ? values[0] : values[1];
+            } else {
                 return defaultValue;
             }
         }

@@ -27,12 +27,15 @@ namespace TinyNvidiaUpdateChecker.Handlers
             }
 
             // If the cached metadata does not contain current GPU then force recache
-            try {
-                int gpuId = (int)gpuData[isNotebook ? "notebook" : "desktop"][gpuName];
-            } catch {
-                gpuDataRaw = GetCachedMetadata("gpu-data.json", true);
-                gpuData = JObject.Parse(gpuDataRaw);
+            if (gpuName != null) {
+                try {
+                    int gpuId = (int)gpuData[isNotebook ? "notebook" : "desktop"][gpuName];
+                } catch {
+                    gpuDataRaw = GetCachedMetadata("gpu-data.json", true);
+                    gpuData = JObject.Parse(gpuDataRaw);
+                }
             }
+
 
             // Validate OS JSON
             try {
@@ -47,7 +50,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
         private static string GetCachedMetadata(string fileName, bool forceRecache)
         {
-            string dataPath = Path.Combine(SettingManager.configDirectoryPath, fileName);
+            string dataPath = Path.Combine(ConfigurationHandler.configDirectoryPath, fileName);
 
             if (File.Exists(dataPath) && !forceRecache) {
                 DateTime lastUpdate = File.GetLastWriteTime(dataPath);
