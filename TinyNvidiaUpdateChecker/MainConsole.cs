@@ -503,9 +503,6 @@ namespace TinyNvidiaUpdateChecker
             // If no drivers were found then query PCI Lookup API for each GPU
             // TODO: PCI Lookup API requires seperate GPU name sanitation code which has not been developed yet
             // See issue #215
-            gpuList.Add(new GPU("GeForce RTX 3060", "320.20", "3312", "7543", true, false));
-            gpuList.Add(new GPU("GeForce RTX 4070", "400.20", "7341", "8235", true, true));
-            gpuList.Add(new GPU("GeForce RTX 2080", "700.20", "1334", "1236", true, true));
             Regex apiRegex = new(@"([A-Za-z0-9]+( [A-Za-z0-9]+)+)");
 
             foreach (var gpu in gpuList.Where(x => !x.isValidated)) {
@@ -554,10 +551,10 @@ namespace TinyNvidiaUpdateChecker
                     if (foundId != null) {
                         return (foundId.gpuId, osId, isDchDriver, foundId.isNotebook);
                     } else {
+                        // That GPU ID is not found in the system, prompt user to choose new GPU
                         ConfigurationHandler.SetupSetting("GPU ID", gpuList);
                         configGpuId = int.Parse(ConfigurationHandler.ReadSetting("GPU ID", gpuList));
 
-                        // Validate that the GPU ID is still active on this computer
                         foreach (var gpu in gpuList.Where(x => x.isValidated)) {
                             if (gpu.gpuId == configGpuId) {
                                 foundId = gpu; break;
