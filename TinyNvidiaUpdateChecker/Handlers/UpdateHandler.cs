@@ -70,12 +70,12 @@ namespace TinyNvidiaUpdateChecker.Handlers
                     Console.Write("Validating checksum . . . ");
 
                     // Validate checksum MD5
-                    string md5New = CalculateMD5(tempFile);
+                    string tempHash = CalculateMD5(tempFile);
 
-                    if (md5New != null) {
+                    if (tempHash != null) {
                         string serverHash = MainConsole.ReadURL(MainConsole.checksumUrl);
 
-                        if (md5New == serverHash) {
+                        if (tempHash == serverHash) {
                             Console.WriteLine("OK!");
                             Console.WriteLine();
 
@@ -88,6 +88,9 @@ namespace TinyNvidiaUpdateChecker.Handlers
                         } else {
                             Console.WriteLine("ERROR!");
                             Console.WriteLine("Checksum mismatch!");
+                            Console.WriteLine();
+                            Console.WriteLine($"Calculated Hash: {tempHash}");
+                            Console.WriteLine($"Server Hash: {serverHash}");
                         }
                     }
                 } else {
@@ -95,7 +98,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 }
             } catch { }
 
-            Console.WriteLine("Download failed");
+            Console.WriteLine("Update failed");
             Console.WriteLine();
             File.Move(currentExe + ".old", currentExe, true);
         }

@@ -15,6 +15,18 @@ Uses a NVIDIA API to get the latest driver, and there is support for the majorit
 - Internet connection
 - (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org) for minimal install feature
 
+### .NET Desktop Runtime 8
+
+If TNUC does not run or closes after a split second then you did not install this runtime properly.
+
+There is two ways you can install it. The easiest and first way is with a privileged command prompt.
+
+`winget install Microsoft.DotNet.DesktopRuntime.8 --architecture x86`
+
+Or
+
+[Navigate to the download page](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and select the __.NET Desktop Runtime x86__ download
+
 ## Installation
 
 1. [Download the latest version](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases)

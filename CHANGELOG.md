@@ -4,11 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.18.2] - 2024-06-07
 ### Added
-- Self updater
+- Self client updater
 - Optional configuration file entries for custom extract libary path, see issue #207
 - Fixed silent install not properly working, see issue #85
+
+### Fixed
+- GPUs with 'different' PNP IDs would cause crash, see issue #219
 
 ## [1.18.1] - 2024-06-07
 ### Fixed
