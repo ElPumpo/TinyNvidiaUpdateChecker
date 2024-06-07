@@ -148,10 +148,11 @@ namespace TinyNvidiaUpdateChecker
 
             Console.Write("Retrieving GPU information . . . ");
 
-            (int gpuId, int osId, int isDchDriver, bool isNotebook) = GetDriverMetadata();
+            (int gpuId, string gpuVersion, int osId, int isDchDriver, bool isNotebook) = GetDriverMetadata();
             var downloadInfo = GetDriverDownloadInfo(gpuId, osId, isDchDriver);
             var dlPrefix = ConfigurationHandler.ReadSetting("Download location");
 
+            OfflineGPUVersion = gpuVersion;
             downloadURL = downloadInfo["DownloadURL"].ToString();
             
             // Some GPUs, such as 970M (Win10) URLs (including release notes URL) are HTTP and not HTTPS
@@ -245,7 +246,6 @@ namespace TinyNvidiaUpdateChecker
 
             LogManager.Log("BYE!", LogManager.Level.INFO);
             callExit(0);
-	
         }
 
         /// <summary>
@@ -417,14 +417,13 @@ namespace TinyNvidiaUpdateChecker
         /// Finds the GPU, the version and queries up to date information
         /// </summary>
         ///
-        private static (int, int, int, bool) GetDriverMetadata()
+        private static (int, string, int, int, bool) GetDriverMetadata()
         {
             bool isNotebook = false;
             int osId = 0;
             int isDchDriver = 0;
-            string gpuName = "";
             var nameRegex = new Regex(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
-            List<int> notebookChassisTypes = new() { 1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32 };
+            List<int> notebookChassisTypes = [1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32];
             var gpuList = new List<GPU> { };
             (JObject gpuData, OSClassRoot osData) = MetadataHandler.RetrieveMetadata(null, false);
 
@@ -465,7 +464,6 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.WriteLine("Could not find a supported driver by your operating system.");
                 Console.WriteLine();
-                Console.WriteLine($"gpuName:   {gpuName}");
                 Console.WriteLine($"osVersion: {osVersion}");
                 Console.WriteLine($"osBit:     {osBit}");
                 callExit(1);
@@ -493,13 +491,18 @@ namespace TinyNvidiaUpdateChecker
                 string deviceID = split[1][..4];
 
                 if (Regex.IsMatch(rawName, @"^NVIDIA") && nameRegex.IsMatch(rawName)) {
-                    gpuName = nameRegex.Match(rawName).Value.Trim().Replace("Super", "SUPER");
-                    OfflineGPUVersion = rawVersion.Substring(rawVersion.Length - 5, 5).Insert(3, ".");
-                    gpuList.Add(new GPU(gpuName, OfflineGPUVersion, vendorID, deviceID, true, isNotebook));
-                } else {
+                    string gpuName = nameRegex.Match(rawName).Value.Trim().Replace("Super", "SUPER");
+                    string cleanVersion = rawVersion.Substring(rawVersion.Length - 5, 5).Insert(3, ".");
+
+                    gpuList.Add(new GPU(gpuName, cleanVersion, vendorID, deviceID, true, isNotebook));
+
+                // Name does not match but the vendor is NVIDIA, use API to lookup it's name
+                } else if (vendorID == "10de") {
                     gpuList.Add(new GPU(rawName, rawVersion, vendorID, deviceID, false, isNotebook));
                 }
             }
+
+            gpuSearch.Dispose();
 
             // If no drivers were found then query PCI Lookup API for each GPU
             // TODO: PCI Lookup API requires seperate GPU name sanitation code which has not been developed yet
@@ -511,7 +514,7 @@ namespace TinyNvidiaUpdateChecker
                 string rawData = ReadURL(url);
                 PCILookupClassRoot apiResponse = JsonConvert.DeserializeObject<PCILookupClassRoot>(rawData);
 
-                if (apiResponse.Count > 0) {
+                if (apiResponse != null && apiResponse.Count > 0) {
                     string rawName = apiResponse[0].desc;
                     string rawVendorName = apiResponse[0].venDesc.ToUpper();
                     string rawVersion = gpu.version;
@@ -521,8 +524,6 @@ namespace TinyNvidiaUpdateChecker
                         gpu.version = rawVersion.Substring(rawVersion.Length - 5, 5).Insert(3, ".");
                         gpu.isValidated = true;
                     }
-                } else {
-                    //Console.WriteLine($"GPU {gpu.name} API lookup fail");
                 }
             }
 
@@ -539,49 +540,43 @@ namespace TinyNvidiaUpdateChecker
 
             if (gpuCount > 0) {
                 if (gpuCount > 1) {
+                    // Validate that the GPU ID is still active on this system
                     int configGpuId = int.Parse(ConfigurationHandler.ReadSetting("GPU ID", gpuList));
-                    GPU foundId = null;
 
-                    // Validate that the GPU ID is still active on this computer
                     foreach (var gpu in gpuList.Where(x => x.isValidated)) {
                         if (gpu.gpuId == configGpuId) {
-                            foundId = gpu; break;
+                            return (gpu.gpuId, gpu.version, osId, isDchDriver, gpu.isNotebook);
                         }
                     }
 
-                    if (foundId != null) {
-                        return (foundId.gpuId, osId, isDchDriver, foundId.isNotebook);
-                    } else {
-                        // That GPU ID is not found in the system, prompt user to choose new GPU
-                        ConfigurationHandler.SetupSetting("GPU ID", gpuList);
-                        configGpuId = int.Parse(ConfigurationHandler.ReadSetting("GPU ID", gpuList));
+                    // GPU ID is no longer active on this system, prompt user to choose new GPU
+                    ConfigurationHandler.SetupSetting("GPU ID", gpuList);
+                    configGpuId = int.Parse(ConfigurationHandler.ReadSetting("GPU ID", gpuList));
 
-                        foreach (var gpu in gpuList.Where(x => x.isValidated)) {
-                            if (gpu.gpuId == configGpuId) {
-                                foundId = gpu; break;
-                            }
+                    foreach (var gpu in gpuList.Where(x => x.isValidated)) {
+                        if (gpu.gpuId == configGpuId) {
+                            return (gpu.gpuId, gpu.version, osId, isDchDriver, gpu.isNotebook);
                         }
-
-                        return (foundId.gpuId, osId, isDchDriver, foundId.isNotebook);
                     }
                 } else {
-                    GPU gpu = gpuList.First();
-                    return (gpu.gpuId, osId, isDchDriver, gpu.isNotebook);
+                    GPU gpu = gpuList.Where(x => x.isValidated).First();
+                    return (gpu.gpuId, gpu.version, osId, isDchDriver, gpu.isNotebook);
                 }
-            } else {
-                Console.Write("ERROR!");
-                Console.WriteLine();
-                Console.WriteLine("GPU metadata for your card does not exist, or could not be validated! Please file an issue on the GitHub project page and include the following information:");
-                Console.WriteLine();
-
-                foreach (var gpu in gpuList) {
-                    Console.WriteLine($"GPU Name: {gpu.name} | VendorId: {gpu.vendorId} | DeviceId: {gpu.deviceId} | IsNotebook: {gpu.isNotebook}");
-                }
-
-                callExit(1);
-                return (0, 0, 0, false);
             }
+
+            Console.Write("ERROR!");
+            Console.WriteLine();
+            Console.WriteLine("GPU metadata for your card does not exist, or could not be validated! Please file an issue on the GitHub project page and include the following information:");
+            Console.WriteLine();
+
+            foreach (var gpu in gpuList) {
+                Console.WriteLine($"GPU Name: '{gpu.name}' | VendorId: {gpu.vendorId} | DeviceId: {gpu.deviceId} | IsNotebook: {gpu.isNotebook}");
+            }
+
+            callExit(1);
+            return (0, null, 0, 0, false);
         }
+
         private static JObject GetDriverDownloadInfo(int gpuId, int osId, int isDchDriver) {
             try {
                 var ajaxDriverLink = "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup";
@@ -658,7 +653,6 @@ namespace TinyNvidiaUpdateChecker
             }
 	
             callExit(1);
-
             return null;
         }
 

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 [Unreleased]
 ### Fixed
+- Error on retrieving GPU information, caused by misunderstanding PNP Device ID, its length is not a fixed value. See issue #217
+- Systems with multiple GPUs could not search for updates at all, see issue #218
+- Empty response from PCI Lookup API causing crash
+- Minor code mistakes
 - Missing icon for prompts
 
 ## [1.18.0] - 2024-06-06
