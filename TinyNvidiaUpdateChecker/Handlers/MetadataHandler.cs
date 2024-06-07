@@ -11,47 +11,56 @@ namespace TinyNvidiaUpdateChecker.Handlers
         /// Cache max duration in days
         /// </summary>
         static int cacheDuration = 60;
-        public static (JObject, OSClassRoot) RetrieveMetadata(string gpuName, bool isNotebook)
+
+        /// <summary>
+        /// Cached GPU Data
+        /// </summary>
+        static JObject cachedGPUData;
+
+        /// <summary>
+        /// Cached OS Data
+        /// </summary>
+        static OSClassRoot cachedOSData;
+
+        public static void PrepareCache()
         {
-            string gpuDataRaw = GetCachedMetadata("gpu-data.json", false);
-            string osDataRaw = GetCachedMetadata("os-data.json", false);
-            JObject gpuData;
-            OSClassRoot osData;
+            var gpuData = GetCachedMetadata("gpu-data.json", false);
+            var osData = GetCachedMetadata("os-data.json", false);
 
-            // Validate GPU JSON
+            // Validate GPU Data JSON
             try {
-                gpuData = JObject.Parse(gpuDataRaw);
+                cachedGPUData = JObject.Parse(gpuData);
             } catch {
-                gpuDataRaw = GetCachedMetadata("gpu-data.json", true);
-                gpuData = JObject.Parse(gpuDataRaw);
+                gpuData = GetCachedMetadata("gpu-data.json", true);
+                cachedGPUData = JObject.Parse(gpuData);
             }
-
-            // If the cached metadata does not contain current GPU then force recache
-            if (gpuName != null) {
-                try {
-                    int gpuId = (int)gpuData[isNotebook ? "notebook" : "desktop"][gpuName];
-                } catch {
-                    gpuDataRaw = GetCachedMetadata("gpu-data.json", true);
-                    gpuData = JObject.Parse(gpuDataRaw);
-                }
-            }
-
 
             // Validate OS JSON
             try {
-                osData = JsonConvert.DeserializeObject<OSClassRoot>(osDataRaw);
+                cachedOSData = JsonConvert.DeserializeObject<OSClassRoot>(osData);
             } catch {
-                osDataRaw = GetCachedMetadata("os-data.json", true);
-                osData = JsonConvert.DeserializeObject<OSClassRoot>(osDataRaw);
+                osData = GetCachedMetadata("os-data.json", true);
+                cachedOSData = JsonConvert.DeserializeObject<OSClassRoot>(osData);
             }
-
-            return (gpuData, osData);
         }
 
-        private static string GetCachedMetadata(string fileName, bool forceRecache)
+        public static (bool, int) GetGpuIdFromName(string name, bool isNotebook)
+        {
+            try {
+                int gpuId = (int)cachedGPUData[isNotebook ? "notebook" : "desktop"][name];
+                return (true, gpuId);
+            } catch {
+                return (false, 0);
+            }
+            
+        }
+        public static OSClassRoot RetrieveOSData() { return cachedOSData; }
+
+        private static dynamic GetCachedMetadata(string fileName, bool forceRecache)
         {
             string dataPath = Path.Combine(ConfigurationHandler.configDirectoryPath, fileName);
 
+            // If the cache exists and is not outdated, then it can be used
             if (File.Exists(dataPath) && !forceRecache) {
                 DateTime lastUpdate = File.GetLastWriteTime(dataPath);
                 var days = (DateTime.Now - lastUpdate).TotalDays;
@@ -60,11 +69,12 @@ namespace TinyNvidiaUpdateChecker.Handlers
                     try {
                         return File.ReadAllText(dataPath);
                     } catch {
+
                     }
                 }
             }
 
-            // Delete corrupt file if it exists
+            // Delete corrupt/old file if it exists
             if (File.Exists(dataPath)) {
                 try {
                     File.Delete(dataPath);
@@ -73,7 +83,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 }
             }
 
-            // Cache the file
+            // Download the file and cache it
             string rawData = MainConsole.ReadURL($"{MainConsole.gpuMetadataRepo}/{fileName}");
 
             try {

@@ -14,7 +14,7 @@ public class GPU(string name, string version, string vendorId, string deviceId, 
     public string version { get; set; } = version;
     public string vendorId { get; set; } = vendorId;
     public string deviceId { get; set; } = deviceId;
-    public int gpuId { get; set; } = 0;
+    public int id { get; set; } = 0;
     public bool isValidated { get; set; } = isValidated;
     public bool isNotebook { get; set; } = isNotebook;
     public bool isDch { get; set; } = isDch;

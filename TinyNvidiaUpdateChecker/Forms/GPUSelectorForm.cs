@@ -28,7 +28,7 @@ namespace TinyNvidiaUpdateChecker
         {
             foreach (var gpu in gpuList.Where(x => x.isValidated)) {
                 int index = comboBox.Items.Add(gpu.name);
-                validatedList.Add(index, gpu.gpuId);
+                validatedList.Add(index, gpu.id);
             }
         }
 

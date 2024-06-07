@@ -148,8 +148,9 @@ namespace TinyNvidiaUpdateChecker
 
             Console.Write("Retrieving GPU information . . . ");
 
+            MetadataHandler.PrepareCache();
             (GPU gpu, int osId) = GetDriverMetadata();
-            JObject downloadInfo = GetDriverDownloadInfo(gpu.gpuId, osId, gpu.isDch);
+            JObject downloadInfo = GetDriverDownloadInfo(gpu.id, osId, gpu.isDch);
             string dlPrefix = ConfigurationHandler.ReadSetting("Download location");
 
             OfflineGPUVersion = gpu.version;
@@ -212,7 +213,7 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
 
             if (debug) {
-                Console.WriteLine($"gpuId:       {gpu.gpuId}");
+                Console.WriteLine($"gpuId:       {gpu.id}");
                 Console.WriteLine($"osId:        {osId}");
                 Console.WriteLine($"isDchDriver: {gpu.isDch}");
                 Console.WriteLine($"downloadURL: {downloadURL}");
@@ -425,7 +426,7 @@ namespace TinyNvidiaUpdateChecker
             var nameRegex = new Regex(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
             List<int> notebookChassisTypes = [1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32];
             var gpuList = new List<GPU> { };
-            (JObject gpuData, OSClassRoot osData) = MetadataHandler.RetrieveMetadata(null, false);
+            OSClassRoot osData = MetadataHandler.RetrieveOSData();
 
             // Check for notebook
             // TODO rewrite and identify GPUs properly
@@ -528,10 +529,11 @@ namespace TinyNvidiaUpdateChecker
             }
 
             foreach (var gpu in gpuList.Where(x => x.isValidated)) {
-                try {
-                    int gpuId = (int)gpuData[gpu.isNotebook ? "notebook" : "desktop"][gpu.name];
-                    gpu.gpuId = gpuId;
-                } catch {
+                (bool success, int gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, gpu.isNotebook);
+
+                if (success) {
+                    gpu.id = gpuId;
+                } else {
                     gpu.isValidated = false;
                 }
             }
@@ -544,7 +546,7 @@ namespace TinyNvidiaUpdateChecker
                     int configGpuId = int.Parse(ConfigurationHandler.ReadSetting("GPU ID", gpuList));
 
                     foreach (var gpu in gpuList.Where(x => x.isValidated)) {
-                        if (gpu.gpuId == configGpuId) {
+                        if (gpu.id == configGpuId) {
                             return (gpu, osId);
                         }
                     }
@@ -554,7 +556,7 @@ namespace TinyNvidiaUpdateChecker
                     configGpuId = int.Parse(ConfigurationHandler.ReadSetting("GPU ID", gpuList));
 
                     foreach (var gpu in gpuList.Where(x => x.isValidated)) {
-                        if (gpu.gpuId == configGpuId) {
+                        if (gpu.id == configGpuId) {
                             return (gpu, osId);
                         }
                     }
