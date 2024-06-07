@@ -148,11 +148,11 @@ namespace TinyNvidiaUpdateChecker
 
             Console.Write("Retrieving GPU information . . . ");
 
-            (int gpuId, string gpuVersion, int osId, int isDchDriver, bool isNotebook) = GetDriverMetadata();
-            var downloadInfo = GetDriverDownloadInfo(gpuId, osId, isDchDriver);
-            var dlPrefix = ConfigurationHandler.ReadSetting("Download location");
+            (GPU gpu, int osId) = GetDriverMetadata();
+            JObject downloadInfo = GetDriverDownloadInfo(gpu.gpuId, osId, gpu.isDch);
+            string dlPrefix = ConfigurationHandler.ReadSetting("Download location");
 
-            OfflineGPUVersion = gpuVersion;
+            OfflineGPUVersion = gpu.version;
             downloadURL = downloadInfo["DownloadURL"].ToString();
             
             // Some GPUs, such as 970M (Win10) URLs (including release notes URL) are HTTP and not HTTPS
@@ -212,9 +212,9 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
 
             if (debug) {
-                Console.WriteLine($"gpuId:       {gpuId}");
+                Console.WriteLine($"gpuId:       {gpu.gpuId}");
                 Console.WriteLine($"osId:        {osId}");
-                Console.WriteLine($"isDchDriver: {isDchDriver}");
+                Console.WriteLine($"isDchDriver: {gpu.isDch}");
                 Console.WriteLine($"downloadURL: {downloadURL}");
                 Console.WriteLine($"pdfURL:      {pdfURL}");
                 Console.WriteLine($"releaseDate: {releaseDate.ToShortDateString()}");
@@ -417,11 +417,11 @@ namespace TinyNvidiaUpdateChecker
         /// Finds the GPU, the version and queries up to date information
         /// </summary>
         ///
-        private static (int, string, int, int, bool) GetDriverMetadata()
+        private static (GPU, int) GetDriverMetadata()
         {
             bool isNotebook = false;
+            bool isDchDriver = false; // TODO rewrite for each GPU
             int osId = 0;
-            int isDchDriver = 0;
             var nameRegex = new Regex(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
             List<int> notebookChassisTypes = [1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32];
             var gpuList = new List<GPU> { };
@@ -473,7 +473,7 @@ namespace TinyNvidiaUpdateChecker
             // TODO do we know if this applies to every GPU?
             using (var regKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\nvlddmkm", false)) {
                 if (regKey != null && regKey.GetValue("DCHUVen") != null) {
-                    isDchDriver = 1;
+                    isDchDriver = true;
                 }
             }
 
@@ -494,11 +494,11 @@ namespace TinyNvidiaUpdateChecker
                     string gpuName = nameRegex.Match(rawName).Value.Trim().Replace("Super", "SUPER");
                     string cleanVersion = rawVersion.Substring(rawVersion.Length - 5, 5).Insert(3, ".");
 
-                    gpuList.Add(new GPU(gpuName, cleanVersion, vendorID, deviceID, true, isNotebook));
+                    gpuList.Add(new GPU(gpuName, cleanVersion, vendorID, deviceID, true, isNotebook, isDchDriver));
 
                 // Name does not match but the vendor is NVIDIA, use API to lookup it's name
                 } else if (vendorID == "10de") {
-                    gpuList.Add(new GPU(rawName, rawVersion, vendorID, deviceID, false, isNotebook));
+                    gpuList.Add(new GPU(rawName, rawVersion, vendorID, deviceID, false, isNotebook, isDchDriver));
                 }
             }
 
@@ -545,7 +545,7 @@ namespace TinyNvidiaUpdateChecker
 
                     foreach (var gpu in gpuList.Where(x => x.isValidated)) {
                         if (gpu.gpuId == configGpuId) {
-                            return (gpu.gpuId, gpu.version, osId, isDchDriver, gpu.isNotebook);
+                            return (gpu, osId);
                         }
                     }
 
@@ -555,12 +555,12 @@ namespace TinyNvidiaUpdateChecker
 
                     foreach (var gpu in gpuList.Where(x => x.isValidated)) {
                         if (gpu.gpuId == configGpuId) {
-                            return (gpu.gpuId, gpu.version, osId, isDchDriver, gpu.isNotebook);
+                            return (gpu, osId);
                         }
                     }
                 } else {
                     GPU gpu = gpuList.Where(x => x.isValidated).First();
-                    return (gpu.gpuId, gpu.version, osId, isDchDriver, gpu.isNotebook);
+                    return (gpu, osId);
                 }
             }
 
@@ -574,14 +574,13 @@ namespace TinyNvidiaUpdateChecker
             }
 
             callExit(1);
-            return (0, null, 0, 0, false);
+            return (null, 0);
         }
 
-        private static JObject GetDriverDownloadInfo(int gpuId, int osId, int isDchDriver) {
+        private static JObject GetDriverDownloadInfo(int gpuId, int osId, bool isDchDriver) {
             try {
                 var ajaxDriverLink = "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup";
-                ajaxDriverLink += $"&pfid={gpuId}&osID={osId}&dch={isDchDriver}";
-
+                ajaxDriverLink += $"&pfid={gpuId}&osID={osId}&dch={(isDchDriver ? 1 : 0)}";
                 // Driver type (upCRD)
                 // - 0 is Game Ready Driver (GRD)
                 // - 1 is Studio Driver (SD)
@@ -595,7 +594,7 @@ namespace TinyNvidiaUpdateChecker
 
                     // If the operating system has support for DCH drivers, and DCH drivers are currently not installed, then serach for DCH drivers too.
                     // Non-DCH drivers are discontinued. Not searching for DCH drivers will result in users having outdated graphics drivers, and we don't want that.
-                    if (Environment.Version.Build > 10240 && isDchDriver == 0) {
+                    if (Environment.Version.Build > 10240 && !isDchDriver) {
                         ajaxDriverLink = ajaxDriverLink.Substring(0, ajaxDriverLink.Length - 1) + "1";
                         JObject driverObjDCH = JObject.Parse(ReadURL(ajaxDriverLink));
 

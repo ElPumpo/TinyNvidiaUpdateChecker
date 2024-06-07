@@ -8,7 +8,7 @@ public class OSClass
     public int id { get; set; }
 }
 
-public class GPU(string name, string version, string vendorId, string deviceId, bool isValidated, bool isNotebook)
+public class GPU(string name, string version, string vendorId, string deviceId, bool isValidated, bool isNotebook, bool isDch)
 {
     public string name { get; set; } = name;
     public string version { get; set; } = version;
@@ -17,6 +17,7 @@ public class GPU(string name, string version, string vendorId, string deviceId, 
     public int gpuId { get; set; } = 0;
     public bool isValidated { get; set; } = isValidated;
     public bool isNotebook { get; set; } = isNotebook;
+    public bool isDch { get; set; } = isDch;
 }
 
 public class OSClassRoot : List<OSClass> { }
