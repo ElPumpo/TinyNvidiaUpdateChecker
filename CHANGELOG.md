@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+[Unreleased]
+### Fixed
+- Error on retrieving GPU information, caused by not properly understanding PNP Device ID. See issue #217
+
 ## [1.18.0] - 2024-06-06
 ### Added
 - Multiple GPU support, when more than one GPU is detected a dialog is shown, allowing users to choose the proper GPU of their liking. See issue #177

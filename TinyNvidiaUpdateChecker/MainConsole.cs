@@ -488,11 +488,9 @@ namespace TinyNvidiaUpdateChecker
 
                 // Vendor and Device ID
                 string pnp = gpu["PNPDeviceID"].ToString();
-                pnp = pnp[8..];
-                pnp = pnp[..13];
-                string[] ids = pnp.Split("&DEV_");
-                string vendorID = ids[0];
-                string deviceID = ids[1];
+                string[] split = pnp.Split("&DEV_");
+                string vendorID = split[0][^4..];
+                string deviceID = split[1][..4];
 
                 if (Regex.IsMatch(rawName, @"^NVIDIA") && nameRegex.IsMatch(rawName)) {
                     gpuName = nameRegex.Match(rawName).Value.Trim().Replace("Super", "SUPER");
@@ -524,7 +522,7 @@ namespace TinyNvidiaUpdateChecker
                         gpu.isValidated = true;
                     }
                 } else {
-                    Console.WriteLine($"GPU {gpu.name} API lookup fail");
+                    //Console.WriteLine($"GPU {gpu.name} API lookup fail");
                 }
             }
 
