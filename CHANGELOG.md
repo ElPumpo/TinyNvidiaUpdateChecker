@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-[Unreleased]
+## [1.18.1] - 2024-06-07
 ### Fixed
 - Error on retrieving GPU information, caused by misunderstanding PNP Device ID, its length is not a fixed value. See issue #217
 - Systems with multiple GPUs could not search for updates at all, see issue #218
