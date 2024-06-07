@@ -449,22 +449,25 @@ namespace TinyNvidiaUpdateChecker
             foreach (ManagementObject gpu in gpuSearch) {
                 string rawName = gpu["Name"].ToString();
                 string rawVersion = gpu["DriverVersion"].ToString().Replace(".", string.Empty);
-
-                // Vendor and Device ID
                 string pnp = gpu["PNPDeviceID"].ToString();
-                string[] split = pnp.Split("&DEV_");
-                string vendorID = split[0][^4..];
-                string deviceID = split[1][..4];
 
-                if (Regex.IsMatch(rawName, @"^NVIDIA") && nameRegex.IsMatch(rawName)) {
-                    string gpuName = nameRegex.Match(rawName).Value.Trim().Replace("Super", "SUPER");
-                    string cleanVersion = rawVersion.Substring(rawVersion.Length - 5, 5).Insert(3, ".");
+                // Is it a GPU?
+                if (pnp.Contains("&DEV_")) {
+                    string[] split = pnp.Split("&DEV_");
+                    string vendorID = split[0][^4..];
+                    string deviceID = split[1][..4];
 
-                    gpuList.Add(new GPU(gpuName, cleanVersion, vendorID, deviceID, true, isNotebook, isDchDriver));
+                    // Are drivers installed for this GPU? If not Windows reports a generic GPU name which is not sufficient
+                    if (Regex.IsMatch(rawName, @"^NVIDIA") && nameRegex.IsMatch(rawName)) {
+                        string gpuName = nameRegex.Match(rawName).Value.Trim().Replace("Super", "SUPER");
+                        string cleanVersion = rawVersion.Substring(rawVersion.Length - 5, 5).Insert(3, ".");
 
-                // Name does not match but the vendor is NVIDIA, use API to lookup it's name
-                } else if (vendorID == "10de") {
-                    gpuList.Add(new GPU(rawName, rawVersion, vendorID, deviceID, false, isNotebook, isDchDriver));
+                        gpuList.Add(new GPU(gpuName, cleanVersion, vendorID, deviceID, true, isNotebook, isDchDriver));
+
+                    // Name does not match but the vendor is NVIDIA, use API to lookup its name
+                    } else if (vendorID == "10de") {
+                        gpuList.Add(new GPU(rawName, rawVersion, vendorID, deviceID, false, isNotebook, isDchDriver));
+                    }
                 }
             }
 
@@ -482,10 +485,9 @@ namespace TinyNvidiaUpdateChecker
 
                 if (apiResponse != null && apiResponse.Count > 0) {
                     string rawName = apiResponse[0].desc;
-                    string rawVendorName = apiResponse[0].venDesc.ToUpper();
                     string rawVersion = gpu.version;
 
-                    if (rawVendorName.Contains("NVIDIA") && apiRegex.IsMatch(rawName)) {
+                    if (apiRegex.IsMatch(rawName)) {
                         gpu.name = apiRegex.Match(rawName).Value.Trim();
                         gpu.version = rawVersion.Substring(rawVersion.Length - 5, 5).Insert(3, ".");
                         gpu.isValidated = true;
