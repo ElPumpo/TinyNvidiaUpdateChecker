@@ -30,19 +30,24 @@ namespace TinyNvidiaUpdateChecker
         public readonly static string gpuMetadataRepo = "https://github.com/ZenitH-AT/nvidia-data/raw/main";
 
         /// <summary>
+        /// Server Checksum URL
+        /// </summary>
+        public readonly static string checksumUrl = "https://github.com/ElPumpo/TinyNvidiaUpdateChecker/raw/master/checksum";
+
+        /// <summary>
         /// URL for client update
         /// </summary>
-        private readonly static string updateUrl = "https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/latest";
+        public readonly static string updateUrl = "https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/latest";
 
         /// <summary>
         /// Current client version
         /// </summary>
-        private static string offlineVer = Application.ProductVersion;
+        public static string offlineVer = Application.ProductVersion;
 
         /// <summary>
         /// Remote client version
         /// </summary>
-        private static string onlineVer;
+        public static string onlineVer;
 
         /// <summary>
         /// Current GPU driver version
@@ -143,7 +148,7 @@ namespace TinyNvidiaUpdateChecker
             CheckDependencies();
 
             if (ConfigurationHandler.ReadSettingBool("Check for Updates")) {
-                SearchForUpdates();
+                UpdateHandler.SearchForUpdate(args);
             }
 
             Console.Write("Retrieving GPU information . . . ");
@@ -250,51 +255,6 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// Search for client updates
-        /// </summary>
-        private static void SearchForUpdates()
-        {
-            Console.Write("Searching for Updates . . . ");
-
-            try {
-                using var request = new HttpRequestMessage(HttpMethod.Head, updateUrl);
-                using var response = httpClient.Send(request);
-                response.EnsureSuccessStatusCode();
-
-                var responseUri = response.RequestMessage.RequestUri.ToString();
-                onlineVer = responseUri.Substring(responseUri.LastIndexOf("/") + 1).Substring(1);
-
-                Console.Write("OK!");
-                Console.WriteLine();
-            } catch (Exception ex) {
-                onlineVer = "0.0.0";
-                Console.Write("ERROR!");
-                LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
-                Console.WriteLine();
-                Console.WriteLine(ex.ToString());
-            }
-
-            if (new Version(onlineVer).CompareTo(new Version(offlineVer)) > 0) {
-                Console.WriteLine("There is a update available for TinyNvidiaUpdateChecker!");
-
-                if(!confirmDL && !dryRun) {
-                    DialogResult dialog = MessageBox.Show("There is a new client update available to download, do you want to be navigate to the official GitHub download section?", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                    if (dialog == DialogResult.Yes) {
-                        Process.Start(new ProcessStartInfo(updateUrl[..^7]) { UseShellExecute = true });
-                    }
-                }
-            }
-
-            if (debug) {
-                Console.WriteLine($"offlineVer: {offlineVer}");
-                Console.WriteLine($"onlineVer:  {onlineVer}");
-            }
-
-            Console.WriteLine();
-        }
-
-        /// <summary>
         /// Handles the command line arguments </summary>
         /// <param name="args"> Command line arguments in. Turned out that Environment.GetCommandLineArgs() wasn't any good.</param>
         private static void CheckArgs(string[] args)
@@ -364,6 +324,11 @@ namespace TinyNvidiaUpdateChecker
                 else if (arg.StartsWith("--config-override=")) {
                     var locationArg = arg.Substring(18);
                     overrideConfigFileLocation = locationArg;
+                }
+
+                // delete old file
+                else if (arg.ToLower() == "--cleanup-update") {
+                    File.Delete(Path.GetFileName(Environment.ProcessPath) + ".old");
                 }
 
                 // help menu
@@ -873,9 +838,15 @@ namespace TinyNvidiaUpdateChecker
         /// <param name="url">URL path for download</param>
         /// <param name="path">Absolute file path</param>
         /// <returns></returns>
-        private static Exception HandleDownload(string url, string path)
+        public static Exception HandleDownload(string url, string path)
         {
             Exception ex = null;
+
+            // if a partial file download exists, delete it now
+            if (File.Exists(path)) {
+                File.Delete(path);
+            }
+
             path += ".part"; // add 'partial' to file name making it easier to identify as an incomplete download
 
             // if a partial file download exists, delete it now

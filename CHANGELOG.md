@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Self updater
 - Optional configuration file entries for custom extract libary path, see issue #207
 
 ## [1.18.1] - 2024-06-07
