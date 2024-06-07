@@ -75,6 +75,7 @@
             Controls.Add(ConfirmBtn);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.Execut‌​ablePath);
             Name = "LocationChooserForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "TinyNvidiaUpdateChecker - Choose Download Location";

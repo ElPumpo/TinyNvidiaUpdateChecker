@@ -80,11 +80,11 @@
             Controls.Add(richTextBox1);
             Controls.Add(ConfirmBtn);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.Execut‌​ablePath);
             Name = "GPUSelectorForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            Text = "TinyNvidiaUpdateChecker - Choose Download Location";
+            Text = "TinyNvidiaUpdateChecker - Choose GPU";
             Load += GPUSelectorForm_Load;
             ResumeLayout(false);
         }
