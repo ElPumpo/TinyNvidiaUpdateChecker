@@ -688,7 +688,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (ConfigurationHandler.ReadSettingBool("Minimal install")) {
                 if (LibaryHandler.EvaluateLibary() == null) {
-                    Console.WriteLine("Doesn't seem like either WinRAR or 7-Zip is installed! We are disabling the minimal install feature for you.");
+                    Console.WriteLine("Doesn't seem like neither WinRAR or 7-Zip is installed! We are disabling the minimal install feature for you.");
                     ConfigurationHandler.SetSetting("Minimal install", "false");
                 }
             }

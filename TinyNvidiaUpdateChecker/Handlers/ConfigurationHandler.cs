@@ -76,7 +76,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
         /// <summary>
         /// Reads setting from configuration file, and adds if requested key / value is missing - returns a string.</summary>
         /// <param name="key"> Config key to read value from.</param>
-        public static string ReadSetting(string key, dynamic data = null)
+        public static string ReadSetting(string key, dynamic data = null, bool setupIfNotFound = true)
         {
             string result = null;
 
@@ -85,7 +85,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
                 if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
-                } else {
+                } else if (setupIfNotFound) {
                     // error reading key
                     Console.WriteLine();
                     Console.WriteLine($"Error reading configuration file, attempting to repair key '{key}' . . .");

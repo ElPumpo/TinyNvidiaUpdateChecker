@@ -11,8 +11,8 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
         private static bool is64 = Environment.Is64BitOperatingSystem;
 
-        static List<LibaryRegistryPath> libaryRegistryList = new()
-            {
+        static List<LibaryRegistryPath> libaryRegistryList =
+            [
                 /* WinRAR */
 
                 new(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", "InstallLocation", Libary.WINRAR),
@@ -31,11 +31,11 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
                 // MSI x86 intaller on amd64 system
                 new (Registry.LocalMachine, @"SOFTWARE\WOW6432Node\7-Zip", "Path", Libary.SEVENZIP),
-            };
+            ];
 
 
-        static List<LibaryPath> libaryPathList = new()
-            {
+        static List<LibaryPath> libaryPathList =
+            [
                 /* 7-Zip */
 
                 // scoop in user profile
@@ -56,9 +56,12 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 // x86 on amd64 system
                 new([Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "7-Zip"], Libary.SEVENZIP),
                 
-                // debug directory
-                new([Path.GetFullPath("7-Zip")], Libary.SEVENZIP)
-            };
+                // custom path defined in config file
+                new([ConfigurationHandler.ReadSetting("Custom 7-ZIP Libary Path", null, false)], Libary.SEVENZIP),
+
+                /* WinRAR */
+                new([ConfigurationHandler.ReadSetting("Custom WinRAR Libary Path", null, false)], Libary.WINRAR)
+            ];
 
         public enum Libary
         {
