@@ -6,7 +6,7 @@ TinyNvidiaUpdateChecker (TNUC for short) is a lightweight tool that checks for N
 
 It has a minimal install feature that extracts the GPU drivers from the otherwise bloated bundle which contains GeForce Experience, 3d drivers and other components. Nothing except the required drivers will be installed.
 
-Uses a NVIDIA API to get the latest driver, and there is support for the majority of their GPUs. Thanks to [ZenitH-AT](https://github.com/ZenitH-AT) for their research and metadata repo used by this project.
+Uses a NVIDIA API to get the latest driver, and there is support for the majority of their GPUs. Thanks to [ZenitH-AT](https://github.com/ZenitH-AT) for his research.
 
 ## Dependencies
 
@@ -14,18 +14,6 @@ Uses a NVIDIA API to get the latest driver, and there is support for the majorit
 - [.NET Desktop Runtime 8 x86](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - Internet connection
 - (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org) for minimal install feature
-
-### .NET Desktop Runtime 8
-
-If a prompt comes up to install .NET Runtime 8, then do not worry.
-
-There is two ways you can install it. The easiest and first way is with a privileged command prompt.
-
-`winget install Microsoft.DotNet.DesktopRuntime.8 --architecture x86`
-
-Or
-
-[Navigate to the download page](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and select the __.NET Desktop Runtime x86__ download
 
 ## Installation
 

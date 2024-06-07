@@ -462,7 +462,7 @@ namespace TinyNvidiaUpdateChecker
             if (osId == 0) {
                 Console.Write("ERROR!");
                 Console.WriteLine();
-                Console.WriteLine("Could not find a supported driver by your operating system.");
+                Console.WriteLine("No NVIDIA driver was found for this operating system configuration. Make sure TNUC is updated.");
                 Console.WriteLine();
                 Console.WriteLine($"osVersion: {osVersion}");
                 Console.WriteLine($"osBit:     {osBit}");
