@@ -743,7 +743,7 @@ namespace TinyNvidiaUpdateChecker
                     MakeInstaller(false);
                 }
             } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLINSTALL) {
-                DownloadDriverQuiet(false);
+                DownloadDriverQuiet(confirmDL);
             }
         }
 
@@ -796,7 +796,9 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            if (ConfigurationHandler.ReadSettingBool("Minimal install")) {
+            bool minimalInstaller = ConfigurationHandler.ReadSettingBool("Minimal install");
+
+            if (minimalInstaller) {
                 MakeInstaller(minimized);
             }
 
@@ -804,13 +806,14 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine();
                 Console.Write("Executing driver installer . . . ");
 
-                var minimalInstaller = ConfigurationHandler.ReadSettingBool("Minimal install");
-                var arguments = minimized ? "/s /noreboot" : "/nosplash";
-                var fileName = minimalInstaller ? FULL_PATH_DIRECTORY + "setup.exe" : FULL_PATH_DRIVER;
+                string fileName = minimalInstaller ? FULL_PATH_DIRECTORY + "setup.exe" : FULL_PATH_DRIVER;
 
                 ProcessStartInfo startInfo = new(fileName);
                 startInfo.UseShellExecute = true;
-                startInfo.Arguments = arguments;
+
+                if (minimized) {
+                    startInfo.Arguments = "/s";
+                }
 
                 Process.Start(startInfo).WaitForExit();
                 Console.Write("OK!");

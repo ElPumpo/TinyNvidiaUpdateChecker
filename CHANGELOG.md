@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Self updater
 - Optional configuration file entries for custom extract libary path, see issue #207
+- Fixed silent install not properly working, see issue #85
 
 ## [1.18.1] - 2024-06-07
 ### Fixed
