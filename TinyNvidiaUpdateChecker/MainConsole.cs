@@ -30,14 +30,9 @@ namespace TinyNvidiaUpdateChecker
         public readonly static string gpuMetadataRepo = "https://github.com/ZenitH-AT/nvidia-data/raw/main";
 
         /// <summary>
-        /// Server Checksum URL
-        /// </summary>
-        public readonly static string checksumUrl = "https://github.com/ElPumpo/TinyNvidiaUpdateChecker/raw/master/checksum";
-
-        /// <summary>
         /// URL for client update
         /// </summary>
-        public readonly static string updateUrl = "https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases/latest";
+        public readonly static string updateUrl = "https://api.github.com/repos/ElPumpo/TinyNvidiaUpdateChecker/releases/latest";
 
         /// <summary>
         /// Current client version
@@ -130,6 +125,8 @@ namespace TinyNvidiaUpdateChecker
             string message = $"TinyNvidiaUpdateChecker v{offlineVer}";
             LogManager.Log(message, LogManager.Level.INFO);
             Console.Title = message;
+
+            httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
 
             CheckArgs(args);
 
@@ -594,10 +591,10 @@ namespace TinyNvidiaUpdateChecker
                     Console.WriteLine();
                     Console.WriteLine("NOTICE: you have selected Studio Drivers (SD)");
 
-                    TaskDialogButton[] buttons = new TaskDialogButton[] {
+                    TaskDialogButton[] buttons = [
                         new("Change to Game Ready Driver (GRD)") { Tag = "change" },
                         new("No") { Tag = "no" }
-                    };
+                    ];
 
                     string text = @"No driver was found for your system and you have choosen Studio Drivers." +
                         Environment.NewLine + Environment.NewLine +

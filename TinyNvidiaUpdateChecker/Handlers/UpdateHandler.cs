@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
@@ -15,33 +15,43 @@ namespace TinyNvidiaUpdateChecker.Handlers
             Console.Write("Searching for Update . . . ");
 
             try {
-                using var request = new HttpRequestMessage(HttpMethod.Head, MainConsole.updateUrl);
-                using var response = MainConsole.httpClient.Send(request);
-                response.EnsureSuccessStatusCode();
+                string response = MainConsole.ReadURL(MainConsole.updateUrl);
+                GitHubAPIReleaseRoot release = JsonConvert.DeserializeObject<GitHubAPIReleaseRoot>(response);
+                MainConsole.onlineVer = release.tag_name[1..];
 
-                var responseUri = response.RequestMessage.RequestUri.ToString();
-                MainConsole.onlineVer = responseUri.Substring(responseUri.LastIndexOf("/") + 1).Substring(1);
+                Asset exeFile = release.assets.Where(x => x.name == "TinyNvidiaUpdateChecker.exe").First();
+                string downloadUrl = exeFile.browser_download_url;
+
+                Asset checksumFile = release.assets.Where(x => x.name == "checksum").First();
+                string serverHash = MainConsole.ReadURL(checksumFile.browser_download_url);
+
+                string changelog = release.body;
 
                 Console.Write("OK!");
                 Console.WriteLine();
+
+                if (new Version(MainConsole.onlineVer).CompareTo(new Version(MainConsole.offlineVer)) > 0) {
+                    Console.WriteLine("There is a update available for TinyNvidiaUpdateChecker!");
+
+                    if (!MainConsole.confirmDL && !MainConsole.dryRun) {
+                        TaskDialogButton[] buttons = [
+                            new("Update Now") { Tag = "update" },
+                            new("Ignore") { Tag = "no" }
+                        ];
+
+                        string dialog = ConfigurationHandler.ShowButtonDialog("TinyNvidiaUpdateChecker - New Client Update Available", changelog, TaskDialogIcon.Information, buttons);
+
+                        if (dialog == "update") {
+                            UpdateNow(args, downloadUrl, serverHash);
+                        }
+                    }
+                }
             } catch (Exception ex) {
                 MainConsole.onlineVer = "0.0.0";
                 Console.Write("ERROR!");
                 LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
-            }
-
-            if (new Version(MainConsole.onlineVer).CompareTo(new Version(MainConsole.offlineVer)) > 0) {
-                Console.WriteLine("There is a update available for TinyNvidiaUpdateChecker!");
-
-                if (!MainConsole.confirmDL && !MainConsole.dryRun) {
-                    DialogResult dialog = MessageBox.Show("There is a client update available. Do you wish to update now? TNUC will auto-update and restart.", "TinyNvidiaUpdateChecker", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                    if (dialog == DialogResult.Yes) {
-                        UpdateNow(args);
-                    }
-                }
             }
 
             if (MainConsole.debug) {
@@ -52,18 +62,17 @@ namespace TinyNvidiaUpdateChecker.Handlers
             Console.WriteLine();
         }
 
-        private static void UpdateNow(string[] args)
+        private static void UpdateNow(string[] args, string downloadUrl, string serverHash)
         {
             string currentExe = Path.GetFileName(Environment.ProcessPath);
 
             try {
                 string tempFile = Path.Combine(Path.GetTempPath(), "TinyNvidiaUpdateChecker.tmp");
-
                 File.Move(currentExe, currentExe + ".old", true);
 
                 Console.WriteLine();
                 Console.Write("Downloading update . . . ");
-                Exception ex = MainConsole.HandleDownload($"{MainConsole.updateUrl}/download/TinyNvidiaUpdateChecker.exe", tempFile);
+                Exception ex = MainConsole.HandleDownload(downloadUrl, tempFile);
 
                 if (ex == null) {
                     Console.WriteLine("OK!");
@@ -72,26 +81,22 @@ namespace TinyNvidiaUpdateChecker.Handlers
                     // Validate checksum MD5
                     string tempHash = CalculateMD5(tempFile);
 
-                    if (tempHash != null) {
-                        string serverHash = MainConsole.ReadURL(MainConsole.checksumUrl);
+                    if (tempHash != null && tempHash == serverHash) {
+                        Console.WriteLine("OK!");
+                        Console.WriteLine();
 
-                        if (tempHash == serverHash) {
-                            Console.WriteLine("OK!");
-                            Console.WriteLine();
+                        File.Move(tempFile, currentExe);
+                        Console.WriteLine("Relaunching now!");
 
-                            File.Move(tempFile, currentExe);
-                            Console.WriteLine("Relaunching now!");
-
-                            string runArgs = string.Join(" ", args) + " --cleanup-update";
-                            Process.Start(new ProcessStartInfo(currentExe) { UseShellExecute = true, Arguments = runArgs });
-                            Environment.Exit(0);
-                        } else {
-                            Console.WriteLine("ERROR!");
-                            Console.WriteLine("Checksum mismatch!");
-                            Console.WriteLine();
-                            Console.WriteLine($"Calculated Hash: {tempHash}");
-                            Console.WriteLine($"Server Hash: {serverHash}");
-                        }
+                        string runArgs = string.Join(" ", args) + " --cleanup-update";
+                        Process.Start(new ProcessStartInfo(currentExe) { UseShellExecute = true, Arguments = runArgs });
+                        Environment.Exit(0);
+                    } else {
+                        Console.WriteLine("ERROR!");
+                        Console.WriteLine("Checksum mismatch!");
+                        Console.WriteLine();
+                        Console.WriteLine($"Calculated Hash: {tempHash}");
+                        Console.WriteLine($"Server Hash: {serverHash}");
                     }
                 } else {
                     Console.WriteLine("ERROR!");
@@ -105,10 +110,10 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
         public static string CalculateMD5(string filePath)
         {
-            using (var md5 = MD5.Create()) {
+            using (MD5 md5 = MD5.Create()) {
                 try {
-                    using (var stream = File.OpenRead(filePath)) {
-                        var hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
+                    using (FileStream stream = File.OpenRead(filePath)) {
+                        string hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
                         return hash;
                     }
                 } catch {
