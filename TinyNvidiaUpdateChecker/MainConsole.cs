@@ -640,6 +640,7 @@ namespace TinyNvidiaUpdateChecker
 
             // Check internet connection
             Console.Write("Verifying internet connection . . . ");
+
             if (NetworkInterface.GetIsNetworkAvailable()) {
                 Console.Write("OK!");
                 Console.WriteLine();
@@ -894,93 +895,82 @@ namespace TinyNvidiaUpdateChecker
             Console.WriteLine();
             Console.Write("Extracting drivers . . . ");
 
-            var error = false;
-            var libaryFile = LibaryHandler.EvaluateLibary();
+            LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
             string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
+            string fullDriverPath = @"""" + savePath + driverFileName + @"""";
+            using var process = new Process();
+            LibaryHandler.Libary libary = libaryFile.LibaryName();
+
+            if (libary == LibaryHandler.Libary.WINRAR) {
+                process.StartInfo = new ProcessStartInfo {
+                    FileName = libaryFile.GetInstallationDirectory() + "winrar.exe",
+                    WorkingDirectory = savePath,
+                    Arguments = $@"X {fullDriverPath} -N@""inclList.txt""",
+                    UseShellExecute = false
+                };
+
+                if (silent) process.StartInfo.Arguments += " -ibck -y";
+            } else if (libary == LibaryHandler.Libary.SEVENZIP) {
+                process.StartInfo = new ProcessStartInfo {
+                    WorkingDirectory = savePath,
+                    Arguments = $"x {fullDriverPath} @inclList.txt",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                if (silent) {
+                    process.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7z.exe";
+                    process.StartInfo.Arguments += " -y";
+                } else {
+                    process.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7zG.exe";
+                }
+            } else if (libary == LibaryHandler.Libary.NANAZIP) {
+                process.StartInfo = new ProcessStartInfo {
+                    WorkingDirectory = savePath,
+                    Arguments = $"x {fullDriverPath} @inclList.txt",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                if (silent) {
+                    process.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "NanaZipC.exe";
+                    process.StartInfo.Arguments += " -y";
+                } else {
+                    process.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "NanaZipG.exe";
+                }
+            }
 
             try {
                 File.WriteAllLines(savePath + "inclList.txt", filesToExtract);
+                process.Start();
+                process.WaitForExit();
             } catch (Exception ex) {
-                error = true;
                 Console.Write("ERROR!");
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
                 callExit(1);
             }
 
-            string fullDriverPath = @"""" + savePath + driverFileName + @"""";
-
-            if (libaryFile.LibaryName() == LibaryHandler.Libary.WINRAR) {
-                using var WinRAR = new Process();
-                WinRAR.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "winrar.exe";
-                WinRAR.StartInfo.WorkingDirectory = savePath;
-                WinRAR.StartInfo.Arguments = $@"X {fullDriverPath} -N@""inclList.txt""";
-                if (silent) WinRAR.StartInfo.Arguments += " -ibck -y";
-                WinRAR.StartInfo.UseShellExecute = false;
-
-                try {
-                    WinRAR.Start();
-                    WinRAR.WaitForExit();
-                } catch (Exception ex) {
-                    error = true;
-                    Console.Write("ERROR!");
-                    Console.WriteLine();
-                    Console.WriteLine(ex.ToString());
-                    callExit(1);
-                }
-            } else if (libaryFile.LibaryName() == LibaryHandler.Libary.SEVENZIP) {
-                using var SevenZip = new Process();
-                if (silent) {
-                    SevenZip.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7z.exe";
-                } else {
-                    SevenZip.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7zG.exe";
-                }
-
-                SevenZip.StartInfo.WorkingDirectory = savePath;
-                SevenZip.StartInfo.Arguments = $"x {fullDriverPath} @inclList.txt";
-                if (silent) SevenZip.StartInfo.Arguments += " -y";
-                SevenZip.StartInfo.UseShellExecute = false;
-                SevenZip.StartInfo.CreateNoWindow = true; // don't show the console in our console!
-
-                try {
-                    Thread.Sleep(1000);
-                    SevenZip.Start();
-                    SevenZip.WaitForExit();
-                } catch (Exception ex) {
-                    error = true;
-                    Console.Write("ERROR!");
-                    Console.WriteLine();
-                    Console.WriteLine(ex.ToString());
-                }
-            } else {
-                Console.WriteLine("Could not identify a possible extractor! We should panic.");
-                error = true;
-            }
-
             // remove new EULA files from the installer config, or else the installer throws error codes
             // author https://github.com/cywq
-            if (!error) {
-                var xmlDocument = new XmlDocument();
-                string setupFile = savePath + "setup.cfg";
-                string[] linesToDelete = { "${{EulaHtmlFile}}", "${{FunctionalConsentFile}}", "${{PrivacyPolicyFile}}" };
+            var xmlDocument = new XmlDocument();
+            string setupFile = savePath + "setup.cfg";
+            string[] linesToDelete = { "${{EulaHtmlFile}}", "${{FunctionalConsentFile}}", "${{PrivacyPolicyFile}}" };
 
-                xmlDocument.Load(setupFile);
+            xmlDocument.Load(setupFile);
 
-                foreach (var line in linesToDelete) {
-                    var node = (XmlElement)xmlDocument.DocumentElement.SelectSingleNode($"/setup/manifest/file[@name=\"{line}\"]");
+            foreach (var line in linesToDelete) {
+                var node = (XmlElement)xmlDocument.DocumentElement.SelectSingleNode($"/setup/manifest/file[@name=\"{line}\"]");
 
-                    if (node != null) {
-                        node.ParentNode.RemoveChild(node);
-                    }
+                if (node != null) {
+                    node.ParentNode.RemoveChild(node);
                 }
-
-                xmlDocument.Save(setupFile);
             }
 
-            if (!error) {
-                Console.Write("OK!");
-                Console.WriteLine();
-            }
+            xmlDocument.Save(setupFile);
+
+            Console.Write("OK!");
+            Console.WriteLine();
         }
 
         /// <summary>

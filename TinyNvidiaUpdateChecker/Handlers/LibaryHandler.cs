@@ -1,7 +1,10 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace TinyNvidiaUpdateChecker.Handlers
 {
@@ -33,7 +36,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 new (Registry.LocalMachine, @"SOFTWARE\WOW6432Node\7-Zip", "Path", Libary.SEVENZIP),
             ];
 
-
         static List<LibaryPath> libaryPathList =
             [
                 /* 7-Zip */
@@ -63,14 +65,45 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 new([ConfigurationHandler.ReadSetting("Custom WinRAR Libary Path", null, false)], Libary.WINRAR)
             ];
 
+        static Dictionary<string, Libary> cliList = new() {
+            {"NanaZipC", Libary.NANAZIP} // NanaZip
+        };
+
         public enum Libary
         {
             SEVENZIP,
-            WINRAR
+            WINRAR,
+            NANAZIP
         }
 
         public static LibaryFile EvaluateLibary()
         {
+            foreach (var entry in cliList)
+            {
+                try
+                {
+                    using var process = new Process();
+
+                    process.StartInfo = new ProcessStartInfo
+                    {
+                        FileName = entry.Key,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+
+                    process.Start();
+                    string exePath = process.GetMainModuleFileName();
+                    process.WaitForExit();
+
+                    if (process.ExitCode == 0)
+                    {
+                        string directoryPath = Path.GetDirectoryName(exePath) + @"\";
+                        return new LibaryFile(directoryPath, entry.Value, true);
+                    }
+                }
+                catch { }
+            }
+
             foreach (var entry in libaryRegistryList)
             {
                 try
@@ -114,12 +147,25 @@ namespace TinyNvidiaUpdateChecker.Handlers
                         return new LibaryFile(path, entry.libary, true);
                     }
                 }
-                catch
-                {
-                }
+                catch { }
             }
 
             return null;
+        }
+    }
+
+    internal static class Extensions
+    {
+        [DllImport("Kernel32.dll")]
+        private static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
+
+        public static string GetMainModuleFileName(this Process process, int buffer = 1024)
+        {
+            var fileNameBuilder = new StringBuilder(buffer);
+            uint bufferLength = (uint)fileNameBuilder.Capacity + 1;
+            return QueryFullProcessImageName(process.Handle, 0, fileNameBuilder, ref bufferLength) ?
+                fileNameBuilder.ToString() :
+                null;
         }
     }
 
