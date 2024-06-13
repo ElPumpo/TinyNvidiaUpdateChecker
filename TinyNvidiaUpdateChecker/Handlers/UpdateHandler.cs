@@ -42,7 +42,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
                         string dialog = ConfigurationHandler.ShowButtonDialog("TinyNvidiaUpdateChecker - New Client Update Available", changelog, TaskDialogIcon.Information, buttons);
 
                         if (dialog == "update") {
-                            UpdateNow(args, downloadUrl, serverHash);
+                            UpdateNow(args, downloadUrl, serverHash.Trim());
                         }
                     }
                 }
@@ -96,14 +96,14 @@ namespace TinyNvidiaUpdateChecker.Handlers
                         Console.WriteLine("Checksum mismatch!");
                         Console.WriteLine();
                         Console.WriteLine($"Calculated Hash: {tempHash}");
-                        Console.WriteLine($"Server Hash: {serverHash}");
+                        Console.WriteLine($"Server Hash:     {serverHash}");
                     }
                 } else {
                     Console.WriteLine("ERROR!");
                 }
             } catch { }
 
-            Console.WriteLine("Update failed");
+            Console.WriteLine("Update failed, please update manually.");
             Console.WriteLine();
             File.Move(currentExe + ".old", currentExe, true);
         }
