@@ -62,9 +62,9 @@
             label1.AutoSize = true;
             label1.Location = new System.Drawing.Point(87, 515);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(285, 20);
+            label1.Size = new System.Drawing.Size(294, 20);
             label1.TabIndex = 5;
-            label1.Text = "Chose the components you want to install";
+            label1.Text = "Choose the components you want to install";
             // 
             // richTextBox
             // 
