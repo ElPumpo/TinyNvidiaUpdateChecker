@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Windows.Forms;
+using TinyNvidiaUpdateChecker.Forms;
 
 namespace TinyNvidiaUpdateChecker.Handlers
 {
@@ -160,7 +162,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
                 case "Minimal install":
                     choices = ["true", "false"];
-                    value = SetupConfigYesNoMessagebox("Do you want to perform a minimal install of the drivers? This will make sure you don't install telemetry and miscellaneous addons, but requires either WinRAR or 7-Zip to be installed.", choices, "false");
+                    value = SetupConfigYesNoMessagebox("Do you want to perform a minimal/custom install of the drivers? You will (later) choose the components you want to install, but this feature requires either WinRAR, 7-Zip or NanaZip to be installed.", choices, "false");
                     break;
 
                 case "Download location":
@@ -187,6 +189,13 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 case "GPU ID":
                     GPUSelectorForm gpuForm = new();
                     value = gpuForm.OpenForm(data);
+                    break;
+
+                case "Minimal install components":
+                    ComponentChooserForm componentForm = new();
+                    List<string> components = componentForm.OpenForm(data);
+                    string formattedComponents = string.Join(", ", components.ToArray());
+                    value = formattedComponents;
                     break;
 
                 default:

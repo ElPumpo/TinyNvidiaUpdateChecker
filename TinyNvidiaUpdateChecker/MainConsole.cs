@@ -54,9 +54,6 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         public static string OnlineGPUVersion;
 
-        private static string downloadURL;
-        private static string savePath;
-        private static string driverFileName;
         public static string pdfURL;
         public static DateTime releaseDate;
         public static string releaseDesc;
@@ -156,7 +153,7 @@ namespace TinyNvidiaUpdateChecker
             string dlPrefix = ConfigurationHandler.ReadSetting("Download location");
 
             OfflineGPUVersion = gpu.version;
-            downloadURL = downloadInfo["DownloadURL"].ToString();
+            string downloadURL = downloadInfo["DownloadURL"].ToString();
             
             // Some GPUs, such as 970M (Win10) URLs (including release notes URL) are HTTP and not HTTPS
             if (downloadURL.Contains("https://")) {
@@ -241,9 +238,9 @@ namespace TinyNvidiaUpdateChecker
 
             if ((updateAvailable || forceDL) && !dryRun) {
                 if (confirmDL) {
-                    DownloadDriverQuiet(true);
+                    DownloadDriverQuiet(true, downloadURL);
                 } else {
-                    DownloadDriver();
+                    DownloadDriver(downloadURL);
                 }
             }
 
@@ -664,15 +661,16 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Downloads the driver and some other stuff
         /// </summary>
-        private static void DownloadDriver()
+        private static void DownloadDriver(string downloadURL)
         {
             DriverDialog.ShowGUI();
 
             if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLEXTRACT) {
                 // download and save (and extract)
                 Console.WriteLine();
-                bool error = false;
-                driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
+
+                string driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
+                string savePath = "";
 
                 try {
                    string title = "Where do you want to save the driver?";
@@ -720,7 +718,6 @@ namespace TinyNvidiaUpdateChecker
                     }
 
                 } catch (Exception ex) {
-                    error = true;
                     Console.Write("ERROR!");
                     Console.WriteLine();
                     Console.WriteLine("Driver download failed.");
@@ -730,33 +727,31 @@ namespace TinyNvidiaUpdateChecker
                     callExit(1);
                 }
 
-                if (!error) {
-                    Console.Write("OK!");
-                    Console.WriteLine();
-                }
+                Console.Write("OK!");
+                Console.WriteLine();
 
                 if (debug) {
                     Console.WriteLine($"savePath: {savePath}");
                 }
 
                 if (ConfigurationHandler.ReadSettingBool("Minimal install")) {
-                    MakeInstaller(false);
+                    MakeInstaller(false, savePath, driverFileName);
                 }
             } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLINSTALL) {
-                DownloadDriverQuiet(confirmDL);
+                DownloadDriverQuiet(confirmDL, downloadURL);
             }
         }
 
         /// <summary>
         /// Downloads and installs the driver without user interaction
         /// </summary>
-        private static void DownloadDriverQuiet(bool minimized)
+        private static void DownloadDriverQuiet(bool minimized, string downloadURL)
         {
-            driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
-            savePath = Path.GetTempPath();
+            string driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
+            string savePath = Path.GetTempPath();
 
-            var FULL_PATH_DIRECTORY = savePath + OnlineGPUVersion + @"\";
-            var FULL_PATH_DRIVER = FULL_PATH_DIRECTORY + driverFileName;
+            string FULL_PATH_DIRECTORY = savePath + OnlineGPUVersion + @"\";
+            string FULL_PATH_DRIVER = FULL_PATH_DIRECTORY + driverFileName;
 
             savePath = FULL_PATH_DIRECTORY;
 
@@ -799,7 +794,7 @@ namespace TinyNvidiaUpdateChecker
             bool minimalInstaller = ConfigurationHandler.ReadSettingBool("Minimal install");
 
             if (minimalInstaller) {
-                MakeInstaller(minimized);
+                MakeInstaller(minimized, FULL_PATH_DIRECTORY, driverFileName);
             }
 
             try {
@@ -890,22 +885,21 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Remove telementry and only extract basic drivers
         /// </summary>
-        private static void MakeInstaller(bool silent)
+        private static void MakeInstaller(bool silent, string savePath, string fileName)
         {
             Console.WriteLine();
             Console.Write("Extracting drivers . . . ");
 
             LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
-            string[] filesToExtract = { "Display.Driver", "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe" };
-            string fullDriverPath = @"""" + savePath + driverFileName + @"""";
             using var process = new Process();
             LibaryHandler.Libary libary = libaryFile.LibaryName();
 
+            // Extract full driver to then analyze
             if (libary == LibaryHandler.Libary.WINRAR) {
                 process.StartInfo = new ProcessStartInfo {
                     FileName = libaryFile.GetInstallationDirectory() + "winrar.exe",
                     WorkingDirectory = savePath,
-                    Arguments = $@"X {fullDriverPath} -N@""inclList.txt""",
+                    Arguments = $"x {fileName} -optemp", //verifiera
                     UseShellExecute = false
                 };
 
@@ -913,7 +907,7 @@ namespace TinyNvidiaUpdateChecker
             } else if (libary == LibaryHandler.Libary.SEVENZIP) {
                 process.StartInfo = new ProcessStartInfo {
                     WorkingDirectory = savePath,
-                    Arguments = $"x {fullDriverPath} @inclList.txt",
+                    Arguments = $"x {fileName} -otemp",
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
@@ -927,7 +921,7 @@ namespace TinyNvidiaUpdateChecker
             } else if (libary == LibaryHandler.Libary.NANAZIP) {
                 process.StartInfo = new ProcessStartInfo {
                     WorkingDirectory = savePath,
-                    Arguments = $"x {fullDriverPath} @inclList.txt",
+                    Arguments = $"x {fileName} -otemp",
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
@@ -941,7 +935,6 @@ namespace TinyNvidiaUpdateChecker
             }
 
             try {
-                File.WriteAllLines(savePath + "inclList.txt", filesToExtract);
                 process.Start();
                 process.WaitForExit();
             } catch (Exception ex) {
@@ -950,6 +943,42 @@ namespace TinyNvidiaUpdateChecker
                 Console.WriteLine(ex.ToString());
                 callExit(1);
             }
+
+            // Analyze with ComponentHandler
+            List<Handlers.Component> components = ComponentHandler.ParseComponentData($"{savePath}temp");
+            
+            string textComponents = ConfigurationHandler.ReadSetting("Minimal install components", components, true);
+            string[] arrayComponents = textComponents
+                .Split(", ")
+                .Select(s => s.Trim())
+                .ToArray();
+
+            string[] extractFiles = [.. arrayComponents, "NVI2", "EULA.txt", "license.txt", "ListDevices.txt", "setup.cfg", "setup.exe"];
+
+            foreach (string file in extractFiles) {
+                string filePath = Path.Combine(savePath, "temp", file);
+
+                if (File.Exists(filePath))
+                {
+                    try
+                    {
+                        string destinationFilePath = Path.Combine(savePath, file);
+                        File.Move(filePath, destinationFilePath);
+                    }
+                    catch { }
+                }
+                else if (Directory.Exists(filePath))
+                {
+                    try
+                    {
+                        string destinationDirectoryPath = Path.Combine(savePath, Path.GetFileName(filePath));
+                        Directory.Move(filePath, destinationDirectoryPath);
+                    }
+                    catch { }
+                }
+            }
+
+            Directory.Delete(Path.Combine(savePath, "temp"), true);
 
             // remove new EULA files from the installer config, or else the installer throws error codes
             // author https://github.com/cywq
@@ -968,7 +997,6 @@ namespace TinyNvidiaUpdateChecker
             }
 
             xmlDocument.Save(setupFile);
-
             Console.Write("OK!");
             Console.WriteLine();
         }

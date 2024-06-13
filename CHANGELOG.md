@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Customizable NVIDIA installer. You can now (finally) choose what components of the driver you want to install. For example notebook users can now include Optimus, but still keep out the nasty bloatware with an ease of a button, or two.
 - Support for NanaZip as extract library
 
 ### Changed

@@ -11,7 +11,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
     class LibaryHandler
     {
-
         private static bool is64 = Environment.Is64BitOperatingSystem;
 
         static List<LibaryRegistryPath> libaryRegistryList =
