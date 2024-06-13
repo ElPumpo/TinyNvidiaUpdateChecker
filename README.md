@@ -2,9 +2,15 @@
 
 # TinyNvidiaUpdateChecker
 
-TinyNvidiaUpdateChecker (TNUC for short) is a lightweight tool that checks for NVIDIA GPU drivers for Windows. You can configure TNUC [executing it when logging in](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Quiet-runs-on-user-login), and have it only pop up if there's a new driver available.
+TinyNvidiaUpdateChecker (TNUC for short) is a lightweight tool that checks for NVIDIA GPU drivers for Windows.
 
-It has a minimal install feature that extracts the GPU drivers from the otherwise bloated bundle which contains GeForce Experience, 3d drivers and other components. Nothing except the required drivers will be installed.
+## Features
+
+- Lightweight and modernized open sourced project
+- Fully customizable driver install, allowing installing the components that are important to you, and keeping bloatware away
+- [Automated update notifications](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Quiet-runs-on-user-login) with semi automatic installation
+- Supports most NVIDIA GPUs (even if you don't have any drivers installed)
+- Supports multi-GPU setups and eGPUs
 
 Uses a NVIDIA API to get the latest driver, and there is support for the majority of their GPUs. Thanks to [ZenitH-AT](https://github.com/ZenitH-AT) for his research.
 
@@ -13,7 +19,7 @@ Uses a NVIDIA API to get the latest driver, and there is support for the majorit
 - Windows 10 or higher
 - [.NET Desktop Runtime 8 x86](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - Internet connection
-- (optional) [WinRAR](https://www.rarlab.com/) or [7-Zip](http://www.7-zip.org) for minimal install feature
+- (optional) WinRAR, 7-Zip or NanaZip for minimal install feature
 
 ### .NET Desktop Runtime 8
 
@@ -45,11 +51,6 @@ scoop install tinynvidiaupdatechecker
 ## How to use
 
 Be sure to [check out the wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) to learn more about how to use TNUC.
-
-## Alternatives
-
-- [EnvyUpdate](https://github.com/fyr77/EnvyUpdate)
-- [nvidia-update](https://github.com/ZenitH-AT/nvidia-update)
 
 ## Legal
 

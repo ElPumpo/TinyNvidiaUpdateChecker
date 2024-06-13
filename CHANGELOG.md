@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.19.0] - 2024-06-13
 ### Added
-- Customizable NVIDIA installer. You can now (finally) choose what components of the driver you want to install. For example notebook users can now include Optimus, but still keep out the nasty bloatware with an ease of a button, or two.
+- Customizable NVIDIA installer. You can now (finally) choose what components of the driver you want to install. For example notebook users can now include Optimus, but still keep out the nasty bloatware with an ease of a button, or two
 - Support for NanaZip as extract library
 
 ### Changed
