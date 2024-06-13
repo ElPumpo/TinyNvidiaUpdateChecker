@@ -20,11 +20,9 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 MainConsole.onlineVer = release.tag_name[1..];
 
                 Asset exeFile = release.assets.Where(x => x.name == "TinyNvidiaUpdateChecker.exe").First();
-                string downloadUrl = exeFile.browser_download_url;
-
                 Asset checksumFile = release.assets.Where(x => x.name == "checksum").First();
+                string downloadUrl = exeFile.browser_download_url;
                 string serverHash = MainConsole.ReadURL(checksumFile.browser_download_url);
-
                 string changelog = release.body;
 
                 Console.Write("OK!");
@@ -64,7 +62,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
         private static void UpdateNow(string[] args, string downloadUrl, string serverHash)
         {
-            string currentExe = Path.GetFileName(Environment.ProcessPath);
+            string currentExe = Path.GetFullPath(Environment.ProcessPath);
 
             try {
                 string tempFile = Path.Combine(Path.GetTempPath(), "TinyNvidiaUpdateChecker.tmp");

@@ -322,7 +322,7 @@ namespace TinyNvidiaUpdateChecker
 
                 // delete old file
                 else if (arg.ToLower() == "--cleanup-update") {
-                    File.Delete(Path.GetFileName(Environment.ProcessPath) + ".old");
+                    File.Delete(Path.GetFullPath(Environment.ProcessPath) + ".old");
                 }
 
                 // help menu
@@ -558,7 +558,7 @@ namespace TinyNvidiaUpdateChecker
                     // If the operating system has support for DCH drivers, and DCH drivers are currently not installed, then serach for DCH drivers too.
                     // Non-DCH drivers are discontinued. Not searching for DCH drivers will result in users having outdated graphics drivers, and we don't want that.
                     if (Environment.Version.Build > 10240 && !isDchDriver) {
-                        ajaxDriverLink = ajaxDriverLink.Substring(0, ajaxDriverLink.Length - 1) + "1";
+                        ajaxDriverLink = ajaxDriverLink[..^1] + "1";
                         JObject driverObjDCH = JObject.Parse(ReadURL(ajaxDriverLink));
 
                         if ((int)driverObjDCH["Success"] == 1) {
