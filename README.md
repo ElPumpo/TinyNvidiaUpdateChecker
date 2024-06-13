@@ -12,8 +12,6 @@ TinyNvidiaUpdateChecker (TNUC for short) is a lightweight tool that checks for N
 - Supports most NVIDIA GPUs (even if you don't have any drivers installed)
 - Supports multi-GPU setups and eGPUs
 
-Uses a NVIDIA API to get the latest driver, and there is support for the majority of their GPUs. Thanks to [ZenitH-AT](https://github.com/ZenitH-AT) for his research.
-
 ## Dependencies
 
 - Windows 10 or higher
@@ -23,9 +21,9 @@ Uses a NVIDIA API to get the latest driver, and there is support for the majorit
 
 ### .NET Desktop Runtime 8
 
-If TNUC does not run or closes after a split second then you did not install this runtime properly.
+If TNUC does not run or close after a split second then you did not install this runtime properly.
 
-There is two ways you can install it. The easiest and first way is with a privileged command prompt.
+There are two ways you can install it. The easiest and first way is with a privileged command prompt.
 
 `winget install Microsoft.DotNet.DesktopRuntime.8 --architecture x86`
 
@@ -37,7 +35,7 @@ Or
 
 1. [Download the latest version](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases)
 2. Start TinyNvidiaUpdateChecker.exe
-3. (Optional) configure [execute when logging in](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Quiet-runs-on-user-login)
+3. (Optional) Configure [execute when logging in](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Quiet-runs-on-user-login)
 
 If it does not run or closes after a split second then you did not install the required runtime properly, see above.
 
