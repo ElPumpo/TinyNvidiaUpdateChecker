@@ -63,15 +63,3 @@ This program is free software: you can redistribute it And/Or modify it under th
 This program is distributed In the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty Of MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License For more details.
 
 You should have received a copy Of the GNU General Public License along with this program. If Not, see <http://www.gnu.org/licenses/>.
-
-### Project icon
-
-[Project icon](https://github.com/Maddoc42/Android-Material-Icon-Generator) by [Maddoc42](https://github.com/Maddoc42) is licensed under [CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/)
-
-### HTML Agility Pack
-
-HTML Agility Pack by [zzzprojects](https://github.com/zzzprojects/html-agility-pack) is licensed under the [MIT license](https://opensource.org/licenses/MIT)
-
-### ASCII-alike Progress Bar
-
-[ASCII-alike Progress Bar](https://gist.github.com/DanielSWolf/0ab6a96899cc5377bf54) by [DanielSWolf](https://github.com/DanielSWolf) is licensed under the [MIT license](https://opensource.org/licenses/MIT)
