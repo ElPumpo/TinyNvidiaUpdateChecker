@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Self updater crash when not launching in same working directory (Issue #224)
 - NanaZip access denied error (Issue #228)
+- Minimal install asking for files to override
 
 ## [1.19.0] - 2024-06-13
 ### Added

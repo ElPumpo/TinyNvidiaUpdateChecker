@@ -917,7 +917,7 @@ namespace TinyNvidiaUpdateChecker
                 process.StartInfo = new ProcessStartInfo {
                     FileName = libaryFile.GetInstallationDirectory() + "winrar.exe",
                     WorkingDirectory = savePath,
-                    Arguments = $"x {fileName} -optemp", //verifiera
+                    Arguments = $"x {fileName} -optemp -y",
                     UseShellExecute = false
                 };
 
@@ -925,28 +925,26 @@ namespace TinyNvidiaUpdateChecker
             } else if (libary == LibaryHandler.Libary.SEVENZIP) {
                 process.StartInfo = new ProcessStartInfo {
                     WorkingDirectory = savePath,
-                    Arguments = $"x {fileName} -otemp",
+                    Arguments = $"x {fileName} -otemp -y",
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
 
                 if (silent) {
                     process.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7z.exe";
-                    process.StartInfo.Arguments += " -y";
                 } else {
                     process.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7zG.exe";
                 }
             } else if (libary == LibaryHandler.Libary.NANAZIP) {
                 process.StartInfo = new ProcessStartInfo {
                     WorkingDirectory = savePath,
-                    Arguments = $"x {fileName} -otemp",
+                    Arguments = $"x {fileName} -otemp -y",
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
 
                 if (silent) {
                     process.StartInfo.FileName = "NanaZipC.exe";
-                    process.StartInfo.Arguments += " -y";
                 } else {
                     process.StartInfo.FileName = "NanaZipG.exe";
                 }
