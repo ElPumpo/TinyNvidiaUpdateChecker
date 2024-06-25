@@ -927,10 +927,10 @@ namespace TinyNvidiaUpdateChecker
                 };
 
                 if (silent) {
-                    process.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "NanaZipC.exe";
+                    process.StartInfo.FileName = "NanaZipC.exe";
                     process.StartInfo.Arguments += " -y";
                 } else {
-                    process.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "NanaZipG.exe";
+                    process.StartInfo.FileName = "NanaZipG.exe";
                 }
             }
 
