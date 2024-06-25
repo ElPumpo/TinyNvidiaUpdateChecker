@@ -127,7 +127,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
                         path += @"\";
                     }
 
-                    LogManager.Log($"Found {entry.libary} path: {path}", LogManager.Level.INFO);
                     return new LibaryFile(path, entry.libary, true);
                 }
                 catch { }
@@ -142,7 +141,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
                     if (Path.Exists(path))
                     {
                         path += @"\";
-                        LogManager.Log($"Found {entry.libary} path: {path}", LogManager.Level.INFO);
                         return new LibaryFile(path, entry.libary, true);
                     }
                 }
@@ -202,7 +200,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 case "HKEY_LOCAL_MACHINE":
                     return RegistryHive.LocalMachine;
                 default:
-                    LogManager.Log($"Missing registry hive entry for {key.Name}", LogManager.Level.ERROR);
                     return RegistryHive.LocalMachine;
             }
 

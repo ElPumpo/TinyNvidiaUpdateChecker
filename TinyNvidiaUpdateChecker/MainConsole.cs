@@ -114,28 +114,52 @@ namespace TinyNvidiaUpdateChecker
         static extern bool AllocConsole();
 
         [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool AttachConsole(uint dwProcessId);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool FreeConsole();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr GetConsoleWindow();
+
+        const uint ATTACH_PARENT_PROCESS = 0xFFFFFFFF;
+
+        static bool debuggerAttached = Debugger.IsAttached;
+
+        static bool consoleAttached = false;
 
         [STAThread]
         private static void Main(string[] args)
         {
             string message = $"TinyNvidiaUpdateChecker v{offlineVer}";
-            LogManager.Log(message, LogManager.Level.INFO);
-            Console.Title = message;
-
-            httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
-
+            
             CheckArgs(args);
 
-            RunIntro(); // will run intro if no args needs to output stuff
+            if (showUI && !debuggerAttached) {
+                if (GetConsoleWindow() == IntPtr.Zero) {
+                    bool success = AttachConsole(ATTACH_PARENT_PROCESS);
+                    consoleAttached = true;
 
-            if (showUI) {
-                AllocConsole();
+                    if (success) {
+                        WriteLine();
+                        noPrompt = true; // no prompt needed, we are in existing console
+                    } else {
+                        AllocConsole();
+                    }
+                }
+
+                Console.Title = message;
 
                 if (!debug) {
                     GenericHandler.DisableQuickEdit();
                 }
+            } else if (!showUI && !debuggerAttached) {
+                FreeConsole();
             }
+
+            RunIntro();
+
+            httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
 
             ConfigurationHandler.ConfigInit(overrideConfigFileLocation);
 
@@ -145,7 +169,7 @@ namespace TinyNvidiaUpdateChecker
                 UpdateHandler.SearchForUpdate(args);
             }
 
-            Console.Write("Retrieving GPU information . . . ");
+            Write("Retrieving GPU information . . . ");
 
             MetadataHandler.PrepareCache();
             (GPU gpu, int osId) = GetDriverMetadata();
@@ -208,19 +232,19 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            Console.Write("OK!");
-            Console.WriteLine();
+            Write("OK!");
+            WriteLine();
 
             if (debug) {
-                Console.WriteLine($"gpuId:       {gpu.id}");
-                Console.WriteLine($"osId:        {osId}");
-                Console.WriteLine($"isDchDriver: {gpu.isDch}");
-                Console.WriteLine($"downloadURL: {downloadURL}");
-                Console.WriteLine($"pdfURL:      {pdfURL}");
-                Console.WriteLine($"releaseDate: {releaseDate.ToShortDateString()}");
-                Console.WriteLine($"downloadFileSize:  {Math.Round((downloadFileSize / 1024f) / 1024f)} MiB");
-                Console.WriteLine($"OfflineGPUVersion: {OfflineGPUVersion}");
-                Console.WriteLine($"OnlineGPUVersion:  {OnlineGPUVersion}");
+                WriteLine($"gpuId:       {gpu.id}");
+                WriteLine($"osId:        {osId}");
+                WriteLine($"isDchDriver: {gpu.isDch}");
+                WriteLine($"downloadURL: {downloadURL}");
+                WriteLine($"pdfURL:      {pdfURL}");
+                WriteLine($"releaseDate: {releaseDate.ToShortDateString()}");
+                WriteLine($"downloadFileSize:  {Math.Round((downloadFileSize / 1024f) / 1024f)} MiB");
+                WriteLine($"OfflineGPUVersion: {OfflineGPUVersion}");
+                WriteLine($"OnlineGPUVersion:  {OnlineGPUVersion}");
             }
 
             var updateAvailable = false;
@@ -228,11 +252,11 @@ namespace TinyNvidiaUpdateChecker
             var iOnline = int.Parse(OnlineGPUVersion.Replace(".", string.Empty));
 
             if (iOnline == iOffline) {
-                Console.WriteLine("There is no new GPU driver available, you are up to date.");
+                WriteLine("There is no new GPU driver available, you are up to date.");
             } else if (iOffline > iOnline) {
-                Console.WriteLine("Your current GPU driver is newer than what NVIDIA reports!");
+                WriteLine("Your current GPU driver is newer than what NVIDIA reports!");
             } else {
-                Console.WriteLine("There is a new GPU driver available to download!");
+                WriteLine("There is a new GPU driver available to download!");
                 updateAvailable = true;
             }
 
@@ -244,7 +268,6 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            LogManager.Log("BYE!", LogManager.Level.INFO);
             callExit(0);
         }
 
@@ -262,7 +285,6 @@ namespace TinyNvidiaUpdateChecker
 
                 // no window
                 if (arg.ToLower() == "--quiet") {
-                    FreeConsole();
                     showUI = false;
                 }
 				
@@ -281,8 +303,8 @@ namespace TinyNvidiaUpdateChecker
                             File.Delete(ConfigurationHandler.configFilePath);
                         } catch (Exception ex) {
                             RunIntro();
-                            Console.WriteLine(ex.ToString());
-                            Console.WriteLine();
+                            WriteLine(ex.ToString());
+                            WriteLine();
                         }
                     }
                 }
@@ -300,8 +322,8 @@ namespace TinyNvidiaUpdateChecker
                 // show version number
                 else if (arg.ToLower() == "--version") {
                     RunIntro();
-                    Console.WriteLine($"Current version is {offlineVer}");
-                    Console.WriteLine();
+                    WriteLine($"Current version is {offlineVer}");
+                    WriteLine();
                 }
 
                 // automaticly download driver
@@ -328,21 +350,21 @@ namespace TinyNvidiaUpdateChecker
                 // help menu
                 else if (arg.ToLower() == "--help") {
                     RunIntro();
-                    Console.WriteLine($"Usage: {Path.GetFileName(Environment.ProcessPath)} [ARGS]");
-                    Console.WriteLine();
-                    Console.WriteLine("--quiet                      Runs the application quietly in the background, and will only notify the user if an update is available.");
-                    Console.WriteLine("--noprompt                   Runs the application without prompting to exit.");
-                    Console.WriteLine("--dry-run                    Perform a dry run.");
-                    Console.WriteLine("--erase-config               Erase configuration file.");
-                    Console.WriteLine("--debug                      Turn debugging on, will output more information that can be used for debugging.");
-                    Console.WriteLine("--force-dl                   Force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
-                    Console.WriteLine("--version                    View version.");
-                    Console.WriteLine("--confirm-dl                 Automatically download and install the driver quietly without any user interaction at all. should be used with '--quiet' for the optimal solution.");
-                    Console.WriteLine("--config-here                Use the working directory as path to the configuration file.");
-                    Console.WriteLine("--config-override=<path>     Override configuration file location with absolute file path.");
-                    Console.WriteLine("--help                       Shows help.");
-                    Console.WriteLine("--override-desktop           Override automatic desktop/notebook identification.");
-                    Console.WriteLine("--override-notebook          Override automatic desktop/notebook identification.");
+                    WriteLine($"Usage: {Path.GetFileName(Environment.ProcessPath)} [ARGS]");
+                    WriteLine();
+                    WriteLine("--quiet                      Runs the application quietly in the background, and will only notify the user if an update is available.");
+                    WriteLine("--noprompt                   Runs the application without prompting to exit.");
+                    WriteLine("--dry-run                    Perform a dry run.");
+                    WriteLine("--erase-config               Erase configuration file.");
+                    WriteLine("--debug                      Turn debugging on, will output more information that can be used for debugging.");
+                    WriteLine("--force-dl                   Force prompt to download drivers, even if the user is up-to-date - should only be used for debugging.");
+                    WriteLine("--version                    View version.");
+                    WriteLine("--confirm-dl                 Automatically download and install the driver quietly without any user interaction at all. should be used with '--quiet' for the optimal solution.");
+                    WriteLine("--config-here                Use the working directory as path to the configuration file.");
+                    WriteLine("--config-override=<path>     Override configuration file location with absolute file path.");
+                    WriteLine("--help                       Shows help.");
+                    WriteLine("--override-desktop           Override automatic desktop/notebook identification.");
+                    WriteLine("--override-notebook          Override automatic desktop/notebook identification.");
                     Environment.Exit(0);
                 }
 
@@ -358,8 +380,8 @@ namespace TinyNvidiaUpdateChecker
                 else
                 {
                     RunIntro();
-                    Console.WriteLine($"Unknown command '{arg}', type --help for help.");
-                    Console.WriteLine();
+                    WriteLine($"Unknown command '{arg}', type --help for help.");
+                    WriteLine();
                 }
             }
 
@@ -367,9 +389,9 @@ namespace TinyNvidiaUpdateChecker
             if (debug) {
                 foreach (var arg in args) {
                     RunIntro();
-                    Console.WriteLine($"Arg: {arg}");
+                    WriteLine($"Arg: {arg}");
                 }
-                Console.WriteLine();
+                WriteLine();
             }
         }
 
@@ -420,12 +442,12 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (osId == 0) {
-                Console.Write("ERROR!");
-                Console.WriteLine();
-                Console.WriteLine("No NVIDIA driver was found for this operating system configuration. Make sure TNUC is updated.");
-                Console.WriteLine();
-                Console.WriteLine($"osVersion: {osVersion}");
-                Console.WriteLine($"osBit:     {osBit}");
+                Write("ERROR!");
+                WriteLine();
+                WriteLine("No NVIDIA driver was found for this operating system configuration. Make sure TNUC is updated.");
+                WriteLine();
+                WriteLine($"osVersion: {osVersion}");
+                WriteLine($"osBit:     {osBit}");
                 callExit(1);
             }
 
@@ -527,13 +549,13 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            Console.Write("ERROR!");
-            Console.WriteLine();
-            Console.WriteLine("GPU metadata for your card does not exist, or could not be validated! Please file an issue on the GitHub project page and include the following information:");
-            Console.WriteLine();
+            Write("ERROR!");
+            WriteLine();
+            WriteLine("GPU metadata for your card does not exist, or could not be validated! Please file an issue on the GitHub project page and include the following information:");
+            WriteLine();
 
             foreach (var gpu in gpuList) {
-                Console.WriteLine($"GPU Name: '{gpu.name}' | VendorId: {gpu.vendorId} | DeviceId: {gpu.deviceId} | IsNotebook: {gpu.isNotebook}");
+                WriteLine($"GPU Name: '{gpu.name}' | VendorId: {gpu.vendorId} | DeviceId: {gpu.deviceId} | IsNotebook: {gpu.isNotebook}");
             }
 
             callExit(1);
@@ -573,20 +595,20 @@ namespace TinyNvidiaUpdateChecker
             } catch (ArgumentOutOfRangeException) {
                 string driverType = ConfigurationHandler.ReadSetting("Driver type");
 
-                Console.Write("ERROR!");
-                Console.WriteLine();
-                Console.WriteLine("No NVIDIA driver was found for your system configuration.");
-                Console.WriteLine();
-                Console.WriteLine("Debugging information:");
-                Console.WriteLine($"gpuId:       {gpuId}");
-                Console.WriteLine($"osId:        {osId}");
-                Console.WriteLine($"isDchDriver: {isDchDriver}");
-                Console.WriteLine($"driverType:  {driverType}");
+                Write("ERROR!");
+                WriteLine();
+                WriteLine("No NVIDIA driver was found for your system configuration.");
+                WriteLine();
+                WriteLine("Debugging information:");
+                WriteLine($"gpuId:       {gpuId}");
+                WriteLine($"osId:        {osId}");
+                WriteLine($"isDchDriver: {isDchDriver}");
+                WriteLine($"driverType:  {driverType}");
 
                 // Ask user to switch to GRD driver
                 if (driverType == "sd") {
-                    Console.WriteLine();
-                    Console.WriteLine("NOTICE: you have selected Studio Drivers (SD)");
+                    WriteLine();
+                    WriteLine("NOTICE: you have selected Studio Drivers (SD)");
 
                     TaskDialogButton[] buttons = [
                         new("Change to Game Ready Driver (GRD)") { Tag = "change" },
@@ -603,15 +625,15 @@ namespace TinyNvidiaUpdateChecker
 
                     if (result == "change") {
                         ConfigurationHandler.SetSetting("Driver type", "grd");
-                        Console.WriteLine("The driver type has now been changed to Game Ready Driver (GRD). Restart for changes to apply");
+                        WriteLine("The driver type has now been changed to Game Ready Driver (GRD). Restart for changes to apply");
                     }
                 }
             } catch (Exception ex) {
-                Console.Write("ERROR!");
-                Console.WriteLine();
-                Console.WriteLine("Unable to interact with NVIDIA API.");
-                Console.WriteLine();
-                Console.WriteLine(ex.ToString());
+                Write("ERROR!");
+                WriteLine();
+                WriteLine("Unable to interact with NVIDIA API.");
+                WriteLine();
+                WriteLine(ex.ToString());
             }
 	
             callExit(1);
@@ -636,26 +658,26 @@ namespace TinyNvidiaUpdateChecker
         {
 
             // Check internet connection
-            Console.Write("Verifying internet connection . . . ");
+            Write("Verifying internet connection . . . ");
 
             if (NetworkInterface.GetIsNetworkAvailable()) {
-                Console.Write("OK!");
-                Console.WriteLine();
+                Write("OK!");
+                WriteLine();
             } else {
-                Console.Write("ERROR!");
-                Console.WriteLine();
-                Console.WriteLine("You are not connected to the internet!");
+                Write("ERROR!");
+                WriteLine();
+                WriteLine("You are not connected to the internet!");
                 callExit(2);
             }
 
             if (ConfigurationHandler.ReadSettingBool("Minimal install")) {
                 if (LibaryHandler.EvaluateLibary() == null) {
-                    Console.WriteLine("Doesn't seem like neither WinRAR or 7-Zip is installed! We are disabling the minimal install feature for you.");
+                    WriteLine("Doesn't seem like neither WinRAR or 7-Zip is installed! We are disabling the minimal install feature for you.");
                     ConfigurationHandler.SetSetting("Minimal install", "false");
                 }
             }
 
-            Console.WriteLine();
+            WriteLine();
         }
 
         /// <summary>
@@ -667,7 +689,7 @@ namespace TinyNvidiaUpdateChecker
 
             if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLEXTRACT) {
                 // download and save (and extract)
-                Console.WriteLine();
+                WriteLine();
 
                 string driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
                 string savePath = "";
@@ -688,17 +710,16 @@ namespace TinyNvidiaUpdateChecker
                     if (dialog.ShowDialog() == DialogResult.OK) {
                         savePath = dialog.SelectedPath + @"\";
                     } else {
-                        Console.WriteLine("User closed dialog!");
+                        WriteLine("User closed dialog!");
                         return;
                     }
 
                     if (File.Exists(savePath + driverFileName) && !DoesDriverFileSizeMatch(savePath + driverFileName)) {
-                        LogManager.Log($"Deleting {savePath}{driverFileName} because its length doesn't match!", LogManager.Level.INFO);
                         File.Delete(savePath + driverFileName);
                     }
 
                     // don't download driver if it already exists
-                    Console.Write("Downloading the driver . . . ");
+                    Write("Downloading the driver . . . ");
                     if (showUI && !File.Exists(savePath + driverFileName)) {
                         var ex = HandleDownload(downloadURL, savePath + driverFileName);
 
@@ -713,25 +734,23 @@ namespace TinyNvidiaUpdateChecker
                         dlForm.Focus();
                         dlForm.DownloadFile(new Uri(downloadURL), savePath + driverFileName);
                         dlForm.Close();
-                    } else {
-                        LogManager.Log("Driver is already downloaded", LogManager.Level.INFO);
                     }
 
                 } catch (Exception ex) {
-                    Console.Write("ERROR!");
-                    Console.WriteLine();
-                    Console.WriteLine("Driver download failed.");
-                    Console.WriteLine();
-                    Console.WriteLine(ex.ToString());
-                    Console.WriteLine();
+                    Write("ERROR!");
+                    WriteLine();
+                    WriteLine("Driver download failed.");
+                    WriteLine();
+                    WriteLine(ex.ToString());
+                    WriteLine();
                     callExit(1);
                 }
 
-                Console.Write("OK!");
-                Console.WriteLine();
+                Write("OK!");
+                WriteLine();
 
                 if (debug) {
-                    Console.WriteLine($"savePath: {savePath}");
+                    WriteLine($"savePath: {savePath}");
                 }
 
                 if (ConfigurationHandler.ReadSettingBool("Minimal install")) {
@@ -758,12 +777,11 @@ namespace TinyNvidiaUpdateChecker
             Directory.CreateDirectory(FULL_PATH_DIRECTORY);
 
             if (File.Exists(FULL_PATH_DRIVER) && !DoesDriverFileSizeMatch(FULL_PATH_DRIVER)) {
-                LogManager.Log($"Deleting {FULL_PATH_DRIVER} because its length doesn't match!", LogManager.Level.INFO);
                 File.Delete(savePath + driverFileName);
             }
 
             if (!File.Exists(FULL_PATH_DRIVER)) {
-                Console.Write("Downloading the driver . . . ");
+                Write("Downloading the driver . . . ");
 
                 if (showUI || confirmDL) {
                     try {
@@ -773,13 +791,13 @@ namespace TinyNvidiaUpdateChecker
                             throw ex;
                         }
 
-                        Console.Write("OK!");
-                        Console.WriteLine();
+                        Write("OK!");
+                        WriteLine();
                     } catch (Exception ex) {
-                        Console.Write("ERROR!");
-                        Console.WriteLine();
-                        Console.WriteLine(ex.ToString());
-                        Console.WriteLine();
+                        Write("ERROR!");
+                        WriteLine();
+                        WriteLine(ex.ToString());
+                        WriteLine();
                         callExit(1);
                     }
                 } else {
@@ -798,8 +816,8 @@ namespace TinyNvidiaUpdateChecker
             }
 
             try {
-                Console.WriteLine();
-                Console.Write("Executing driver installer . . . ");
+                WriteLine();
+                Write("Executing driver installer . . . ");
 
                 string fileName = minimalInstaller ? FULL_PATH_DIRECTORY + "setup.exe" : FULL_PATH_DRIVER;
 
@@ -811,21 +829,21 @@ namespace TinyNvidiaUpdateChecker
                 }
 
                 Process.Start(startInfo).WaitForExit();
-                Console.Write("OK!");
+                Write("OK!");
             } catch (Exception ex) {
-                Console.WriteLine("An error occurred preventing the driver installer to execute!");
-                Console.WriteLine();
-                Console.WriteLine(ex.ToString());
+                WriteLine("An error occurred preventing the driver installer to execute!");
+                WriteLine();
+                WriteLine(ex.ToString());
                 callExit(1);
             }
 
-            Console.WriteLine();
+            WriteLine();
 
             try {
                 Directory.Delete(FULL_PATH_DIRECTORY, true);
-                Console.WriteLine($"Cleaned up: {FULL_PATH_DIRECTORY}");
+                WriteLine($"Cleaned up: {FULL_PATH_DIRECTORY}");
             } catch {
-                Console.WriteLine($"Could not cleanup: {FULL_PATH_DIRECTORY}");
+                WriteLine($"Could not cleanup: {FULL_PATH_DIRECTORY}");
             }
 
         }
@@ -887,8 +905,8 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         private static void MakeInstaller(bool silent, string savePath, string fileName)
         {
-            Console.WriteLine();
-            Console.Write("Extracting drivers . . . ");
+            WriteLine();
+            Write("Extracting drivers . . . ");
 
             LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
             using var process = new Process();
@@ -938,9 +956,9 @@ namespace TinyNvidiaUpdateChecker
                 process.Start();
                 process.WaitForExit();
             } catch (Exception ex) {
-                Console.Write("ERROR!");
-                Console.WriteLine();
-                Console.WriteLine(ex.ToString());
+                Write("ERROR!");
+                WriteLine();
+                WriteLine(ex.ToString());
                 callExit(1);
             }
 
@@ -997,8 +1015,8 @@ namespace TinyNvidiaUpdateChecker
             }
 
             xmlDocument.Save(setupFile);
-            Console.Write("OK!");
-            Console.WriteLine();
+            Write("OK!");
+            WriteLine();
         }
 
         /// <summary>
@@ -1008,9 +1026,9 @@ namespace TinyNvidiaUpdateChecker
         {
             if (!hasRunIntro) {
                 hasRunIntro = true;
-                //Console.WriteLine($"TinyNvidiaUpdateChecker v{offlineVer} dev build");
-                Console.WriteLine($"TinyNvidiaUpdateChecker v{offlineVer}");
-                Console.WriteLine();
+                //WriteLine($"TinyNvidiaUpdateChecker v{offlineVer} dev build");
+                WriteLine($"TinyNvidiaUpdateChecker v{offlineVer}");
+                WriteLine();
             }
         }
 
@@ -1022,16 +1040,47 @@ namespace TinyNvidiaUpdateChecker
         {
             if (!noPrompt)
             {
-                Console.WriteLine();
-                Console.WriteLine("Press any key to exit...");
+                WriteLine();
+                WriteLine("Press any key to exit...");
             }
 		
-            if (showUI & !noPrompt) Console.ReadKey();
+            if (showUI & !noPrompt) Console.ReadKey(true);
+            FreeConsole();
             Environment.Exit(exitNum);
         }	    
 	    
         private static bool DoesDriverFileSizeMatch(string absoluteFilePath) {
             return new FileInfo(absoluteFilePath).Length == downloadFileSize;
+        }
+
+        public static void Write(string value = "")
+        {
+            if (!showUI) return;
+            if (!consoleAttached) AttachConsole();
+            if (debuggerAttached) AllocConsole();
+            Console.Write(value);
+        }
+
+        public static void WriteLine(string value = "")
+        {
+            if (!showUI) return;
+            if (!consoleAttached) AttachConsole();
+            if (debuggerAttached) AllocConsole();
+            Console.WriteLine(value);
+        }
+
+        private static void AttachConsole()
+        {
+            if (GetConsoleWindow() == IntPtr.Zero) {
+                bool success = AttachConsole(ATTACH_PARENT_PROCESS);
+                consoleAttached = true;
+
+                if (success) {
+                    WriteLine();
+                } else {
+                    AllocConsole();
+                }
+            }
         }
     }
 }

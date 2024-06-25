@@ -83,8 +83,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
             string result = null;
 
             try {
-                LogManager.Log($"operation='read',key='{key}',val='{ConfigurationManager.AppSettings[key]}'", LogManager.Level.SETTING);
-
                 if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
                 } else if (setupIfNotFound) {
@@ -110,8 +108,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
         public static void SetSetting(string key, string val)
         {
             try {
-                LogManager.Log($"operation='set',key='{key}',val='{val}'", LogManager.Level.SETTING);
-
                 var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                 var settings = configFile.AppSettings.Settings;
 
@@ -133,7 +129,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
                     } catch (Exception e) {
                         Console.WriteLine(e.ToString());
                     }
-                    LogManager.Log("Wiped config!", LogManager.Level.INFO);
                 }
 
                 Console.WriteLine(ex.ToString());
@@ -205,7 +200,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
             }
 
             SetSetting(key, value);
-            LogManager.Log($"operation='setup',key='{key}',val='{value}'", LogManager.Level.SETTING);
         }
 
         private static string SetupConfigYesNoMessagebox(string text, string[] values, string defaultValue)

@@ -47,7 +47,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
             } catch (Exception ex) {
                 MainConsole.onlineVer = "0.0.0";
                 Console.Write("ERROR!");
-                LogManager.Log(ex.ToString(), LogManager.Level.ERROR);
                 Console.WriteLine();
                 Console.WriteLine(ex.ToString());
             }

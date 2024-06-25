@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Dialog for missing required .NET runtime
+
 ### Fixed
 - Self updater crash when not launching in same working directory (Issue #224)
 - NanaZip access denied error (Issue #228)
