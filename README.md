@@ -15,29 +15,15 @@ TinyNvidiaUpdateChecker (TNUC for short) is a lightweight tool that checks for N
 ## Dependencies
 
 - Windows 10 or higher
-- [.NET Desktop Runtime 8 x86](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [.NET Desktop Runtime 8 x64](https://dotnet.microsoft.com/en-us/download/dotnet/8.0), it will be prompted to install if missing
 - Internet connection
 - (optional) WinRAR, 7-Zip or NanaZip for minimal install feature
-
-### .NET Desktop Runtime 8
-
-If TNUC does not run or close after a split second then you did not install this runtime properly.
-
-There are two ways you can install it. The easiest and first way is with a privileged command prompt.
-
-`winget install Microsoft.DotNet.DesktopRuntime.8 --architecture x86`
-
-Or
-
-[Navigate to the download page](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and select the __.NET Desktop Runtime x86__ download
 
 ## Installation
 
 1. [Download the latest version](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/releases)
 2. Start TinyNvidiaUpdateChecker.exe
 3. (Optional) Configure [execute when logging in](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Quiet-runs-on-user-login)
-
-If it does not run or closes after a split second then you did not install the required runtime properly, see above.
 
 ### Install with [Scoop](https://scoop.sh/#/apps?s=2&d=1&o=true&p=1&q=tinynvidiaupdatechecker)
 
