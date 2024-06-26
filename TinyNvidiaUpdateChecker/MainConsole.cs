@@ -821,11 +821,12 @@ namespace TinyNvidiaUpdateChecker
 
                 string fileName = minimalInstaller ? FULL_PATH_DIRECTORY + "setup.exe" : FULL_PATH_DRIVER;
 
-                ProcessStartInfo startInfo = new(fileName);
-                startInfo.UseShellExecute = true;
+                ProcessStartInfo startInfo = new(fileName) {
+                    UseShellExecute = true
+                };
 
                 if (minimized) {
-                    startInfo.Arguments = "/s";
+                    startInfo.Arguments = "/s /noreboot";
                 }
 
                 Process.Start(startInfo).WaitForExit();

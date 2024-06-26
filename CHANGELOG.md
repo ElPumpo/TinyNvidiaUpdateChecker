@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Self updater crash when not launching in same working directory (Issue #224)
 - NanaZip access denied error (Issue #228)
 - Always override existing files when performing minimal install
+- Driver install force rebooting disabled
 
 ### Changed
 - Migrated to x64 built code, which means you will have to install the runtime again. This time a dialog will appear, and will assist you
