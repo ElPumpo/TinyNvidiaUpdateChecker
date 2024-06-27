@@ -517,7 +517,15 @@ namespace TinyNvidiaUpdateChecker
                 if (success) {
                     gpu.id = gpuId;
                 } else {
-                    gpu.isValidated = false;
+                    // check the other type, perhaps it is an eGPU
+                    (success, gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, !gpu.isNotebook);
+                    
+                    if (success) {
+                        gpu.isNotebook = !gpu.isNotebook;
+                        gpu.id = gpuId;
+                    } else {
+                        gpu.isValidated = false;
+                    }
                 }
             }
 
