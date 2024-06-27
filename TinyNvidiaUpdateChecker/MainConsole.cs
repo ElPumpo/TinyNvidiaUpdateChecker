@@ -403,7 +403,6 @@ namespace TinyNvidiaUpdateChecker
         {
             bool isNotebook = false;
             bool isDchDriver = false; // TODO rewrite for each GPU
-            int osId = 0;
             var nameRegex = new Regex(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
             List<int> notebookChassisTypes = [1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32];
             var gpuList = new List<GPU> { };
@@ -422,18 +421,19 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // Get operating system ID
-            var osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
-            var osBit = Environment.Is64BitOperatingSystem ? "64" : "32";
+            string osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
+            string osBit = Environment.Is64BitOperatingSystem ? "64" : "32";
+            int osId = 0;
 
             if (osVersion == "10.0" && Environment.OSVersion.Version.Build >= 22000) {
-                foreach (var os in osData) {
+                foreach (OSClass os in osData) {
                     if (Regex.IsMatch(os.name, "Windows 11")) {
                         osId = os.id;
                         break;
                     }
                 }
             } else {
-                foreach (var os in osData) {
+                foreach (OSClass os in osData) {
                     if (os.code == osVersion && Regex.IsMatch(os.name, osBit)) {
                         osId = os.id;
                         break;
@@ -447,7 +447,6 @@ namespace TinyNvidiaUpdateChecker
                 WriteLine("No NVIDIA driver was found for this operating system configuration. Make sure TNUC is updated.");
                 WriteLine();
                 WriteLine($"osVersion: {osVersion}");
-                WriteLine($"osBit:     {osBit}");
                 callExit(1);
             }
 
@@ -543,8 +542,7 @@ namespace TinyNvidiaUpdateChecker
                     }
 
                     // GPU ID is no longer active on this system, prompt user to choose new GPU
-                    ConfigurationHandler.SetupSetting("GPU ID", gpuList);
-                    configGpuId = int.Parse(ConfigurationHandler.ReadSetting("GPU ID", gpuList));
+                    configGpuId = int.Parse(ConfigurationHandler.SetupSetting("GPU ID", gpuList));
 
                     foreach (var gpu in gpuList.Where(x => x.isValidated)) {
                         if (gpu.id == configGpuId) {

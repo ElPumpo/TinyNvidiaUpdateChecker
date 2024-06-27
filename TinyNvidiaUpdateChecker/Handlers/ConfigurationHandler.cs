@@ -86,12 +86,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 if (ConfigurationManager.AppSettings[key] != null) {
                     result = ConfigurationManager.AppSettings[key];
                 } else if (setupIfNotFound) {
-                    // error reading key
-                    Console.WriteLine();
-                    Console.WriteLine($"Error reading configuration file, attempting to repair key '{key}' . . .");
-                    SetupSetting(key, data);
-
-                    result = ConfigurationManager.AppSettings[key];
+                    result = SetupSetting(key, data);
                 }
             } catch (ConfigurationErrorsException ex) {
                 Console.WriteLine(ex.ToString());
@@ -143,7 +138,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
         /// Ask operator for setting value, not to be confused with SetSetting.</summary>
         /// <param name="key"> Requested key name.</param>
         /// <seealso cref="SetSetting(string, string)"> Where settings are made.</seealso>
-        public static void SetupSetting(string key, dynamic data = null)
+        public static string SetupSetting(string key, dynamic data = null)
         {
             string[] choices;
             string value;
@@ -200,6 +195,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
             }
 
             SetSetting(key, value);
+            return value;
         }
 
         private static string SetupConfigYesNoMessagebox(string text, string[] values, string defaultValue)
@@ -236,27 +232,21 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
         public static bool ReadSettingBool(string key)
         {
-            string read = ReadSetting(key);
+            string value = ReadSetting(key);
 
-            if (read == "true") {
+            if (value == "true") {
                 return true;
-            } else if (read == "false") {
+            } else if (value == "false") {
                 return false;
             } else {
+                value = SetupSetting(key);
 
-                // setup and read
-                SetupSetting(key);
-                read = ReadSetting(key);
-
-                if (read == "true") {
+                if (value == "true") {
                     return true;
-                } else if (read == "false") {
+                } else {
                     return false;
                 }
             }
-            Console.WriteLine($"Could not retrive the key '{key}', this is bad!");
-            return false;
         }
-
     }
 }

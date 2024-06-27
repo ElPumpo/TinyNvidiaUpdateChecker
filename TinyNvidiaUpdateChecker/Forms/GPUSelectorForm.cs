@@ -8,20 +8,16 @@ namespace TinyNvidiaUpdateChecker
     public partial class GPUSelectorForm : Form
     {
         List<GPU> gpuList = null;
-        Dictionary<int, int> validatedList = new();
-        int selectedGpuId;
+        Dictionary<int, int> validatedList = [];
 
-        public GPUSelectorForm()
-        {
-            InitializeComponent();
-        }
+        public GPUSelectorForm() => InitializeComponent();
 
         public string OpenForm(List<GPU> _gpuList)
         {
             gpuList = _gpuList;
             ShowDialog();
 
-            return selectedGpuId.ToString();
+            return validatedList[comboBox.SelectedIndex].ToString();
         }
 
         private void GPUSelectorForm_Load(object sender, EventArgs e)
@@ -32,15 +28,8 @@ namespace TinyNvidiaUpdateChecker
             }
         }
 
-        private void ConfirmBtn_Click(object sender, EventArgs e)
-        {
-            selectedGpuId = validatedList[comboBox.SelectedIndex];
-            Close();
-        }
+        private void ConfirmBtn_Click(object sender, EventArgs e) => Close();
 
-        private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ConfirmBtn.Enabled = true;
-        }
+        private void comboBox_SelectedIndexChanged(object sender, EventArgs e) => ConfirmBtn.Enabled = true;
     }
 }
