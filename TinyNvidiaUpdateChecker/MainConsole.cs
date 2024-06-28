@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Management;
 using System.Net.NetworkInformation;
-using System.ComponentModel;
 using System.Xml;
 using TinyNvidiaUpdateChecker.Handlers;
 using Microsoft.Win32;
@@ -18,6 +15,8 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using HtmlAgilityPack;
 using System.Net.Http;
+using HttpClientProgress;
+using System.Threading.Tasks;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -727,19 +726,12 @@ namespace TinyNvidiaUpdateChecker
                     // don't download driver if it already exists
                     Write("Downloading the driver . . . ");
                     if (showUI && !File.Exists(savePath + driverFileName)) {
-                        var ex = HandleDownload(downloadURL, savePath + driverFileName);
-
-                        if (ex != null) {
-                            throw ex;
-                        }
+                        HandleDownload(downloadURL, savePath + driverFileName).GetAwaiter().GetResult();
                     }
                     // show the progress bar gui
                     else if(!showUI && !File.Exists(savePath + driverFileName)) {
                         using DownloaderForm dlForm = new();
-                        dlForm.Show();
-                        dlForm.Focus();
-                        dlForm.DownloadFile(new Uri(downloadURL), savePath + driverFileName);
-                        dlForm.Close();
+                        dlForm.DownloadFile(downloadURL, savePath + driverFileName);
                     }
 
                 } catch (Exception ex) {
@@ -791,11 +783,7 @@ namespace TinyNvidiaUpdateChecker
 
                 if (showUI || confirmDL) {
                     try {
-                        var ex = HandleDownload(downloadURL, FULL_PATH_DRIVER);
-
-                        if (ex != null) {
-                            throw ex;
-                        }
+                        HandleDownload(downloadURL, FULL_PATH_DRIVER).GetAwaiter().GetResult();
 
                         Write("OK!");
                         WriteLine();
@@ -808,10 +796,7 @@ namespace TinyNvidiaUpdateChecker
                     }
                 } else {
                     using DownloaderForm dlForm = new();
-                    dlForm.Show();
-                    dlForm.Focus();
-                    dlForm.DownloadFile(new Uri(downloadURL), FULL_PATH_DRIVER);
-                    dlForm.Close();
+                    dlForm.DownloadFile(downloadURL, FULL_PATH_DRIVER);
                 }
             }
 
@@ -861,10 +846,8 @@ namespace TinyNvidiaUpdateChecker
         /// <param name="url">URL path for download</param>
         /// <param name="path">Absolute file path</param>
         /// <returns></returns>
-        public static Exception HandleDownload(string url, string path)
+        async public static Task HandleDownload(string url, string path, EventHandler<float> progressHandle = null)
         {
-            Exception ex = null;
-
             // if a partial file download exists, delete it now
             if (File.Exists(path)) {
                 File.Delete(path);
@@ -877,33 +860,31 @@ namespace TinyNvidiaUpdateChecker
                 File.Delete(path);
             }
 
+            HttpClient client = new();
+            Progress<float> progress = new();
+            Handlers.ProgressBar progressBar = null;
+
+            if (progressHandle == null) {
+                progressBar = new();
+
+                progress.ProgressChanged += delegate (object sender, float progress) {
+                    progressBar.Report(progress / 100);
+                };
+            } else {
+                progress.ProgressChanged += progressHandle;
+            }
+
             try {
-                using WebClient webClient = new();
-                var notifier = new AutoResetEvent(false);
-                var progress = new Handlers.ProgressBar();
+                using (FileStream file = new(path, FileMode.Create, FileAccess.Write, FileShare.None))  {
+                    await client.DownloadDataAsync(url, file, progress);
+                }
 
-                webClient.DownloadProgressChanged += delegate (object sender, DownloadProgressChangedEventArgs e) {
-                    progress.Report((double)e.ProgressPercentage / 100);
-                };
-
-                webClient.DownloadFileCompleted += delegate (object sender, AsyncCompletedEventArgs e) {
-                    if (e.Cancelled || e.Error != null) {
-                        File.Delete(path);
-                        ex = e.Error;
-                    } else {
-                        File.Move(path, path.Substring(0, path.Length - 5)); // rename back
-                    }
-
-                    notifier.Set();
-                };
-
-                webClient.DownloadFileAsync(new Uri(url), path);
-                notifier.WaitOne();
-                progress.Dispose();
-
-                return ex;
-            } catch (Exception ex2) {
-                return ex2;
+                File.Move(path, path[..^5]); // rename back
+                if (progressHandle == null ) { progressBar.Dispose(); }
+            } catch {
+                File.Delete(path);
+                if (progressHandle == null) { progressBar.Dispose(); }
+                throw;
             }
         }
 

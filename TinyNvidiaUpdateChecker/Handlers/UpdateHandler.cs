@@ -69,34 +69,31 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
                 Console.WriteLine();
                 Console.Write("Downloading update . . . ");
-                Exception ex = MainConsole.HandleDownload(downloadUrl, tempFile);
 
-                if (ex == null) {
+                MainConsole.HandleDownload(downloadUrl, tempFile).GetAwaiter().GetResult();
+
+                Console.WriteLine("OK!");
+                Console.Write("Validating checksum . . . ");
+
+                // Validate checksum MD5
+                string tempHash = CalculateMD5(tempFile);
+
+                if (tempHash != null && tempHash == serverHash) {
                     Console.WriteLine("OK!");
-                    Console.Write("Validating checksum . . . ");
+                    Console.WriteLine();
 
-                    // Validate checksum MD5
-                    string tempHash = CalculateMD5(tempFile);
+                    File.Move(tempFile, currentExe);
+                    Console.WriteLine("Relaunching now!");
 
-                    if (tempHash != null && tempHash == serverHash) {
-                        Console.WriteLine("OK!");
-                        Console.WriteLine();
-
-                        File.Move(tempFile, currentExe);
-                        Console.WriteLine("Relaunching now!");
-
-                        string runArgs = string.Join(" ", args) + " --cleanup-update";
-                        Process.Start(new ProcessStartInfo(currentExe) { UseShellExecute = true, Arguments = runArgs });
-                        Environment.Exit(0);
-                    } else {
-                        Console.WriteLine("ERROR!");
-                        Console.WriteLine("Checksum mismatch!");
-                        Console.WriteLine();
-                        Console.WriteLine($"Calculated Hash: {tempHash}");
-                        Console.WriteLine($"Server Hash:     {serverHash}");
-                    }
+                    string runArgs = string.Join(" ", args) + " --cleanup-update";
+                    Process.Start(new ProcessStartInfo(currentExe) { UseShellExecute = true, Arguments = runArgs });
+                    Environment.Exit(0);
                 } else {
                     Console.WriteLine("ERROR!");
+                    Console.WriteLine("Checksum mismatch!");
+                    Console.WriteLine();
+                    Console.WriteLine($"Calculated Hash: {tempHash}");
+                    Console.WriteLine($"Server Hash:     {serverHash}");
                 }
             } catch { }
 
