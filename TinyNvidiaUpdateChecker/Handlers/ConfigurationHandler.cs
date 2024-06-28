@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -80,25 +81,20 @@ namespace TinyNvidiaUpdateChecker.Handlers
         /// <param name="key"> Config key to read value from.</param>
         public static string ReadSetting(string key, dynamic data = null, bool setupIfNotFound = true)
         {
-            string result = null;
-
             try {
                 if (ConfigurationManager.AppSettings[key] != null) {
-                    result = ConfigurationManager.AppSettings[key];
+                    return ConfigurationManager.AppSettings[key];
                 } else if (setupIfNotFound) {
-                    // error reading key
-                    Console.WriteLine();
-                    Console.WriteLine($"Error reading configuration file, attempting to repair key '{key}' . . .");
                     SetupSetting(key, data);
-
-                    result = ConfigurationManager.AppSettings[key];
+                    return ConfigurationManager.AppSettings[key];
                 }
-            } catch (ConfigurationErrorsException ex) {
+            } catch (Exception ex) {
+                Console.WriteLine();
                 Console.WriteLine(ex.ToString());
                 Console.WriteLine();
             }
 
-            return result;
+            return null;
         }
 
         /// <summary>
@@ -121,8 +117,8 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 configFile.Save(ConfigurationSaveMode.Modified);
                 ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
 
-            } catch (ConfigurationErrorsException ex) {
-                // clean config file
+            } catch (Exception ex) {
+                // delete config file
                 if (File.Exists(configFilePath)) {
                     try {
                         File.Delete(configFilePath);
@@ -143,7 +139,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
         /// Ask operator for setting value, not to be confused with SetSetting.</summary>
         /// <param name="key"> Requested key name.</param>
         /// <seealso cref="SetSetting(string, string)"> Where settings are made.</seealso>
-        public static void SetupSetting(string key, dynamic data = null)
+        public static string SetupSetting(string key, dynamic data = null)
         {
             string[] choices;
             string value;
@@ -183,7 +179,23 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
                 case "GPU ID":
                     GPUSelectorForm gpuForm = new();
-                    value = gpuForm.OpenForm(data);
+
+                    (string gpuId, string gpuName, bool overrideType, bool overrideIsDesktop) = ((string, string, bool, bool))gpuForm.OpenForm(data);
+
+                    if (overrideType) {
+                        string overridesString = ReadSetting("GPU Type Override", null, true);
+                        Dictionary<string, string> kvp = JsonConvert.DeserializeObject<Dictionary<string, string>>(overridesString);
+                        kvp[gpuName] = overrideIsDesktop ? "desktop" : "notebook";
+
+                        overridesString = JsonConvert.SerializeObject(kvp);
+                        SetSetting("GPU Type Override", overridesString);
+                    }
+                    
+                    value = gpuId;
+                    break;
+
+                case "GPU Type Override":
+                    value = "{}";
                     break;
 
                 case "Minimal install components":
@@ -200,6 +212,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
             }
 
             SetSetting(key, value);
+            return value;
         }
 
         private static string SetupConfigYesNoMessagebox(string text, string[] values, string defaultValue)

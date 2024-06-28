@@ -44,10 +44,10 @@ namespace TinyNvidiaUpdateChecker.Handlers
             }
         }
 
-        public static (bool, int) GetGpuIdFromName(string name, bool isNotebook)
+        public static (bool, int) GetGpuIdFromName(string name, string type)
         {
             try {
-                int gpuId = (int)cachedGPUData[isNotebook ? "notebook" : "desktop"][name];
+                int gpuId = (int)cachedGPUData[type][name];
                 return (true, gpuId);
             } catch {
                 return (false, 0);

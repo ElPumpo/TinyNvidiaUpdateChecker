@@ -401,39 +401,39 @@ namespace TinyNvidiaUpdateChecker
         ///
         private static (GPU, int) GetDriverMetadata()
         {
-            bool isNotebook = false;
+            string type = "";
             bool isDchDriver = false; // TODO rewrite for each GPU
-            int osId = 0;
-            var nameRegex = new Regex(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
+            Regex nameRegex = new(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
             List<int> notebookChassisTypes = [1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32];
-            var gpuList = new List<GPU> { };
-            OSClassRoot osData = MetadataHandler.RetrieveOSData();
+            List<GPU> gpuList = [];
 
-            // Check for notebook
+            // Check GPU Type (Desktop, Notebook)
             // TODO rewrite and identify GPUs properly
             if (overrideChassisType == 0) {
-                foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
+                foreach (ManagementBaseObject obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
                     foreach (int chassisType in obj["ChassisTypes"] as ushort[]) {
-                        isNotebook = notebookChassisTypes.Contains(chassisType);
+                        type = notebookChassisTypes.Contains(chassisType) ? "notebook" : "desktop";
                     }
                 }
             } else {
-                isNotebook = notebookChassisTypes.Contains(overrideChassisType);
+                type = notebookChassisTypes.Contains(overrideChassisType) ? "notebook" : "desktop";
             }
 
-            // Get operating system ID
-            var osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
-            var osBit = Environment.Is64BitOperatingSystem ? "64" : "32";
+            // Get OS data
+            OSClassRoot osData = MetadataHandler.RetrieveOSData();
+            string osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
+            string osBit = Environment.Is64BitOperatingSystem ? "64" : "32";
+            int osId = 0;
 
             if (osVersion == "10.0" && Environment.OSVersion.Version.Build >= 22000) {
-                foreach (var os in osData) {
+                foreach (OSClass os in osData) {
                     if (Regex.IsMatch(os.name, "Windows 11")) {
                         osId = os.id;
                         break;
                     }
                 }
             } else {
-                foreach (var os in osData) {
+                foreach (OSClass os in osData) {
                     if (os.code == osVersion && Regex.IsMatch(os.name, osBit)) {
                         osId = os.id;
                         break;
@@ -447,7 +447,6 @@ namespace TinyNvidiaUpdateChecker
                 WriteLine("No NVIDIA driver was found for this operating system configuration. Make sure TNUC is updated.");
                 WriteLine();
                 WriteLine($"osVersion: {osVersion}");
-                WriteLine($"osBit:     {osBit}");
                 callExit(1);
             }
 
@@ -460,7 +459,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // Scan computer for GPUs
-            var gpuSearch = new ManagementObjectSearcher("SELECT Name, DriverVersion, PNPDeviceID FROM Win32_VideoController").Get();
+            ManagementObjectCollection gpuSearch = new ManagementObjectSearcher("SELECT Name, DriverVersion, PNPDeviceID FROM Win32_VideoController").Get();
 
             foreach (ManagementObject gpu in gpuSearch) {
                 string rawName = gpu["Name"].ToString();
@@ -478,23 +477,24 @@ namespace TinyNvidiaUpdateChecker
                         string gpuName = nameRegex.Match(rawName).Value.Trim().Replace("Super", "SUPER");
                         string cleanVersion = rawVersion.Substring(rawVersion.Length - 5, 5).Insert(3, ".");
 
-                        gpuList.Add(new GPU(gpuName, cleanVersion, vendorID, deviceID, true, isNotebook, isDchDriver));
+                        gpuList.Add(new GPU(gpuName, cleanVersion, vendorID, deviceID, type, true, isDchDriver));
 
                     // Name does not match but the vendor is NVIDIA, use API to lookup its name
                     } else if (vendorID == "10de") {
-                        gpuList.Add(new GPU(rawName, rawVersion, vendorID, deviceID, false, isNotebook, isDchDriver));
+                        gpuList.Add(new GPU(rawName, rawVersion, vendorID, deviceID, type, false, isDchDriver));
                     }
                 }
             }
 
             gpuSearch.Dispose();
+            gpuList.Add(new GPU("GeForce 840M", "311.11", "10de", "1341", "notebook", true, true));
 
             // If no drivers were found then query PCI Lookup API for each GPU
             // TODO: PCI Lookup API requires seperate GPU name sanitation code which has not been developed yet
             // See issue #215
             Regex apiRegex = new(@"([A-Za-z0-9]+( [A-Za-z0-9]+)+)");
 
-            foreach (var gpu in gpuList.Where(x => !x.isValidated)) {
+            foreach (GPU gpu in gpuList.Where(x => !x.isValidated)) {
                 string url = $"https://www.pcilookup.com/api.php?action=search&vendor={gpu.vendorId}&device={gpu.deviceId}";
                 string rawData = ReadURL(url);
                 PCILookupClassRoot apiResponse = JsonConvert.DeserializeObject<PCILookupClassRoot>(rawData);
@@ -511,8 +511,22 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            foreach (var gpu in gpuList.Where(x => x.isValidated)) {
-                (bool success, int gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, gpu.isNotebook);
+            // Check for type override. NOTE: It currently uses GPU name (not ID)
+            string overrides = ConfigurationHandler.ReadSetting("GPU Type Override", null, false);
+
+            if (overrides != null) {
+                Dictionary<string, string> kvp = JsonConvert.DeserializeObject<Dictionary<string, string>>(overrides);
+
+                foreach (GPU gpu in gpuList.Where(x => x.isValidated)) {
+                    if (kvp.TryGetValue(gpu.name, out string value)) {
+                        gpu.type = value;
+                    }
+                }
+            }
+
+            // Get the GPU IDs used for NVIDIA API
+            foreach (GPU gpu in gpuList.Where(x => x.isValidated)) {
+                (bool success, int gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, gpu.type);
 
                 if (success) {
                     gpu.id = gpuId;
@@ -535,8 +549,7 @@ namespace TinyNvidiaUpdateChecker
                     }
 
                     // GPU ID is no longer active on this system, prompt user to choose new GPU
-                    ConfigurationHandler.SetupSetting("GPU ID", gpuList);
-                    configGpuId = int.Parse(ConfigurationHandler.ReadSetting("GPU ID", gpuList));
+                    configGpuId = int.Parse(ConfigurationHandler.SetupSetting("GPU ID", gpuList));
 
                     foreach (var gpu in gpuList.Where(x => x.isValidated)) {
                         if (gpu.id == configGpuId) {
@@ -555,7 +568,7 @@ namespace TinyNvidiaUpdateChecker
             WriteLine();
 
             foreach (var gpu in gpuList) {
-                WriteLine($"GPU Name: '{gpu.name}' | VendorId: {gpu.vendorId} | DeviceId: {gpu.deviceId} | IsNotebook: {gpu.isNotebook}");
+                WriteLine($"GPU Name: '{gpu.name}' | VendorId: {gpu.vendorId} | DeviceId: {gpu.deviceId} | Type: {gpu.type}");
             }
 
             callExit(1);
