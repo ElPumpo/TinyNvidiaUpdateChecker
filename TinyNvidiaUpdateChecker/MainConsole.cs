@@ -402,10 +402,9 @@ namespace TinyNvidiaUpdateChecker
         {
             bool isNotebook = false;
             bool isDchDriver = false; // TODO rewrite for each GPU
-            var nameRegex = new Regex(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
+            Regex nameRegex = new(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
             List<int> notebookChassisTypes = [1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32];
-            var gpuList = new List<GPU> { };
-            OSClassRoot osData = MetadataHandler.RetrieveOSData();
+            List<GPU> gpuList = [];
 
             // Check for notebook
             // TODO rewrite and identify GPUs properly
@@ -420,6 +419,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // Get operating system ID
+            OSClassRoot osData = MetadataHandler.RetrieveOSData();
             string osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
             string osBit = Environment.Is64BitOperatingSystem ? "64" : "32";
             int osId = 0;
@@ -458,9 +458,7 @@ namespace TinyNvidiaUpdateChecker
             }
 
             // Scan computer for GPUs
-            var gpuSearch = new ManagementObjectSearcher("SELECT Name, DriverVersion, PNPDeviceID FROM Win32_VideoController").Get();
-
-            foreach (ManagementObject gpu in gpuSearch) {
+            foreach (ManagementBaseObject gpu in new ManagementObjectSearcher("SELECT Name, DriverVersion, PNPDeviceID FROM Win32_VideoController").Get()) {
                 string rawName = gpu["Name"].ToString();
                 string rawVersion = gpu["DriverVersion"].ToString().Replace(".", string.Empty);
                 string pnp = gpu["PNPDeviceID"].ToString();
@@ -485,14 +483,12 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            gpuSearch.Dispose();
-
             // If no drivers were found then query PCI Lookup API for each GPU
             // TODO: PCI Lookup API requires seperate GPU name sanitation code which has not been developed yet
             // See issue #215
             Regex apiRegex = new(@"([A-Za-z0-9]+( [A-Za-z0-9]+)+)");
 
-            foreach (var gpu in gpuList.Where(x => !x.isValidated)) {
+            foreach (GPU gpu in gpuList.Where(x => !x.isValidated)) {
                 string url = $"https://www.pcilookup.com/api.php?action=search&vendor={gpu.vendorId}&device={gpu.deviceId}";
                 string rawData = ReadURL(url);
                 PCILookupClassRoot apiResponse = JsonConvert.DeserializeObject<PCILookupClassRoot>(rawData);
@@ -509,7 +505,7 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            foreach (var gpu in gpuList.Where(x => x.isValidated)) {
+            foreach (GPU gpu in gpuList.Where(x => x.isValidated)) {
                 (bool success, int gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, gpu.isNotebook);
 
                 if (success) {
@@ -534,7 +530,7 @@ namespace TinyNvidiaUpdateChecker
                     // Validate that the GPU ID is still active on this system
                     int configGpuId = int.Parse(ConfigurationHandler.ReadSetting("GPU ID", gpuList));
 
-                    foreach (var gpu in gpuList.Where(x => x.isValidated)) {
+                    foreach (GPU gpu in gpuList.Where(x => x.isValidated)) {
                         if (gpu.id == configGpuId) {
                             return (gpu, osId);
                         }
@@ -543,7 +539,7 @@ namespace TinyNvidiaUpdateChecker
                     // GPU ID is no longer active on this system, prompt user to choose new GPU
                     configGpuId = int.Parse(ConfigurationHandler.SetupSetting("GPU ID", gpuList));
 
-                    foreach (var gpu in gpuList.Where(x => x.isValidated)) {
+                    foreach (GPU gpu in gpuList.Where(x => x.isValidated)) {
                         if (gpu.id == configGpuId) {
                             return (gpu, osId);
                         }
@@ -559,7 +555,7 @@ namespace TinyNvidiaUpdateChecker
             WriteLine("GPU metadata for your card does not exist, or could not be validated! Please file an issue on the GitHub project page and include the following information:");
             WriteLine();
 
-            foreach (var gpu in gpuList) {
+            foreach (GPU gpu in gpuList) {
                 WriteLine($"GPU Name: '{gpu.name}' | VendorId: {gpu.vendorId} | DeviceId: {gpu.deviceId} | IsNotebook: {gpu.isNotebook}");
             }
 
@@ -909,7 +905,7 @@ namespace TinyNvidiaUpdateChecker
                     UseShellExecute = false
                 };
 
-                if (silent) process.StartInfo.Arguments += " -ibck -y";
+                if (silent) process.StartInfo.Arguments += " -ibck";
             } else if (libary == LibaryHandler.Libary.SEVENZIP) {
                 process.StartInfo = new ProcessStartInfo {
                     WorkingDirectory = savePath,
