@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Support to autodetect eGPUs (Issue #182)
 
+### Fixed
+- Old libary installation files would cause identification problems (Issue #241)
+
 ## [1.19.1] - 2024-06-26
 ### Added
 - Dialog for missing required .NET runtime

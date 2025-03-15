@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using static TinyNvidiaUpdateChecker.Handlers.LibaryHandler;
 
 namespace TinyNvidiaUpdateChecker.Handlers
 {
@@ -127,24 +128,24 @@ namespace TinyNvidiaUpdateChecker.Handlers
                         path += @"\";
                     }
 
-                    return new LibaryFile(path, entry.libary, true);
+                    string exe = LibaryPath.GetExeFromLibary(entry.libary);
+                    string exePath = Path.Combine(path, exe);
+
+                    if (Path.Exists(exePath))
+                    {
+                        return new LibaryFile(path, entry.libary, true);
+                    }
                 }
                 catch { }
             }
 
             foreach (var entry in libaryPathList)
             {
-                try
+                if (entry.validate())
                 {
-                    string path = Path.Combine(entry.path);
-
-                    if (Path.Exists(path))
-                    {
-                        path += @"\";
-                        return new LibaryFile(path, entry.libary, true);
-                    }
+                    string path = Path.Combine(entry.path) + @"\";
+                    return new LibaryFile(path, entry.libary, true);
                 }
-                catch { }
             }
 
             return null;
@@ -175,6 +176,33 @@ namespace TinyNvidiaUpdateChecker.Handlers
         {
             this.path = path;
             this.libary = libary;
+        }
+
+        public bool validate()
+        {
+            try
+            {
+                string exe = GetExeFromLibary(this.libary);
+                string path = Path.Combine(this.path.ToString(), exe);
+
+                if (Path.Exists(path))
+                {
+                    return true;
+                }
+            }
+            catch { }
+
+            return false;
+        }
+
+        public static string GetExeFromLibary(Libary libary)
+        {
+            return libary switch
+            {
+                Libary.SEVENZIP => "7z.exe",
+                Libary.WINRAR => "winrar.exe",
+                _ => "",
+            };
         }
     }
 
