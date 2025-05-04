@@ -22,10 +22,10 @@ namespace TinyNvidiaUpdateChecker.Handlers
         /// </summary>
         static OSClassRoot cachedOSData;
 
-        public static void PrepareCache()
+        public static void PrepareCache(bool forceRecache = false)
         {
-            var gpuData = GetCachedMetadata("gpu-data.json", false);
-            var osData = GetCachedMetadata("os-data.json", false);
+            var gpuData = GetCachedMetadata("gpu-data.json", forceRecache);
+            var osData = GetCachedMetadata("os-data.json", forceRecache);
 
             // Validate GPU Data JSON
             try {

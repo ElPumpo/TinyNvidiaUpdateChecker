@@ -397,8 +397,8 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Finds the GPU, the version and queries up to date information
         /// </summary>
-        ///
-        private static (GPU, int) GetDriverMetadata()
+
+        private static (GPU, int) GetDriverMetadata(bool forceRecache = false)
         {
             bool isNotebook = false;
             bool isDchDriver = false; // TODO rewrite for each GPU
@@ -550,17 +550,25 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            Write("ERROR!");
-            WriteLine();
-            WriteLine("GPU metadata for your card does not exist, or could not be validated! Please file an issue on the GitHub project page and include the following information:");
-            WriteLine();
+            // If no GPU could be validated, then force recache once, and loop again.
+            // This fixes issues related with outdated cache
+            if (!forceRecache) {
+                MetadataHandler.PrepareCache(true);
+                return GetDriverMetadata(true);
+            } else {
+                Write("ERROR!");
+                WriteLine();
+                WriteLine("GPU metadata lookup has failed! Please file an issue on the GitHub project page and include the following information:");
+                WriteLine();
 
-            foreach (GPU gpu in gpuList) {
-                WriteLine($"GPU Name: '{gpu.name}' | VendorId: {gpu.vendorId} | DeviceId: {gpu.deviceId} | IsNotebook: {gpu.isNotebook}");
+                foreach (GPU gpu in gpuList)
+                {
+                    WriteLine($"GPU Name: '{gpu.name}' | VendorId: {gpu.vendorId} | DeviceId: {gpu.deviceId} | IsNotebook: {gpu.isNotebook}");
+                }
+
+                callExit(1);
+                return (null, 0);
             }
-
-            callExit(1);
-            return (null, 0);
         }
 
         private static JObject GetDriverDownloadInfo(int gpuId, int osId, bool isDchDriver) {

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support to autodetect eGPUs (Issue #182)
 
 ### Fixed
+- Outdated GPU metadata caching issues (Issue #247)
 - Old libary installation files would cause identification problems (Issue #241)
 
 ## [1.19.1] - 2024-06-26
