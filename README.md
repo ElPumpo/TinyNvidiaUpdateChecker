@@ -1,16 +1,22 @@
 ![TNUC Logo](image.png)
 
-# TinyNvidiaUpdateChecker
+# GeForce Experience sucks, use this tool instead.
 
-TinyNvidiaUpdateChecker (TNUC for short) is a lightweight tool that checks for NVIDIA GPU drivers for Windows.
+The __most popular__ open-sourced tool to keep your NVIDIA GPUs updated.
 
-## Features
+## Main features
 
-- Lightweight and modernized open sourced project
-- Fully customizable driver install, allowing installing the components that are important to you, and keeping bloatware away
-- [Automated update notifications](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki/Quiet-runs-on-user-login) with semi automatic installation
-- Supports most NVIDIA GPUs (even if you don't have any drivers installed)
-- Supports multi-GPU setups and eGPUs
+### It's lightweight, portable and open-sourced
+
+All the other known tools are either bloated, or not open-sourced. It's a security vulnerability waiting to happen.
+
+Or they require you to install them, and cannot be run in portable mode, and some even require admin permissions to run (!!).
+
+### Debloats the driver install
+
+Stops the NVIDIA spyware from being installed on your computer, and lets you choose EXACTLY which components of the driver you actually want.
+
+No more bloatware.
 
 ## Dependencies
 
