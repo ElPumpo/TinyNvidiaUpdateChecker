@@ -4,13 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.20.1] - 2025-05-23
+### Fixed
+- Fixed library lookup for path-based installations, such as Scoop installations (Issue #248)
+
 ## [1.20.0] - 2025-05-04
 ### Added
 - Support to autodetect eGPUs (Issue #182)
 
 ### Fixed
 - Outdated GPU metadata caching issues (Issue #247)
-- Old libary installation files would cause identification problems (Issue #241)
+- Old library installation files would cause identification problems (Issue #241)
 
 ## [1.19.1] - 2024-06-26
 ### Added
@@ -36,7 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.18.2] - 2024-06-07
 ### Added
 - Self client updater
-- Optional configuration file entries for custom extract libary path, see issue #207
+- Optional configuration file entries for custom extract library path, see issue #207
 - Fixed silent install not properly working, see issue #85
 
 ### Fixed
@@ -85,7 +89,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.16.5] - 2023-05-13
 ### Fixed
-- Invalid minimal install extract libary paths could cause a `ArgumentNullException`. See issue #168
+- Invalid minimal install extract library paths could cause a `ArgumentNullException`. See issue #168
 
 ## [1.16.4] - 2023-02-02
 ### Changed
@@ -117,7 +121,7 @@ This update migrated from the discontinued .NET Framework to .NET 7. TNUC will f
 ### Changed
 - Migrated from discontinued .NET Framework to .NET 7. TNUC will from this point forward require the .NET 7 Desktop Runtime x86
 - Improved error handling for NVIDIA API and metadata repo
-- Improved libary detection code
+- Improved library detection code
 - Remove unwanted image tags and URLs from release description
 
 ## [1.15.4] - 2022-12-27
@@ -270,7 +274,7 @@ I am back, sorry for being inactive the past years. I've been very busy with GTA
 ## [1.9.0] - 2017-09-25
 ### Added
 - New fancy dialog when a new driver is available, with a much better GUI solution and better release notes preview
-- Support for 7-Zip, and an improved libary handling system
+- Support for 7-Zip, and an improved library handling system
 - `--confirm-dl` argument. It will automaticly download and install new drivers! (uses minimal installer)
 - `--config-here` argument. It uses the working directory as the path for the config
 - Implemented check for driver file size
