@@ -72,10 +72,10 @@ namespace TinyNvidiaUpdateChecker
         /// </summary>
         public static bool noPrompt = false;
 
-	    /// <summary>
+        /// <summary>
         /// Dry run
         /// </summary>
-	    public static bool dryRun = false;    
+        public static bool dryRun = false;    
 
         /// <summary>
         /// Enable extended information
@@ -286,12 +286,12 @@ namespace TinyNvidiaUpdateChecker
                 if (arg.ToLower() == "--quiet") {
                     showUI = false;
                 }
-				
-		        else if (arg.ToLower() == "--noprompt") {
+
+                else if (arg.ToLower() == "--noprompt") {
                     noPrompt = true;
                 }
 
-		        else if (arg.ToLower() == "--dry-run") {
+                else if (arg.ToLower() == "--dry-run") {
                     dryRun = true;
                 }
 
@@ -644,7 +644,7 @@ namespace TinyNvidiaUpdateChecker
                 WriteLine();
                 WriteLine(ex.ToString());
             }
-	
+
             callExit(1);
             return null;
         }
@@ -680,8 +680,8 @@ namespace TinyNvidiaUpdateChecker
             }
 
             if (ConfigurationHandler.ReadSettingBool("Minimal install")) {
-                if (LibaryHandler.EvaluateLibary() == null) {
-                    WriteLine("Doesn't seem like neither WinRAR or 7-Zip is installed! We are disabling the minimal install feature for you.");
+                if (LibraryHandler.EvaluateLibrary() == null) {
+                    WriteLine("No compatible extract library was detected on the system. The minimal install feature has been disabled.");
                     ConfigurationHandler.SetSetting("Minimal install", "false");
                 }
             }
@@ -900,21 +900,21 @@ namespace TinyNvidiaUpdateChecker
             WriteLine();
             Write("Extracting drivers . . . ");
 
-            LibaryFile libaryFile = LibaryHandler.EvaluateLibary();
+            LibraryFile libraryFile = LibraryHandler.EvaluateLibrary();
             using var process = new Process();
-            LibaryHandler.Libary libary = libaryFile.LibaryName();
+            LibraryHandler.Library library = libraryFile.LibraryName();
 
             // Extract full driver to then analyze
-            if (libary == LibaryHandler.Libary.WINRAR) {
+            if (library == LibraryHandler.Library.WINRAR) {
                 process.StartInfo = new ProcessStartInfo {
-                    FileName = libaryFile.GetInstallationDirectory() + "winrar.exe",
+                    FileName = libraryFile.GetInstallationDirectory() + "winrar.exe",
                     WorkingDirectory = savePath,
                     Arguments = $"x {fileName} -optemp -y",
                     UseShellExecute = false
                 };
 
                 if (silent) process.StartInfo.Arguments += " -ibck";
-            } else if (libary == LibaryHandler.Libary.SEVENZIP) {
+            } else if (library == LibraryHandler.Library.SEVENZIP) {
                 process.StartInfo = new ProcessStartInfo {
                     WorkingDirectory = savePath,
                     Arguments = $"x {fileName} -otemp -y",
@@ -923,11 +923,11 @@ namespace TinyNvidiaUpdateChecker
                 };
 
                 if (silent) {
-                    process.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7z.exe";
+                    process.StartInfo.FileName = libraryFile.GetInstallationDirectory() + "7z.exe";
                 } else {
-                    process.StartInfo.FileName = libaryFile.GetInstallationDirectory() + "7zG.exe";
+                    process.StartInfo.FileName = libraryFile.GetInstallationDirectory() + "7zG.exe";
                 }
-            } else if (libary == LibaryHandler.Libary.NANAZIP) {
+            } else if (library == LibraryHandler.Library.NANAZIP) {
                 process.StartInfo = new ProcessStartInfo {
                     WorkingDirectory = savePath,
                     Arguments = $"x {fileName} -otemp -y",
@@ -1033,12 +1033,12 @@ namespace TinyNvidiaUpdateChecker
                 WriteLine();
                 WriteLine("Press any key to exit...");
             }
-		
+
             if (showUI & !noPrompt) Console.ReadKey(true);
             FreeConsole();
             Environment.Exit(exitNum);
-        }	    
-	    
+        }
+        
         private static bool DoesDriverFileSizeMatch(string absoluteFilePath) {
             return new FileInfo(absoluteFilePath).Length == downloadFileSize;
         }

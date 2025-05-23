@@ -5,78 +5,79 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using static TinyNvidiaUpdateChecker.Handlers.LibaryHandler;
+using static TinyNvidiaUpdateChecker.Handlers.LibraryHandler;
 
 namespace TinyNvidiaUpdateChecker.Handlers
 {
 
-    class LibaryHandler
+    class LibraryHandler
     {
         private static bool is64 = Environment.Is64BitOperatingSystem;
 
-        static List<LibaryRegistryPath> libaryRegistryList =
+        static List<LibraryRegistryPath> libraryRegistryList 
+        =
             [
                 /* WinRAR */
 
-                new(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", "InstallLocation", Libary.WINRAR),
-                new(Registry.LocalMachine, @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", "InstallLocation", Libary.WINRAR),
+                new(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", "InstallLocation", Library.WINRAR),
+                new(Registry.LocalMachine, @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\WinRAR archiver", "InstallLocation", Library.WINRAR),
 
                 /* 7-Zip */
 
                 // amd64 installer on amd64 system, or x86 on x86 system
-                new(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", "InstallLocation", Libary.SEVENZIP),
+                new(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", "InstallLocation", Library.SEVENZIP),
 
                 // x86 intaller on amd64 system
-                new(Registry.LocalMachine, @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", "InstallLocation", Libary.SEVENZIP),
+                new(Registry.LocalMachine, @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", "InstallLocation", Library.SEVENZIP),
 
                 // MSI amd64 installer on amd64 system, or x86 on x86 system
-                new(Registry.LocalMachine, @"SOFTWARE\7-Zip", "Path", Libary.SEVENZIP),
+                new(Registry.LocalMachine, @"SOFTWARE\7-Zip", "Path", Library.SEVENZIP),
 
                 // MSI x86 intaller on amd64 system
-                new (Registry.LocalMachine, @"SOFTWARE\WOW6432Node\7-Zip", "Path", Libary.SEVENZIP),
+                new (Registry.LocalMachine, @"SOFTWARE\WOW6432Node\7-Zip", "Path", Library.SEVENZIP),
             ];
 
-        static List<LibaryPath> libaryPathList =
+        static List<LibraryPath> LibraryPathList =
             [
                 /* 7-Zip */
 
                 // scoop in user profile
-                new([Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps", "7zip", "current"], Libary.SEVENZIP),
+                new([Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps", "7zip", "current"], Library.SEVENZIP),
 
                 // scoop in Program Data
-                new([Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "scoop", "apps", "7zip", "current"], Libary.SEVENZIP),
+                new([Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "scoop", "apps", "7zip", "current"], Library.SEVENZIP),
 
                 // scoop local environment variable
-                new([Environment.GetEnvironmentVariable("SCOOP", EnvironmentVariableTarget.User), "apps", "7zip", "current"], Libary.SEVENZIP),
+                new([Environment.GetEnvironmentVariable("SCOOP", EnvironmentVariableTarget.User), "apps", "7zip", "current"], Library.SEVENZIP),
 
                 // scoop global environment variable
-                new([Environment.GetEnvironmentVariable("SCOOP_GLOBAL", EnvironmentVariableTarget.Machine), "apps", "7zip", "current"], Libary.SEVENZIP),
+                new([Environment.GetEnvironmentVariable("SCOOP_GLOBAL", EnvironmentVariableTarget.Machine), "apps", "7zip", "current"], Library.SEVENZIP),
 
                 // amd64 on amd64 system, or x86 on x86 system
-                new([Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip"], Libary.SEVENZIP),
+                new([Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip"], Library.SEVENZIP),
 
                 // x86 on amd64 system
-                new([Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "7-Zip"], Libary.SEVENZIP),
+                new([Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "7-Zip"], Library.SEVENZIP),
                 
                 // custom path defined in config file
-                new([ConfigurationHandler.ReadSetting("Custom 7-ZIP Libary Path", null, false)], Libary.SEVENZIP),
+                new([ConfigurationHandler.ReadSetting("Custom 7-ZIP Library Path", null, false)], Library.SEVENZIP),
 
                 /* WinRAR */
-                new([ConfigurationHandler.ReadSetting("Custom WinRAR Libary Path", null, false)], Libary.WINRAR)
+                new([ConfigurationHandler.ReadSetting("Custom WinRAR Library Path", null, false)], Library.WINRAR)
             ];
 
-        static Dictionary<string, Libary> cliList = new() {
-            {"NanaZipC", Libary.NANAZIP} // NanaZip
+        static Dictionary<string, Library> cliList = new() {
+            {"NanaZipC", Library.NANAZIP} // NanaZip
         };
 
-        public enum Libary
+        public enum Library
         {
             SEVENZIP,
             WINRAR,
             NANAZIP
         }
 
-        public static LibaryFile EvaluateLibary()
+        public static LibraryFile EvaluateLibrary()
         {
             foreach (var entry in cliList)
             {
@@ -98,13 +99,14 @@ namespace TinyNvidiaUpdateChecker.Handlers
                     if (process.ExitCode == 0)
                     {
                         string directoryPath = Path.GetDirectoryName(exePath) + @"\";
-                        return new LibaryFile(directoryPath, entry.Value, true);
+                        return new LibraryFile(directoryPath, entry.Value, true);
                     }
                 }
                 catch { }
             }
 
-            foreach (var entry in libaryRegistryList)
+            foreach (var entry in libraryRegistryList)
+            
             {
                 try
                 {
@@ -128,23 +130,23 @@ namespace TinyNvidiaUpdateChecker.Handlers
                         path += @"\";
                     }
 
-                    string exe = LibaryPath.GetExeFromLibary(entry.libary);
+                    string exe = LibraryPath.GetExeFromLibrary(entry.library);
                     string exePath = Path.Combine(path, exe);
 
                     if (Path.Exists(exePath))
                     {
-                        return new LibaryFile(path, entry.libary, true);
+                        return new LibraryFile(path, entry.library, true);
                     }
                 }
                 catch { }
             }
 
-            foreach (var entry in libaryPathList)
+            foreach (var entry in LibraryPathList)
             {
                 if (entry.validate())
                 {
                     string path = Path.Combine(entry.path) + @"\";
-                    return new LibaryFile(path, entry.libary, true);
+                    return new LibraryFile(path, entry.library, true);
                 }
             }
 
@@ -167,22 +169,22 @@ namespace TinyNvidiaUpdateChecker.Handlers
         }
     }
 
-    class LibaryPath
+    class LibraryPath
     {
         public string[] path;
-        public LibaryHandler.Libary libary;
+        public LibraryHandler.Library library;
 
-        public LibaryPath(string[] path, LibaryHandler.Libary libary)
+        public LibraryPath(string[] path, LibraryHandler.Library library)
         {
             this.path = path;
-            this.libary = libary;
+            this.library = library;
         }
 
         public bool validate()
         {
             try
             {
-                string exe = GetExeFromLibary(this.libary);
+                string exe = GetExeFromLibrary(this.library);
                 string path = Path.Combine([.. this.path, exe]);
 
                 if (Path.Exists(path))
@@ -195,30 +197,30 @@ namespace TinyNvidiaUpdateChecker.Handlers
             return false;
         }
 
-        public static string GetExeFromLibary(Libary libary)
+        public static string GetExeFromLibrary(Library library)
         {
-            return libary switch
+            return library switch
             {
-                Libary.SEVENZIP => "7z.exe",
-                Libary.WINRAR => "winrar.exe",
+                Library.SEVENZIP => "7z.exe",
+                Library.WINRAR => "winrar.exe",
                 _ => "",
             };
         }
     }
 
-    class LibaryRegistryPath
+    class LibraryRegistryPath
     {
         public RegistryKey key;
         public string path;
         public string name;
-        public LibaryHandler.Libary libary;
+        public LibraryHandler.Library library;
 
-        public LibaryRegistryPath(RegistryKey key, string path, string name, LibaryHandler.Libary libary)
+        public LibraryRegistryPath(RegistryKey key, string path, string name, LibraryHandler.Library library)
         {
             this.key = key;
             this.path = path;
             this.name = name;
-            this.libary = libary;
+            this.library = library;
         }
 
         public RegistryHive getRegistryHive()
@@ -237,27 +239,27 @@ namespace TinyNvidiaUpdateChecker.Handlers
     /// <summary>
     /// Libaries that can extract the nvidia driver file
     /// </summary>
-    class LibaryFile
+    class LibraryFile
     {
         string installationDirectory;
-        LibaryHandler.Libary libary;
+        LibraryHandler.Library library;
         bool isInstalled;
 
-        public LibaryFile(string installationDirectory, LibaryHandler.Libary libary, bool isInstalled)
+        public LibraryFile(string installationDirectory, LibraryHandler.Library library, bool isInstalled)
         {
             this.installationDirectory = installationDirectory;
-            this.libary = libary;
+            this.library = library;
             this.isInstalled = isInstalled;
         }
 
-        public LibaryFile(LibaryHandler.Libary libary, bool isInstalled)
+        public LibraryFile(LibraryHandler.Library library, bool isInstalled)
         {
-            this.libary = libary;
+            this.library = library;
             this.isInstalled = isInstalled;
         }
 
         /// <summary>
-        /// Is the libary installed?
+        /// Is the library installed?
         /// </summary>
         public bool IsInstalled()
         {
@@ -265,15 +267,15 @@ namespace TinyNvidiaUpdateChecker.Handlers
         }
 
         /// <summary>
-        /// Libary name
+        /// Library name
         /// </summary>
-        public LibaryHandler.Libary LibaryName()
+        public LibraryHandler.Library LibraryName()
         {
-            return libary;
+            return library;
         }
 
         /// <summary>
-        /// Get the absolute path to the libary, ending with a backslash
+        /// Get the absolute path to the library, ending with a backslash
         /// </summary>
         public string GetInstallationDirectory()
         {
@@ -282,7 +284,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
         public override string ToString()
         {
-            return $"installationDirectory: {installationDirectory} | libary: {libary} | isInstalled: {isInstalled}";
+            return $"installationDirectory: {installationDirectory} | library: {library} | isInstalled: {isInstalled}";
         }
     }
 }
