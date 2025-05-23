@@ -698,7 +698,6 @@ namespace TinyNvidiaUpdateChecker
 
             if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLEXTRACT) {
                 // download and save (and extract)
-                WriteLine();
 
                 string driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
                 string savePath = "";
@@ -719,8 +718,7 @@ namespace TinyNvidiaUpdateChecker
                     if (dialog.ShowDialog() == DialogResult.OK) {
                         savePath = dialog.SelectedPath + @"\";
                     } else {
-                        WriteLine("User closed dialog!");
-                        return;
+                        DownloadDriver(downloadURL);
                     }
 
                     if (File.Exists(savePath + driverFileName) && !DoesDriverFileSizeMatch(savePath + driverFileName)) {
@@ -728,6 +726,7 @@ namespace TinyNvidiaUpdateChecker
                     }
 
                     // don't download driver if it already exists
+                    WriteLine();
                     Write("Downloading the driver . . . ");
                     if (showUI && !File.Exists(savePath + driverFileName)) {
                         HandleDownload(downloadURL, savePath + driverFileName).GetAwaiter().GetResult();
@@ -739,6 +738,7 @@ namespace TinyNvidiaUpdateChecker
                     }
 
                 } catch (Exception ex) {
+                    WriteLine();
                     Write("ERROR!");
                     WriteLine();
                     WriteLine("Driver download failed.");

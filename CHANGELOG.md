@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Changed
+- Closing the "Download only" folder dialog now reverts to the main UI, instead of exiting
+
 ## [1.20.1] - 2025-05-23
 ### Fixed
 - Fixed library lookup for path-based installations, such as Scoop installations (Issue #248)
