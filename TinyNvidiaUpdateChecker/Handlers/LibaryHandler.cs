@@ -183,7 +183,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
             try
             {
                 string exe = GetExeFromLibary(this.libary);
-                string path = Path.Combine(this.path.ToString(), exe);
+                string path = Path.Combine([.. this.path, exe]);
 
                 if (Path.Exists(path))
                 {
