@@ -262,7 +262,7 @@ namespace TinyNvidiaUpdateChecker
                 if (confirmDL) {
                     DownloadDriverQuiet(true, downloadURL);
                 } else {
-                    DownloadDriver(downloadURL);
+                    PromptAvailableUpdate(downloadURL);
                 }
             }
 
@@ -689,9 +689,9 @@ namespace TinyNvidiaUpdateChecker
         }
 
         /// <summary>
-        /// Downloads the driver and some other stuff
+        /// Prompt for available GPU update with UI
         /// </summary>
-        private static void DownloadDriver(string downloadURL)
+        private static void PromptAvailableUpdate(string downloadURL)
         {
             DriverDialog.ShowGUI();
 
@@ -702,10 +702,10 @@ namespace TinyNvidiaUpdateChecker
                 string savePath = "";
 
                 try {
-                   string title = "Where do you want to save the driver?";
+                    string title = "Choose download location";
 
                     if (ConfigurationHandler.ReadSettingBool("Minimal install")) {
-                        title += " (you should select a empty folder)";
+                        title += " (you should select an empty folder)";
                     }
 
                     using var dialog = new FolderBrowserDialog {
@@ -717,7 +717,8 @@ namespace TinyNvidiaUpdateChecker
                     if (dialog.ShowDialog() == DialogResult.OK) {
                         savePath = dialog.SelectedPath + @"\";
                     } else {
-                        DownloadDriver(downloadURL);
+                        PromptAvailableUpdate(downloadURL);
+                        return;
                     }
 
                     if (File.Exists(savePath + driverFileName) && !DoesDriverFileSizeMatch(savePath + driverFileName)) {
@@ -730,8 +731,9 @@ namespace TinyNvidiaUpdateChecker
                     if (showUI && !File.Exists(savePath + driverFileName)) {
                         HandleDownload(downloadURL, savePath + driverFileName).GetAwaiter().GetResult();
                     }
+
                     // show the progress bar gui
-                    else if(!showUI && !File.Exists(savePath + driverFileName)) {
+                    else if (!showUI && !File.Exists(savePath + driverFileName)) {
                         using DownloaderForm dlForm = new();
                         dlForm.DownloadFile(downloadURL, savePath + driverFileName);
                     }
@@ -759,18 +761,43 @@ namespace TinyNvidiaUpdateChecker
                 }
             } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLINSTALL) {
                 DownloadDriverQuiet(confirmDL, downloadURL);
+                
+            } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLINSTALLCUSTOM) {
+                string title = "Choose download location";
+
+                if (ConfigurationHandler.ReadSettingBool("Minimal install"))
+                {
+                    title += " (you should select an empty folder)";
+                }
+
+                using var dialog = new FolderBrowserDialog
+                {
+                    Description = title,
+                    UseDescriptionForTitle = true,
+                    ShowNewFolderButton = true
+                };
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    DownloadDriverQuiet(confirmDL, downloadURL, dialog.SelectedPath + @"\", true);
+                }
+                else
+                {
+                    PromptAvailableUpdate(downloadURL);
+                    return;
+                }
             }
         }
 
         /// <summary>
         /// Downloads and installs the driver without user interaction
         /// </summary>
-        private static void DownloadDriverQuiet(bool minimized, string downloadURL)
+        private static void DownloadDriverQuiet(bool minimized, string downloadURL, string overrideDownloadLocation = null, bool keepDriver = false)
         {
             string driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
-            string savePath = Path.GetTempPath();
+            string savePath = overrideDownloadLocation ?? Path.GetTempPath();
 
-            string FULL_PATH_DIRECTORY = savePath + OnlineGPUVersion + @"\";
+            string FULL_PATH_DIRECTORY = overrideDownloadLocation ?? savePath + OnlineGPUVersion + @"\";
             string FULL_PATH_DRIVER = FULL_PATH_DIRECTORY + driverFileName;
 
             savePath = FULL_PATH_DIRECTORY;
@@ -834,13 +861,18 @@ namespace TinyNvidiaUpdateChecker
 
             WriteLine();
 
-            try {
-                Directory.Delete(FULL_PATH_DIRECTORY, true);
-                WriteLine($"Cleaned up: {FULL_PATH_DIRECTORY}");
-            } catch {
-                WriteLine($"Could not cleanup: {FULL_PATH_DIRECTORY}");
+            if (!keepDriver)
+            {
+                try
+                {
+                    Directory.Delete(FULL_PATH_DIRECTORY, true);
+                    WriteLine($"Cleaned up: {FULL_PATH_DIRECTORY}");
+                }
+                catch
+                {
+                    WriteLine($"Could not cleanup: {FULL_PATH_DIRECTORY}");
+                }
             }
-
         }
 
         /// <summary>

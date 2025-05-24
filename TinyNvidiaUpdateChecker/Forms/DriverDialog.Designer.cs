@@ -43,7 +43,12 @@ namespace TinyNvidiaUpdateChecker
             IgnoreBtn = new Button();
             webBrowser1 = new WebBrowser();
             toolTip1 = new ToolTip(components);
+            configButton = new Button();
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            installItem = new ToolStripMenuItem();
+            keepCheckBox = new ToolStripMenuItem();
             groupBox1.SuspendLayout();
+            contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // DownloadInstallButton
@@ -164,11 +169,49 @@ namespace TinyNvidiaUpdateChecker
             webBrowser1.WebBrowserShortcutsEnabled = false;
             webBrowser1.DocumentCompleted += webBrowser1_DocumentCompleted;
             // 
+            // configButton
+            // 
+            configButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            configButton.Location = new System.Drawing.Point(480, 11);
+            configButton.Margin = new Padding(3, 4, 3, 4);
+            configButton.Name = "configButton";
+            configButton.Size = new System.Drawing.Size(35, 43);
+            configButton.TabIndex = 7;
+            configButton.Text = "⚙";
+            toolTip1.SetToolTip(configButton, "Open configuration");
+            configButton.UseVisualStyleBackColor = true;
+            configButton.Click += configButton_Click;
+            // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { installItem, keepCheckBox });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(193, 52);
+            contextMenuStrip1.Closing += contextMenuStrip1_Closing;
+            // 
+            // installItem
+            // 
+            installItem.Name = "installItem";
+            installItem.Size = new System.Drawing.Size(192, 24);
+            installItem.Text = "Install Now >";
+            installItem.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            installItem.Click += installItem_Click;
+            // 
+            // keepCheckBox
+            // 
+            keepCheckBox.CheckOnClick = true;
+            keepCheckBox.Name = "keepCheckBox";
+            keepCheckBox.Size = new System.Drawing.Size(192, 24);
+            keepCheckBox.Text = "Keep driver files?";
+            keepCheckBox.ToolTipText = "Choose custom download location and keep driver files";
+            // 
             // DriverDialog
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(527, 351);
+            Controls.Add(configButton);
             Controls.Add(webBrowser1);
             Controls.Add(IgnoreBtn);
             Controls.Add(groupBox1);
@@ -177,13 +220,14 @@ namespace TinyNvidiaUpdateChecker
             Controls.Add(DownloadBtn);
             Controls.Add(DownloadInstallButton);
             FormBorderStyle = FormBorderStyle.None;
-            Margin = new Padding(3, 4, 3, 4);
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.Execut‌​ablePath);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "DriverDialog";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "TinyNvidiaUpdateChecker - Update Dialog";
             Load += DriverDialog_Load;
             groupBox1.ResumeLayout(false);
+            contextMenuStrip1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -201,5 +245,11 @@ namespace TinyNvidiaUpdateChecker
         private System.Windows.Forms.WebBrowser webBrowser1;
         private ToolTip toolTip1;
         private Label sizeLabel;
+        private ContextMenuStrip contextMenuStrip1;
+        private ToolStripMenuItem customSaveLocationItem;
+        private ToolStripMenuItem installItem;
+        private ToolStripMenuItem keepCheckBox;
+        private ToolStripTextBox toolStripTextBox1;
+        private Button configButton;
     }
 }

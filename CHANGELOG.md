@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Configuration menu
+- Install now with custom download location, and keep driver after installation
 
 ### Changed
 - Closing the "Download only" folder dialog now reverts to the main UI, instead of exiting

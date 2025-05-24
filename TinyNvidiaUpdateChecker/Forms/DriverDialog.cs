@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
+using TinyNvidiaUpdateChecker.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -17,7 +21,8 @@ namespace TinyNvidiaUpdateChecker
         public static void ShowGUI()
         {
             // show the form
-            using (var form = new DriverDialog()) {
+            using (var form = new DriverDialog())
+            {
                 form.ShowDialog();
             }
         }
@@ -30,11 +35,16 @@ namespace TinyNvidiaUpdateChecker
             var dateDiff = (DateTime.Now - MainConsole.releaseDate).Days; // how many days between the two dates
             string daysAgoFromRelease = null;
 
-            if (dateDiff == 1) {
+            if (dateDiff == 1)
+            {
                 daysAgoFromRelease = $"{dateDiff} day ago";
-            } else if (dateDiff < 1) {
+            }
+            else if (dateDiff < 1)
+            {
                 daysAgoFromRelease = "today"; // we only have the date and not time :/
-            } else {
+            }
+            else
+            {
                 daysAgoFromRelease = $"{dateDiff} days ago";
             }
 
@@ -44,16 +54,20 @@ namespace TinyNvidiaUpdateChecker
             versionLabel.Text += MainConsole.OnlineGPUVersion + $" (you're on {MainConsole.OfflineGPUVersion})";
             sizeLabel.Text += Math.Round((MainConsole.downloadFileSize / 1024f) / 1024f) + " MiB";
 
-            if (MainConsole.pdfURL == null) {
+            if (MainConsole.pdfURL == null)
+            {
                 NotesBtn.Enabled = false;
             }
         }
 
         private void NotesBtn_Click(object sender, EventArgs e)
         {
-            try {
+            try
+            {
                 Process.Start(new ProcessStartInfo(MainConsole.pdfURL) { UseShellExecute = true });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.ToString());
             }
         }
@@ -62,9 +76,12 @@ namespace TinyNvidiaUpdateChecker
         {
             webBrowser1.Document.ExecCommand("SelectAll", false, "null");
             webBrowser1.Document.ExecCommand("FontName", false, "Microsoft Sans Serif");
-            if (notesScale > 96) {
+            if (notesScale > 96)
+            {
                 webBrowser1.Document.ExecCommand("FontSize", false, 1);
-            } else {
+            }
+            else
+            {
                 webBrowser1.Document.ExecCommand("FontSize", false, 2);
             }
 
@@ -79,8 +96,7 @@ namespace TinyNvidiaUpdateChecker
 
         private void DownloadInstallButton_Click(object sender, EventArgs e)
         {
-            selectedBtn = SelectedBtn.DLINSTALL;
-            Close();
+            contextMenuStrip1.Show(DownloadInstallButton, 0, DownloadInstallButton.Height);
         }
 
         private void DownloadBtn_Click(object sender, EventArgs e)
@@ -89,9 +105,39 @@ namespace TinyNvidiaUpdateChecker
             Close();
         }
 
+        private void contextMenuStrip1_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        {
+            if (e.CloseReason == ToolStripDropDownCloseReason.ItemClicked)
+            {
+                var hovered = contextMenuStrip1.Items
+                    .OfType<ToolStripMenuItem>()
+                    .FirstOrDefault(i => i.Bounds.Contains(contextMenuStrip1.PointToClient(Cursor.Position)));
+
+                if (hovered != null && hovered.Text == "Keep driver files?")
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private void configButton_Click(object sender, EventArgs e)
+        {
+            ConfigurationForm configForm = new();
+            Hide();
+            configForm.OpenForm();
+            Show();
+        }
+
+        private void installItem_Click(object sender, EventArgs e)
+        {
+            selectedBtn = keepCheckBox.Checked ? SelectedBtn.DLINSTALLCUSTOM : SelectedBtn.DLINSTALL;
+            Close();
+        }
+
         public enum SelectedBtn
         {
             DLINSTALL,
+            DLINSTALLCUSTOM,
             DLEXTRACT,
             IGNORE
         }
