@@ -61,7 +61,7 @@
             minimalCheckBox.Location = new System.Drawing.Point(12, 56);
             minimalCheckBox.Name = "minimalCheckBox";
             minimalCheckBox.Size = new System.Drawing.Size(177, 24);
-            minimalCheckBox.TabIndex = 1;
+            minimalCheckBox.TabIndex = 2;
             minimalCheckBox.Text = "Enable minimal install";
             minimalCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -71,7 +71,7 @@
             updateCheckBox.Location = new System.Drawing.Point(12, 26);
             updateCheckBox.Name = "updateCheckBox";
             updateCheckBox.Size = new System.Drawing.Size(221, 24);
-            updateCheckBox.TabIndex = 0;
+            updateCheckBox.TabIndex = 1;
             updateCheckBox.Text = "Check for updates on startup";
             updateCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -80,7 +80,7 @@
             cancelButton.Location = new System.Drawing.Point(195, 349);
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new System.Drawing.Size(63, 29);
-            cancelButton.TabIndex = 1;
+            cancelButton.TabIndex = 7;
             cancelButton.Text = "Cancel";
             cancelButton.UseVisualStyleBackColor = true;
             cancelButton.Click += cancelButton_Click;
@@ -90,7 +90,7 @@
             saveButton.Location = new System.Drawing.Point(95, 349);
             saveButton.Name = "saveButton";
             saveButton.Size = new System.Drawing.Size(94, 29);
-            saveButton.TabIndex = 2;
+            saveButton.TabIndex = 6;
             saveButton.Text = "Save";
             saveButton.UseVisualStyleBackColor = true;
             saveButton.Click += saveButton_Click;
@@ -112,7 +112,7 @@
             sdRadioButton.Location = new System.Drawing.Point(12, 56);
             sdRadioButton.Name = "sdRadioButton";
             sdRadioButton.Size = new System.Drawing.Size(117, 24);
-            sdRadioButton.TabIndex = 1;
+            sdRadioButton.TabIndex = 4;
             sdRadioButton.TabStop = true;
             sdRadioButton.Text = "Studio Driver";
             sdRadioButton.UseVisualStyleBackColor = true;
@@ -123,7 +123,7 @@
             grdRadioButton.Location = new System.Drawing.Point(12, 26);
             grdRadioButton.Name = "grdRadioButton";
             grdRadioButton.Size = new System.Drawing.Size(219, 24);
-            grdRadioButton.TabIndex = 0;
+            grdRadioButton.TabIndex = 3;
             grdRadioButton.TabStop = true;
             grdRadioButton.Text = "Game Ready Driver (default)";
             grdRadioButton.UseVisualStyleBackColor = true;
@@ -153,7 +153,7 @@
             resetGpuButton.Location = new System.Drawing.Point(12, 26);
             resetGpuButton.Name = "resetGpuButton";
             resetGpuButton.Size = new System.Drawing.Size(140, 51);
-            resetGpuButton.TabIndex = 0;
+            resetGpuButton.TabIndex = 5;
             resetGpuButton.Text = "Reset GPU choice\r\n(requires restart)";
             resetGpuButton.UseVisualStyleBackColor = true;
             resetGpuButton.Click += resetGpuButton_Click;
@@ -170,6 +170,7 @@
             Controls.Add(cancelButton);
             Controls.Add(groupBox1);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "ConfigurationForm";
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.Execut‌​ablePath);
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
