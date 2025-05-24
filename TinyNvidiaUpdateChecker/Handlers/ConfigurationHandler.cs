@@ -46,7 +46,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
                 SetupSetting("Check for Updates");
                 SetupSetting("Minimal install");
-                SetupSetting("Download location");
                 SetupSetting("Driver type");
 
                 Console.WriteLine();
@@ -64,13 +63,11 @@ namespace TinyNvidiaUpdateChecker.Handlers
         {
             string CHECK_UPDATE = ReadSetting("Check for Updates");
             string MINIMAL_INSTALL = ReadSetting("Minimal install");
-            string DOWNLOAD_LOCATION = ReadSetting("Download location");
             string DRIVER_TYPE = ReadSetting("Driver type");
 
             if (MainConsole.debug) {
                 Console.WriteLine($"CHECK_UPDATE: {CHECK_UPDATE}");
                 Console.WriteLine($"MINIMAL_INSTALL: {MINIMAL_INSTALL}");
-                Console.WriteLine($"DOWNLOAD_LOCATION: {DOWNLOAD_LOCATION}");
                 Console.WriteLine($"DRIVER_TYPE: {DRIVER_TYPE}");
             }
         }
@@ -153,11 +150,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 case "Minimal install":
                     choices = ["true", "false"];
                     value = SetupConfigYesNoMessagebox("Do you want to perform a minimal/custom install of the drivers? You will (later) choose the components you want to install, but this feature requires either WinRAR, 7-Zip or NanaZip to be installed.", choices, "false");
-                    break;
-
-                case "Download location":
-                    LocationChooserForm locForm = new();
-                    value = locForm.OpenForm();
                     break;
 
                 case "Driver type":

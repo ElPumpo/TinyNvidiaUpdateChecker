@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Closing the "Download only" folder dialog now reverts to the main UI, instead of exiting
 
+### Removed
+- Download location form, as NVIDIA uses CDN and smart DNS-routing
+
 ## [1.20.1] - 2025-05-23
 ### Fixed
 - Fixed library lookup for path-based installations, such as Scoop installations (Issue #248)

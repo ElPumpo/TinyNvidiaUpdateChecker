@@ -173,7 +173,6 @@ namespace TinyNvidiaUpdateChecker
             MetadataHandler.PrepareCache();
             (GPU gpu, int osId) = GetDriverMetadata();
             JObject downloadInfo = GetDriverDownloadInfo(gpu.id, osId, gpu.isDch);
-            string dlPrefix = ConfigurationHandler.ReadSetting("Download location");
 
             OfflineGPUVersion = gpu.version;
             string downloadURL = downloadInfo["DownloadURL"].ToString();
@@ -185,7 +184,7 @@ namespace TinyNvidiaUpdateChecker
                 downloadURL = downloadURL.Substring(9);
             }
 
-            downloadURL = $"https://{dlPrefix}{downloadURL}";
+            downloadURL = $"https://international{downloadURL}";
 
             OnlineGPUVersion = downloadInfo["Version"].ToString();
             releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
