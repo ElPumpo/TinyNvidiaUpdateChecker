@@ -179,9 +179,9 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
         public static Dictionary<string, string> componentDescription = new() {
             {"Display.Driver", "This is the graphics driver"},
-            {"Display.Nview", "RTX Desktop Manager is a tool designed to enhance productivity and workflow for professionals.\n\nYou can define custom regions on your desktop and easily snap application windows into those regions, as well as create custom user profiles that organize your windows and applications on launch.\n\nOnly compatiable with RTX and Quadro GPUs."},
+            {"Display.Nview", "RTX Desktop Manager lets you create custom desktop zones to snap windows and set profiles that organize apps on startup.\n\nOnly compatible with RTX and Quadro GPUs."},
             {"Display.Optimus", "NVIDIA Optimus is a technology designed to enhance the battery life of laptops by dynamically switching between two graphics processing units (GPUs) based on the tasks being performed. Install it if you're on notebook."},
-            {"Display.Update", "This component is the NVIDIA driver update checker. It notifies you when a new release is available. But you're using TNUC instead, right?"},
+            {"Display.Update", "This component is the NVIDIA driver update checker. It notifies you when a new release is available. But you're using TNUC instead, right?"},   
             {"FrameViewSDK", "The NVIDIA FrameView SDK is a set of tools designed for capturing and analyzing performance metrics in real-time for gaming and other graphics-intensive applications."},
             {"GFExperience", "GeForce Experience is a companion application for NVIDIA GeForce graphics cards, designed to enhance the gaming experience through various features and tools."},
             {"GFExperience.NvStreamSrv", "This component is the live streaming library for ShadowPlay. Without it, you can only record to disk."},
@@ -193,7 +193,6 @@ namespace TinyNvidiaUpdateChecker.Handlers
             {"NvCamera", "NVIDIA Ansel is a in-game photography tool that allows capturing screenshots from supported games with customizable camera settings and effects."},
             {"NvContainer", "The background service for some components."},
             {"NvModuleTracker", "Process and module monitoring driver."},
-            {"NVPCF", "This component is a driver for very specific laptops, such as some Asus and Acer models.\n\nOnly install this component if you have an unknown device in Device Manager with hardware id 'ACPI\\NVDA0820'"},
             {"NvTelemetry", "This component collects your data without consent and sends them to NVIDIA."},
             {"NvVAD", "NVIDIA Virtual Audio driver, required for ShadowPlay to record audio."},
             {"NvvHCI", "NVIDIA Shield Controller Wired Driver"},
@@ -202,26 +201,39 @@ namespace TinyNvidiaUpdateChecker.Handlers
             {"PPC", "This component is a specific USB-C driver used for a technology called VirtualLink. It provides a method of pairing VR headsets with computers, but has been abandoned."},
             {"ShadowPlay", "ShadowPlay is the popular NVIDIA tool that let's you record your gameplay using their NvENC encoder."},
             {"ShieldWirelessController", "NVIDIA Shield Controller Wireless Driver."},
-            {"Update.Core", "Component that allows GeForce Expereince to self update."}
+            {"Update.Core", "Component that allows GeForce Expereince to self update."},
+            {"NvApp", "The NVIDIA App is a new all-in-one control panel that replaces GeForce Experience and the classic Control Panel.\n\nIt offers driver updates, display settings, ShadowPlay, and game optimization. No login required."},
+            {"NvDLISR", "NVIDIA NGX DLISR enables Image Super Resolution using AI.\n\nIt upscales images by 2×, 4×, or 8× using deep learning to reconstruct details. Its exact use within the driver package remains unclear."},
+            {"NVPCF", "Provides GPU power management for laptops, enabling Dynamic Boost and configurable TDP. Required for proper function of all GeForce RTX 30-series laptop GPUs and newer.\n\nNot needed on desktops.\n\nWithout it, the GPU defaults to low-power mode."},
+            {"NvApp.MessageBus", "NVIDIA App uses this messaging system to communicate with the driver backend and move data between processes."},
+            {"NvCpl", "This is the older NVIDIA Control Panel, which you can open by right-clicking on your desktop. It works on its own, without needing any other components.\n\nWhen you install the NVIDIA App, this component is necessary for game profile support. Without it, you'll get an 'unable to retrieve settings' error."}
         };
 
         public static Dictionary<string, string> componentLabel = [];
 
         public static Dictionary<string, string> componentLabelOverride = new() {
             {"Display.Optimus", "NVIDIA Optimus"},
-            {"Display.Update", "NVIDIA Driver Update Checker"},
+            {"Display.Update", "Driver Update Checker"},
             {"MSVCRT", "Microsoft C Runtimes 2017 & 2019"},
             {"NVPCF", "NV Platform Controller"},
-            {"NvvHCI", "NVIDIA Shield Controller Wired Driver"},
+            {"NvvHCI", " Shield Controller Wired Driver"},
             {"NvModuleTracker", "Process Monitor"},
             {"ShieldWirelessController", "NVIDIA Shield Controller Wireless Driver"},
-            {"Update.Core", "GFE Updater"}
+            {"Update.Core", "GFE Updater"},
+            {"NvApp", "NVIDIA App"},
+            {"NvCpl", "Legacy Control Panel"},
+            {"NvApp.MessageBus", "NVIDIA App MessageBus"},
+            {"PPC", "USB-C Driver"}
         };
 
         public static Dictionary<string, string> dependencyNameOverride = new() {
             {"Display.GFExperience", "GFExperience"},
+            {"Display.NvApp.MessageBus", "NvApp.MessageBus"},
+            {"Display.NvApp.NvBackend", "NvBackend"},
+            {"Display.NvApp.NvCPL", "NvCpl"},
             {"NvNodejs", "nodejs"},
             {"NvContainer.MessageBus", "NvContainer"},
+            {"NvContainer.AIUser", "NvContainer"},
             {"NvContainer.LocalSystem", "NvContainer"},
             {"NvContainer.ServiceUser", "NvContainer"},
             {"NvContainer.Session", "NvContainer"},

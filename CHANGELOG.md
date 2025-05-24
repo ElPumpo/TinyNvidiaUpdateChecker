@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Configuration menu
 - Install now with custom download location, and keep driver after installation
+- Support for NVIDIA App
 
 ### Changed
 - Closing the "Download only" folder dialog now reverts to the main UI, instead of exiting
