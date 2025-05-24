@@ -170,9 +170,8 @@
             Controls.Add(cancelButton);
             Controls.Add(groupBox1);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
-            Name = "ConfigurationForm";
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.Execut‌​ablePath);
+            Name = "ConfigurationForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Configuration Menu";
             Load += ConfigurationForm_Load;
