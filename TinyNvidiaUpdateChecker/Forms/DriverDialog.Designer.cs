@@ -37,6 +37,7 @@ namespace TinyNvidiaUpdateChecker
             NotesBtn = new Button();
             titleLabel = new Label();
             groupBox1 = new GroupBox();
+            typeLabel = new Label();
             sizeLabel = new Label();
             releasedLabel = new Label();
             versionLabel = new Label();
@@ -102,32 +103,42 @@ namespace TinyNvidiaUpdateChecker
             // groupBox1
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            groupBox1.Controls.Add(typeLabel);
             groupBox1.Controls.Add(sizeLabel);
             groupBox1.Controls.Add(releasedLabel);
             groupBox1.Controls.Add(versionLabel);
-            groupBox1.Location = new System.Drawing.Point(315, 50);
+            groupBox1.Location = new System.Drawing.Point(318, 62);
             groupBox1.Margin = new Padding(3, 4, 3, 4);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(3, 4, 3, 4);
-            groupBox1.Size = new System.Drawing.Size(200, 192);
+            groupBox1.Size = new System.Drawing.Size(197, 179);
             groupBox1.TabIndex = 6;
             groupBox1.TabStop = false;
-            groupBox1.Text = "File Information";
+            groupBox1.Text = "Driver Information";
+            // 
+            // typeLabel
+            // 
+            typeLabel.Location = new System.Drawing.Point(6, 133);
+            typeLabel.Name = "typeLabel";
+            typeLabel.Size = new System.Drawing.Size(188, 37);
+            typeLabel.TabIndex = 7;
+            typeLabel.Text = "Type: ";
+            typeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // sizeLabel
             // 
-            sizeLabel.Location = new System.Drawing.Point(6, 130);
+            sizeLabel.Location = new System.Drawing.Point(6, 96);
             sizeLabel.Name = "sizeLabel";
-            sizeLabel.Size = new System.Drawing.Size(188, 55);
+            sizeLabel.Size = new System.Drawing.Size(188, 37);
             sizeLabel.TabIndex = 6;
             sizeLabel.Text = "Size: ";
             sizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // releasedLabel
             // 
-            releasedLabel.Location = new System.Drawing.Point(6, 78);
+            releasedLabel.Location = new System.Drawing.Point(6, 59);
             releasedLabel.Name = "releasedLabel";
-            releasedLabel.Size = new System.Drawing.Size(188, 55);
+            releasedLabel.Size = new System.Drawing.Size(188, 37);
             releasedLabel.TabIndex = 5;
             releasedLabel.Text = "Released: ";
             releasedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -136,7 +147,7 @@ namespace TinyNvidiaUpdateChecker
             // 
             versionLabel.Location = new System.Drawing.Point(6, 22);
             versionLabel.Name = "versionLabel";
-            versionLabel.Size = new System.Drawing.Size(188, 55);
+            versionLabel.Size = new System.Drawing.Size(188, 37);
             versionLabel.TabIndex = 5;
             versionLabel.Text = "Version: ";
             versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -251,5 +262,6 @@ namespace TinyNvidiaUpdateChecker
         private ToolStripMenuItem keepCheckBox;
         private ToolStripTextBox toolStripTextBox1;
         private Button configButton;
+        private Label typeLabel;
     }
 }
