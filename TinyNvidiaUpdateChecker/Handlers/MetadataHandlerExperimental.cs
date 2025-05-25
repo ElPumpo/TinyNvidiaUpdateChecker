@@ -63,7 +63,7 @@ public class MetadataHandlerExperimental
         return (null, 0);
     }
 
-    public static DriverVersion FindLatestDriverForGpu(int gpuIndex)
+    public static DriverVersion FindLatestDriverForGpu(int gpuIndex, string driverType)
     {
         DriverVersion latestDriver = null;
         Version latestParsedVersion = new(0, 0);
@@ -72,12 +72,16 @@ public class MetadataHandlerExperimental
         {
             if (driver.supports.Contains(gpuIndex))
             {
-                if (Version.TryParse(driver.version, out Version currentParsedVersion))
+                // Does driver type match?
+                if ((driverType == "sd" && driver.type == "Studio") || driverType != "sd")
                 {
-                    if (currentParsedVersion > latestParsedVersion)
+                    if (Version.TryParse(driver.version, out Version currentParsedVersion))
                     {
-                        latestParsedVersion = currentParsedVersion;
-                        latestDriver = driver;
+                        if (currentParsedVersion > latestParsedVersion)
+                        {
+                            latestParsedVersion = currentParsedVersion;
+                            latestDriver = driver;
+                        }
                     }
                 }
             }
@@ -85,14 +89,14 @@ public class MetadataHandlerExperimental
         return latestDriver;
     }
 
-    public static (DriverMetadata metadata, string errorCode) GetDriverMetadata(string deviceId)
+    public static (DriverMetadata metadata, string errorCode) GetDriverMetadata(string deviceId, string driverType)
     {
         if (!LoadCombinedJsonData()) return (null, "Error parsing GPU metadata json.");
         (GpuDevice matchedGpu, int gpuIndex) = FindGpuDetailsByDeviceId(deviceId);
 
         if (matchedGpu != null)
         {
-            DriverVersion latestDriver = FindLatestDriverForGpu(gpuIndex);
+            DriverVersion latestDriver = FindLatestDriverForGpu(gpuIndex, driverType);
 
             if (latestDriver != null)
             {
@@ -120,7 +124,13 @@ public class MetadataHandlerExperimental
             }
             else
             {
-                return (null, "No compatible driver was found for your GPU.");
+                // TODO implement popup, and ask to revert to GRD
+                string error = "No compatible driver was found for your GPU.";
+                if (driverType == "sd")
+                {
+                    error += "\nYou have opted to only recieve Studio drivers. Perhaps your GPU has no available Studio drivers.";
+                }
+                return (null, error);
             }
         }
         else

@@ -170,10 +170,11 @@ namespace TinyNvidiaUpdateChecker
             DriverMetadata metadata;
             GPU gpu;
             int osId;
+            string driverType = ConfigurationHandler.ReadSetting("Driver type");
 
             if (ConfigurationHandler.ReadSetting("Use Experimental Metadata", null, false) == "true") {
                 (gpu, osId) = GetDriverMetadata(false, true);
-                (metadata, string error) = MetadataHandlerExperimental.GetDriverMetadata(gpu.deviceId);
+                (metadata, string error) = MetadataHandlerExperimental.GetDriverMetadata(gpu.deviceId, driverType);
 
                 if (metadata == null) {
                     Write("ERROR!");
@@ -185,7 +186,7 @@ namespace TinyNvidiaUpdateChecker
             } else {
                 MetadataHandler.PrepareCache();
                 (gpu, osId) = GetDriverMetadata();
-                JObject downloadInfo = GetDriverDownloadInfo(gpu.id, osId, gpu.isDch);
+                JObject downloadInfo = GetDriverDownloadInfo(gpu.id, osId, gpu.isDch, driverType);
                 metadata = new();
 
                 string tempUrl = downloadInfo["DownloadURL"].ToString();
@@ -194,7 +195,9 @@ namespace TinyNvidiaUpdateChecker
                 metadata.downloadUrl = $"https://international{tempUrl}";
                 metadata.version = downloadInfo["Version"].ToString();
                 metadata.releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
-                metadata.platform = !gpu.isNotebook ? "desktop" : "notebook";
+
+                // Get driver type/platform
+                metadata.platform = (driverType == "grd") ? (!gpu.isNotebook ? "Desktop" : "Notebook") : "Studio";
 
                 // Santitize release notes, and get PDF
                 string tempNotes = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
@@ -592,14 +595,14 @@ namespace TinyNvidiaUpdateChecker
             }
         }
 
-        private static JObject GetDriverDownloadInfo(int gpuId, int osId, bool isDchDriver) {
+        private static JObject GetDriverDownloadInfo(int gpuId, int osId, bool isDchDriver, string driverType) {
             try {
                 var ajaxDriverLink = "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup";
                 ajaxDriverLink += $"&pfid={gpuId}&osID={osId}&dch={(isDchDriver ? 1 : 0)}";
                 // Driver type (upCRD)
                 // - 0 is Game Ready Driver (GRD)
                 // - 1 is Studio Driver (SD)
-                int driverTypeInt = ConfigurationHandler.ReadSetting("Driver type") == "grd" ? 0 : 1;
+                int driverTypeInt = driverType == "grd" ? 0 : 1;
                 ajaxDriverLink += $"&upCRD={driverTypeInt}";
 
                 JObject driverObj = JObject.Parse(ReadURL(ajaxDriverLink));
@@ -623,8 +626,6 @@ namespace TinyNvidiaUpdateChecker
                     throw new ArgumentOutOfRangeException();
                 }
             } catch (ArgumentOutOfRangeException) {
-                string driverType = ConfigurationHandler.ReadSetting("Driver type");
-
                 Write("ERROR!");
                 WriteLine();
                 WriteLine("No NVIDIA driver was found for your system configuration.");
