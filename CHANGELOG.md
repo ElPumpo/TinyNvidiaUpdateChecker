@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- Experimental method to retrieve GPU metadata. This fixes all problems assosiated with eGPUs, or failing GPU matches.
+
 ## [1.21.0] - 2025-05-25
 ### Added
 - Configuration menu in update prompt UI

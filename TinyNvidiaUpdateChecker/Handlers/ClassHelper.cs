@@ -21,6 +21,20 @@ public class GPU(string name, string version, string vendorId, string deviceId, 
     public bool isDch { get; set; } = isDch;
 }
 
+public class DriverMetadata(string name, string version, long fileSize, string platform, string downloadUrl, string pdfUrl, string releaseNotes, DateTime releaseDate)
+{
+    public DriverMetadata() : this(null, null, 0, null, null, null, null, new DateTime()) {}
+
+    public string name { get; set; } = name;
+    public string version { get; set; } = version;
+    public long fileSize { get; set; } = fileSize;
+    public string platform { get; set; } = platform;
+    public string downloadUrl { get; set; } = downloadUrl;
+    public string pdfUrl { get; set; } = pdfUrl;
+    public string releaseNotes { get; set; } = releaseNotes;
+    public DateTime releaseDate { get; set; } = releaseDate;
+}
+
 public class OSClassRoot : List<OSClass> { }
 
 public class PCILookupClassRoot : List<PCILookupClass> { }

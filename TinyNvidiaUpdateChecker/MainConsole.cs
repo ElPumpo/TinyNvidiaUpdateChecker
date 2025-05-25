@@ -17,6 +17,8 @@ using HtmlAgilityPack;
 using System.Net.Http;
 using HttpClientProgress;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.VisualBasic;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -27,6 +29,11 @@ namespace TinyNvidiaUpdateChecker
         /// GPU metadata repo
         /// </summary>
         public readonly static string gpuMetadataRepo = "https://github.com/ZenitH-AT/nvidia-data/raw/main";
+
+        /// <summary>
+        /// GPU metadata repo by NVCleanstall, credit to them and their work
+        /// </summary>
+        public readonly static string experimentalGpuMetadataRepo = "https://gpu.me/v1/index2.json";
 
         /// <summary>
         /// URL for client update
@@ -52,15 +59,6 @@ namespace TinyNvidiaUpdateChecker
         /// Remote GPU driver version
         /// </summary>
         public static string OnlineGPUVersion;
-
-        public static string pdfURL;
-        public static DateTime releaseDate;
-        public static string releaseDesc;
-
-        /// <summary>
-        /// The file size of downloadURL in bytes
-        /// </summary>
-        public static long downloadFileSize;
 
         /// <summary>
         /// Show UI or go quiet mode
@@ -169,66 +167,80 @@ namespace TinyNvidiaUpdateChecker
             }
 
             Write("Retrieving GPU information . . . ");
+            DriverMetadata metadata;
+            GPU gpu;
+            int osId;
 
-            MetadataHandler.PrepareCache();
-            (GPU gpu, int osId) = GetDriverMetadata();
-            JObject downloadInfo = GetDriverDownloadInfo(gpu.id, osId, gpu.isDch);
+            if (ConfigurationHandler.ReadSetting("Use Experimental Metadata", null, false) == "true") {
+                (gpu, osId) = GetDriverMetadata(false, true);
+                (metadata, string error) = MetadataHandlerExperimental.GetDriverMetadata(gpu.deviceId);
 
-            OfflineGPUVersion = gpu.version;
-            string downloadURL = downloadInfo["DownloadURL"].ToString();
-            
-            // Some GPUs, such as 970M (Win10) URLs (including release notes URL) are HTTP and not HTTPS
-            if (downloadURL.Contains("https://")) {
-                downloadURL = downloadURL.Substring(10);
+                if (metadata == null) {
+                    Write("ERROR!");
+                    WriteLine();
+                    WriteLine("Experimental GPU repo parsing error. TNUC can not continue.");
+                    WriteLine($"Error reason: {error}");
+                    callExit(1);
+                }
             } else {
-                downloadURL = downloadURL.Substring(9);
-            }
+                MetadataHandler.PrepareCache();
+                (gpu, osId) = GetDriverMetadata();
+                JObject downloadInfo = GetDriverDownloadInfo(gpu.id, osId, gpu.isDch);
+                metadata = new();
 
-            downloadURL = $"https://international{downloadURL}";
+                string tempUrl = downloadInfo["DownloadURL"].ToString();
+                // Some GPUs return URL with HTTP and not HTTPS
+                tempUrl = tempUrl.StartsWith("https://") ? tempUrl[10..] : tempUrl[9..];
+                metadata.downloadUrl = $"https://international{tempUrl}";
+                metadata.version = downloadInfo["Version"].ToString();
+                metadata.releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
+                metadata.platform = !gpu.isNotebook ? "desktop" : "notebook";
 
-            OnlineGPUVersion = downloadInfo["Version"].ToString();
-            releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
-            releaseDesc = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
+                // Santitize release notes, and get PDF
+                string tempNotes = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
 
-            // Cleanup release description
-            var htmlDocument = new HtmlAgilityPack.HtmlDocument();
-            htmlDocument.LoadHtml(releaseDesc);
+                // Cleanup release description
+                var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+                htmlDocument.LoadHtml(tempNotes);
 
-            // Remove image nodes
-            var nodes = htmlDocument.DocumentNode.SelectNodes("//img");
-            if (nodes != null && nodes.Count > 0)
-            {
-                foreach (var child in nodes) child.Remove();
-            }
+                // Remove image nodes
+                var nodes = htmlDocument.DocumentNode.SelectNodes("//img");
+                if (nodes != null && nodes.Count > 0) {
+                    foreach (var child in nodes) child.Remove();
+                }
 
-            // Remove all links
-            try {
-                var hrefNodes = htmlDocument.DocumentNode.SelectNodes("//a").Where(x => x.Attributes.Contains("href"));
-                foreach (var child in hrefNodes) child.Remove();
-            } catch { }
+                // Remove all links
+                try {
+                    var hrefNodes = htmlDocument.DocumentNode.SelectNodes("//a").Where(x => x.Attributes.Contains("href"));
+                    foreach (var child in hrefNodes) child.Remove();
+                } catch { }
 
-            // Finally set new release description
-            releaseDesc = htmlDocument.DocumentNode.OuterHtml;
+                // Finally set new release description
+                metadata.releaseNotes = tempNotes;
 
-            // Get real file size in bytes
-            using (var request = new HttpRequestMessage(HttpMethod.Head, downloadURL)) {
-                using var response = httpClient.Send(request);
-                response.EnsureSuccessStatusCode();
-                downloadFileSize = response.Content.Headers.ContentLength.Value;
-            }
+                // Get file size in bytes
+                using (var request = new HttpRequestMessage(HttpMethod.Head, metadata.downloadUrl)) {
+                    using var response = httpClient.Send(request);
+                    response.EnsureSuccessStatusCode();
+                    metadata.fileSize = response.Content.Headers.ContentLength.Value;
+                }
 
-            // Get PDF release notes
-            var otherNotes = Uri.UnescapeDataString(downloadInfo["OtherNotes"].ToString());
+                // Get PDF release notes
+                var otherNotes = Uri.UnescapeDataString(downloadInfo["OtherNotes"].ToString());
 
-            htmlDocument.LoadHtml(otherNotes);
-            IEnumerable<HtmlNode> node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
+                htmlDocument.LoadHtml(otherNotes);
+                IEnumerable<HtmlNode> node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
 
-            foreach (var child in node) {
-                if (child.Attributes["href"].Value.Contains("release-notes.pdf")) {
-                    pdfURL = child.Attributes["href"].Value.Trim();
-                    break;
+                foreach (var child in node) {
+                    if (child.Attributes["href"].Value.Contains("release-notes.pdf")) {
+                        metadata.pdfUrl = child.Attributes["href"].Value.Trim();
+                        break;
+                    }
                 }
             }
+
+            OfflineGPUVersion = gpu.version;
+            OnlineGPUVersion = metadata.version;
 
             Write("OK!");
             WriteLine();
@@ -237,10 +249,10 @@ namespace TinyNvidiaUpdateChecker
                 WriteLine($"gpuId:       {gpu.id}");
                 WriteLine($"osId:        {osId}");
                 WriteLine($"isDchDriver: {gpu.isDch}");
-                WriteLine($"downloadURL: {downloadURL}");
-                WriteLine($"pdfURL:      {pdfURL}");
-                WriteLine($"releaseDate: {releaseDate.ToShortDateString()}");
-                WriteLine($"downloadFileSize:  {Math.Round((downloadFileSize / 1024f) / 1024f)} MiB");
+                WriteLine($"downloadURL: {metadata.downloadUrl}");
+                WriteLine($"pdfURL:      {metadata.pdfUrl}");
+                WriteLine($"releaseDate: {metadata.releaseDate.ToShortDateString()}");
+                WriteLine($"downloadFileSize:  {Math.Round((metadata.fileSize / 1024f) / 1024f)} MiB");
                 WriteLine($"OfflineGPUVersion: {OfflineGPUVersion}");
                 WriteLine($"OnlineGPUVersion:  {OnlineGPUVersion}");
             }
@@ -260,9 +272,9 @@ namespace TinyNvidiaUpdateChecker
 
             if ((updateAvailable || forceDL) && !dryRun) {
                 if (confirmDL) {
-                    DownloadDriverQuiet(true, downloadURL);
+                    DownloadDriverQuiet(true, metadata);
                 } else {
-                    PromptAvailableUpdate(downloadURL);
+                    PromptAvailableUpdate(metadata);
                 }
             }
 
@@ -397,56 +409,59 @@ namespace TinyNvidiaUpdateChecker
         /// Finds the GPU, the version and queries up to date information
         /// </summary>
 
-        private static (GPU, int) GetDriverMetadata(bool forceRecache = false)
+        private static (GPU, int) GetDriverMetadata(bool forceRecache = false, bool experimental = false)
         {
             bool isNotebook = false;
             bool isDchDriver = false; // TODO rewrite for each GPU
             Regex nameRegex = new(@"(?<=NVIDIA )(.*(?= \([A-Z]+\))|.*(?= [0-9]+GB)|.*(?= with Max-Q Design)|.*(?= COLLECTORS EDITION)|.*)");
             List<int> notebookChassisTypes = [1, 8, 9, 10, 11, 12, 14, 18, 21, 31, 32];
             List<GPU> gpuList = [];
-
-            // Check for notebook
-            // TODO rewrite and identify GPUs properly
-            if (overrideChassisType == 0) {
-                foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
-                    foreach (int chassisType in obj["ChassisTypes"] as ushort[]) {
-                        isNotebook = notebookChassisTypes.Contains(chassisType);
-                    }
-                }
-            } else {
-                isNotebook = notebookChassisTypes.Contains(overrideChassisType);
-            }
-
-            // Get operating system ID
-            OSClassRoot osData = MetadataHandler.RetrieveOSData();
-            string osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
-            string osBit = Environment.Is64BitOperatingSystem ? "64" : "32";
             int osId = 0;
 
-            if (osVersion == "10.0" && Environment.OSVersion.Version.Build >= 22000) {
-                foreach (OSClass os in osData) {
-                    if (Regex.IsMatch(os.name, "Windows 11")) {
-                        osId = os.id;
-                        break;
+            if (!experimental) {
+                // Check for notebook
+                // TODO rewrite and identify GPUs properly
+                if (overrideChassisType == 0) {
+                    foreach (var obj in new ManagementClass("Win32_SystemEnclosure").GetInstances()) {
+                        foreach (int chassisType in obj["ChassisTypes"] as ushort[]) {
+                            isNotebook = notebookChassisTypes.Contains(chassisType);
+                        }
+                    }
+                } else {
+                    isNotebook = notebookChassisTypes.Contains(overrideChassisType);
+                }
+
+                // Get operating system ID
+                OSClassRoot osData = MetadataHandler.RetrieveOSData();
+                string osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
+                string osBit = Environment.Is64BitOperatingSystem ? "64" : "32";
+
+                if (osVersion == "10.0" && Environment.OSVersion.Version.Build >= 22000) {
+                    foreach (OSClass os in osData) {
+                        if (Regex.IsMatch(os.name, "Windows 11")) {
+                            osId = os.id;
+                            break;
+                        }
+                    }
+                } else {
+                    foreach (OSClass os in osData) {
+                        if (os.code == osVersion && Regex.IsMatch(os.name, osBit)) {
+                            osId = os.id;
+                            break;
+                        }
                     }
                 }
-            } else {
-                foreach (OSClass os in osData) {
-                    if (os.code == osVersion && Regex.IsMatch(os.name, osBit)) {
-                        osId = os.id;
-                        break;
-                    }
+
+                if (osId == 0) {
+                    Write("ERROR!");
+                    WriteLine();
+                    WriteLine("No NVIDIA driver was found for this operating system configuration. Make sure TNUC is updated.");
+                    WriteLine();
+                    WriteLine($"osVersion: {osVersion}");
+                    callExit(1);
                 }
             }
 
-            if (osId == 0) {
-                Write("ERROR!");
-                WriteLine();
-                WriteLine("No NVIDIA driver was found for this operating system configuration. Make sure TNUC is updated.");
-                WriteLine();
-                WriteLine($"osVersion: {osVersion}");
-                callExit(1);
-            }
 
             // Check for DCH for newer drivers
             // TODO do we know if this applies to every GPU?
@@ -475,8 +490,11 @@ namespace TinyNvidiaUpdateChecker
 
                         gpuList.Add(new GPU(gpuName, cleanVersion, vendorID, deviceID, true, isNotebook, isDchDriver));
 
-                    // Name does not match but the vendor is NVIDIA, use API to lookup its name
-                    } else if (vendorID == "10de") {
+                        // If experimental mode is enabled, and the vendor is correct, then it's OK to use
+                    } else if (vendorID == "10de" && experimental) {
+                        gpuList.Add(new GPU(rawName, rawVersion, vendorID, deviceID, true, isNotebook, isDchDriver));
+                        // Name does not match but the vendor is NVIDIA, use API to lookup its name
+                    } else if (vendorID == "10de" && !experimental) {
                         gpuList.Add(new GPU(rawName, rawVersion, vendorID, deviceID, false, isNotebook, isDchDriver));
                     }
                 }
@@ -504,20 +522,24 @@ namespace TinyNvidiaUpdateChecker
                 }
             }
 
-            foreach (GPU gpu in gpuList.Where(x => x.isValidated)) {
-                (bool success, int gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, gpu.isNotebook);
+            // If experimental mode is enabled, do NOT use MetadataHandler, instead, MetadataHandlerExperimental is used,
+            // In that case, do not set any GPU as invalid, because it will not pass the code below.
+            if (!experimental) {
+                foreach (GPU gpu in gpuList.Where(x => x.isValidated)) {
+                    (bool success, int gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, gpu.isNotebook);
 
-                if (success) {
-                    gpu.id = gpuId;
-                } else {
-                    // check the other type, perhaps it is an eGPU
-                    (success, gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, !gpu.isNotebook);
-                    
                     if (success) {
-                        gpu.isNotebook = !gpu.isNotebook;
                         gpu.id = gpuId;
                     } else {
-                        gpu.isValidated = false;
+                        // check the other type, perhaps it is an eGPU?
+                        (success, gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, !gpu.isNotebook);
+                    
+                        if (success) {
+                            gpu.isNotebook = !gpu.isNotebook;
+                            gpu.id = gpuId;
+                        } else {
+                            gpu.isValidated = false;
+                        }
                     }
                 }
             }
@@ -551,7 +573,7 @@ namespace TinyNvidiaUpdateChecker
 
             // If no GPU could be validated, then force recache once, and loop again.
             // This fixes issues related with outdated cache
-            if (!forceRecache) {
+            if (!forceRecache & !experimental) {
                 MetadataHandler.PrepareCache(true);
                 return GetDriverMetadata(true);
             } else {
@@ -691,14 +713,14 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Prompt for available GPU update with UI
         /// </summary>
-        private static void PromptAvailableUpdate(string downloadURL)
+        private static void PromptAvailableUpdate(DriverMetadata metadata)
         {
-            DriverDialog.ShowGUI();
+            DriverDialog.ShowGUI(metadata);
 
             if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLEXTRACT) {
                 // download and save (and extract)
 
-                string driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
+                string driverFileName = metadata.downloadUrl.Split('/').Last(); // retrives file name from url
                 string savePath = "";
 
                 try {
@@ -717,11 +739,11 @@ namespace TinyNvidiaUpdateChecker
                     if (dialog.ShowDialog() == DialogResult.OK) {
                         savePath = dialog.SelectedPath + @"\";
                     } else {
-                        PromptAvailableUpdate(downloadURL);
+                        PromptAvailableUpdate(metadata);
                         return;
                     }
 
-                    if (File.Exists(savePath + driverFileName) && !DoesDriverFileSizeMatch(savePath + driverFileName)) {
+                    if (File.Exists(savePath + driverFileName) && !DoesDriverFileSizeMatch(savePath + driverFileName, metadata.fileSize)) {
                         File.Delete(savePath + driverFileName);
                     }
 
@@ -729,13 +751,13 @@ namespace TinyNvidiaUpdateChecker
                     WriteLine();
                     Write("Downloading the driver . . . ");
                     if (showUI && !File.Exists(savePath + driverFileName)) {
-                        HandleDownload(downloadURL, savePath + driverFileName).GetAwaiter().GetResult();
+                        HandleDownload(metadata.downloadUrl, savePath + driverFileName).GetAwaiter().GetResult();
                     }
 
                     // show the progress bar gui
                     else if (!showUI && !File.Exists(savePath + driverFileName)) {
                         using DownloaderForm dlForm = new();
-                        dlForm.DownloadFile(downloadURL, savePath + driverFileName);
+                        dlForm.DownloadFile(metadata.downloadUrl, savePath + driverFileName);
                     }
 
                 } catch (Exception ex) {
@@ -760,7 +782,7 @@ namespace TinyNvidiaUpdateChecker
                     MakeInstaller(false, savePath, driverFileName);
                 }
             } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLINSTALL) {
-                DownloadDriverQuiet(confirmDL, downloadURL);
+                DownloadDriverQuiet(confirmDL, metadata);
                 
             } else if (DriverDialog.selectedBtn == DriverDialog.SelectedBtn.DLINSTALLCUSTOM) {
                 string title = "Choose download location";
@@ -779,11 +801,11 @@ namespace TinyNvidiaUpdateChecker
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    DownloadDriverQuiet(confirmDL, downloadURL, dialog.SelectedPath + @"\", true);
+                    DownloadDriverQuiet(confirmDL, metadata, dialog.SelectedPath + @"\", true);
                 }
                 else
                 {
-                    PromptAvailableUpdate(downloadURL);
+                    PromptAvailableUpdate(metadata);
                     return;
                 }
             }
@@ -792,9 +814,9 @@ namespace TinyNvidiaUpdateChecker
         /// <summary>
         /// Downloads and installs the driver without user interaction
         /// </summary>
-        private static void DownloadDriverQuiet(bool minimized, string downloadURL, string overrideDownloadLocation = null, bool keepDriver = false)
+        private static void DownloadDriverQuiet(bool minimized, DriverMetadata metadata, string overrideDownloadLocation = null, bool keepDriver = false)
         {
-            string driverFileName = downloadURL.Split('/').Last(); // retrives file name from url
+            string driverFileName = metadata.downloadUrl.Split('/').Last(); // retrives file name from url
             string savePath = overrideDownloadLocation ?? Path.GetTempPath();
 
             string FULL_PATH_DIRECTORY = overrideDownloadLocation ?? savePath + OnlineGPUVersion + @"\";
@@ -804,7 +826,7 @@ namespace TinyNvidiaUpdateChecker
 
             Directory.CreateDirectory(FULL_PATH_DIRECTORY);
 
-            if (File.Exists(FULL_PATH_DRIVER) && !DoesDriverFileSizeMatch(FULL_PATH_DRIVER)) {
+            if (File.Exists(FULL_PATH_DRIVER) && !DoesDriverFileSizeMatch(FULL_PATH_DRIVER, metadata.fileSize)) {
                 File.Delete(savePath + driverFileName);
             }
 
@@ -813,7 +835,7 @@ namespace TinyNvidiaUpdateChecker
 
                 if (showUI || confirmDL) {
                     try {
-                        HandleDownload(downloadURL, FULL_PATH_DRIVER).GetAwaiter().GetResult();
+                        HandleDownload(metadata.downloadUrl, FULL_PATH_DRIVER).GetAwaiter().GetResult();
 
                         Write("OK!");
                         WriteLine();
@@ -826,7 +848,7 @@ namespace TinyNvidiaUpdateChecker
                     }
                 } else {
                     using DownloaderForm dlForm = new();
-                    dlForm.DownloadFile(downloadURL, FULL_PATH_DRIVER);
+                    dlForm.DownloadFile(metadata.downloadUrl, FULL_PATH_DRIVER);
                 }
             }
 
@@ -1070,8 +1092,8 @@ namespace TinyNvidiaUpdateChecker
             Environment.Exit(exitNum);
         }
         
-        private static bool DoesDriverFileSizeMatch(string absoluteFilePath) {
-            return new FileInfo(absoluteFilePath).Length == downloadFileSize;
+        private static bool DoesDriverFileSizeMatch(string absoluteFilePath, long fileSize) {
+            return new FileInfo(absoluteFilePath).Length == fileSize;
         }
 
         public static void Write(string value = "")

@@ -2,15 +2,14 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using Newtonsoft.Json.Linq;
 using TinyNvidiaUpdateChecker.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace TinyNvidiaUpdateChecker
 {
     public partial class DriverDialog : Form
     {
         public static SelectedBtn selectedBtn;
+        static DriverMetadata metadata;
         float notesScale;
 
         public DriverDialog()
@@ -18,22 +17,20 @@ namespace TinyNvidiaUpdateChecker
             InitializeComponent();
         }
 
-        public static void ShowGUI()
+        public static void ShowGUI(DriverMetadata _metadata)
         {
-            // show the form
-            using (var form = new DriverDialog())
-            {
-                form.ShowDialog();
-            }
+            metadata = _metadata;
+            using DriverDialog form = new();
+            form.ShowDialog();
         }
 
         private void DriverDialog_Load(object sender, EventArgs e)
         {
-            webBrowser1.DocumentText = MainConsole.releaseDesc;
+            webBrowser1.DocumentText = metadata.releaseNotes;
             notesScale = this.CreateGraphics().DpiX;
 
-            var dateDiff = (DateTime.Now - MainConsole.releaseDate).Days; // how many days between the two dates
-            string daysAgoFromRelease = null;
+            var dateDiff = (DateTime.Now - metadata.releaseDate).Days; // how many days between the two dates
+            string daysAgoFromRelease;
 
             if (dateDiff == 1)
             {
@@ -49,22 +46,18 @@ namespace TinyNvidiaUpdateChecker
             }
 
             releasedLabel.Text += daysAgoFromRelease;
-            toolTip1.SetToolTip(releasedLabel, MainConsole.releaseDate.ToShortDateString());
+            toolTip1.SetToolTip(releasedLabel, metadata.releaseDate.ToShortDateString());
 
             versionLabel.Text += MainConsole.OnlineGPUVersion + $" (you're on {MainConsole.OfflineGPUVersion})";
-            sizeLabel.Text += Math.Round((MainConsole.downloadFileSize / 1024f) / 1024f) + " MiB";
-
-            if (MainConsole.pdfURL == null)
-            {
-                NotesBtn.Enabled = false;
-            }
+            sizeLabel.Text += Math.Round((metadata.fileSize / 1024f) / 1024f) + " MiB";
+            NotesBtn.Enabled = (metadata.pdfUrl != null);
         }
 
         private void NotesBtn_Click(object sender, EventArgs e)
         {
             try
             {
-                Process.Start(new ProcessStartInfo(MainConsole.pdfURL) { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo(metadata.pdfUrl) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
