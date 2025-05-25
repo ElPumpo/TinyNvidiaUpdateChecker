@@ -17,8 +17,6 @@ using HtmlAgilityPack;
 using System.Net.Http;
 using HttpClientProgress;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.VisualBasic;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -34,6 +32,11 @@ namespace TinyNvidiaUpdateChecker
         /// GPU metadata repo by NVCleanstall, credit to them and their work
         /// </summary>
         public readonly static string experimentalGpuMetadataRepo = "https://gpu.me/v1/index2.json";
+
+        /// <summary>
+        /// GPU metadata repo (release notes) by Techpowerup, credit to them and their work
+        /// </summary>
+        public readonly static string experimentalGpuMetadataRepoReleaseNotes = "https://www.techpowerup.com/download/nvidia-geforce-graphics-drivers/changes";
 
         /// <summary>
         /// URL for client update

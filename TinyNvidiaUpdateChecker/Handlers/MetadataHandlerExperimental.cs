@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
 using TinyNvidiaUpdateChecker;
 
 public class GpuDevice
@@ -119,7 +119,10 @@ public class MetadataHandlerExperimental
                     // Test if PDF url is OK
                     if (!IsUrlOk(pdfUrl)) pdfUrl = null;
 
-                    return (new DriverMetadata(latestDriver.key, latestDriver.version, fileSize, latestDriver.type, downloadUrl, pdfUrl, "Not implemented yet (Experimental GPU metadata repo)", releaseDate), null);
+                    // Release notes
+                    string releaseNotes = RetrieveReleaseNotes();
+
+                    return (new DriverMetadata(latestDriver.key, latestDriver.version, fileSize, latestDriver.type, downloadUrl, pdfUrl, releaseNotes, releaseDate), null);
                 }
             }
             else
@@ -150,6 +153,36 @@ public class MetadataHandlerExperimental
         catch
         {
             return false;
+        }
+    }
+
+    private static string RetrieveReleaseNotes()
+    {
+        try
+        {
+            // Parse code
+            string releaseNotes = MainConsole.ReadURL(MainConsole.experimentalGpuMetadataRepoReleaseNotes);
+            JObject parsed = JObject.Parse(releaseNotes);
+            string html = parsed["result"].ToString();
+
+            // Remove download forms
+            html = Regex.Replace(html, @"<form[^>]*action\s*=\s*[""']?/download/.*?</form>", "", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+            // Only get the three latest release notes
+            MatchCollection matches = Regex.Matches(html, @"<div class=""version[^""]*"" id=""changes-[^""]+"">.*?<\/div>", RegexOptions.Singleline);
+            string limitedHtml = "";
+
+            for (int i = 0; i < Math.Min(3, matches.Count); i++)
+            {
+                limitedHtml += matches[i].Value;
+            }
+
+            string finalHtml = "<html><head><meta charset=\"UTF-8\"></head><body>" + limitedHtml + "</body></html>";
+            return finalHtml;
+        }
+        catch
+        {
+            return "Unable to retireve release notes.";
         }
     }
 }
