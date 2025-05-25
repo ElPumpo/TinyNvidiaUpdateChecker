@@ -119,7 +119,7 @@ public class MetadataHandlerExperimental
                     // Test if PDF url is OK
                     if (!IsUrlOk(pdfUrl)) pdfUrl = null;
 
-                    return (new DriverMetadata(latestDriver.key, latestDriver.version, fileSize, latestDriver.type, downloadUrl, pdfUrl, "Not implemented", releaseDate), null);
+                    return (new DriverMetadata(latestDriver.key, latestDriver.version, fileSize, latestDriver.type, downloadUrl, pdfUrl, "Not implemented yet (Experimental GPU metadata repo)", releaseDate), null);
                 }
             }
             else

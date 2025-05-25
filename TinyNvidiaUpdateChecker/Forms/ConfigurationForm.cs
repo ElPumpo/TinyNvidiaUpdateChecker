@@ -8,6 +8,7 @@ namespace TinyNvidiaUpdateChecker.Forms
     {
         private bool originalCheckUpdates;
         private bool originalMinimalInstall;
+        private bool originalExperimentalRepo;
         private string originalDriverType;
 
         public ConfigurationForm()
@@ -40,6 +41,12 @@ namespace TinyNvidiaUpdateChecker.Forms
                 ConfigurationHandler.SetSetting("Minimal install", minimalCheckBox.Checked.ToString().ToLower());
             }
 
+            if (experimentalCheckBox.Checked != originalExperimentalRepo)
+            {
+                ConfigurationHandler.SetSetting("Use Experimental Metadata", experimentalCheckBox.Checked.ToString().ToLower());
+                restartRequired = true;
+            }
+
             if (newDriverType != originalDriverType)
             {
                 ConfigurationHandler.SetSetting("Driver type", newDriverType);
@@ -62,9 +69,11 @@ namespace TinyNvidiaUpdateChecker.Forms
             originalCheckUpdates = ConfigurationHandler.ReadSettingBool("Check for Updates");
             originalMinimalInstall = ConfigurationHandler.ReadSettingBool("Minimal install");
             originalDriverType = ConfigurationHandler.ReadSetting("Driver type");
+            originalExperimentalRepo = ConfigurationHandler.ReadSetting("Use Experimental Metadata", null, false) == "true";
             string gpuId = ConfigurationHandler.ReadSetting("GPU ID", null, false);
 
             updateCheckBox.Checked = originalCheckUpdates;
+            experimentalCheckBox.Checked = originalExperimentalRepo;
 
             if (LibraryHandler.EvaluateLibrary() != null)
             {
@@ -75,15 +84,15 @@ namespace TinyNvidiaUpdateChecker.Forms
                 minimalCheckBox.Enabled = false;
             }
 
-                switch (originalDriverType)
-                {
-                    case "grd":
-                        grdRadioButton.Checked = true;
-                        break;
-                    case "sd":
-                        sdRadioButton.Checked = true;
-                        break;
-                }
+            switch (originalDriverType)
+            {
+                case "grd":
+                    grdRadioButton.Checked = true;
+                    break;
+                case "sd":
+                    sdRadioButton.Checked = true;
+                    break;
+            }
 
             if (gpuId != null && gpuId != "0")
             {

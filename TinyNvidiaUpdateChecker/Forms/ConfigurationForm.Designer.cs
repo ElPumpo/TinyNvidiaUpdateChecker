@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigurationForm));
             groupBox1 = new System.Windows.Forms.GroupBox();
             minimalCheckBox = new System.Windows.Forms.CheckBox();
             updateCheckBox = new System.Windows.Forms.CheckBox();
@@ -39,9 +41,13 @@
             label1 = new System.Windows.Forms.Label();
             multiGpuGroupBox = new System.Windows.Forms.GroupBox();
             resetGpuButton = new System.Windows.Forms.Button();
+            groupBox4 = new System.Windows.Forms.GroupBox();
+            experimentalCheckBox = new System.Windows.Forms.CheckBox();
+            toolTip1 = new System.Windows.Forms.ToolTip(components);
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             multiGpuGroupBox.SuspendLayout();
+            groupBox4.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -60,9 +66,9 @@
             minimalCheckBox.AutoSize = true;
             minimalCheckBox.Location = new System.Drawing.Point(12, 56);
             minimalCheckBox.Name = "minimalCheckBox";
-            minimalCheckBox.Size = new System.Drawing.Size(177, 24);
+            minimalCheckBox.Size = new System.Drawing.Size(184, 24);
             minimalCheckBox.TabIndex = 2;
-            minimalCheckBox.Text = "Enable minimal install";
+            minimalCheckBox.Text = "Enable minimal install?";
             minimalCheckBox.UseVisualStyleBackColor = true;
             // 
             // updateCheckBox
@@ -70,27 +76,27 @@
             updateCheckBox.AutoSize = true;
             updateCheckBox.Location = new System.Drawing.Point(12, 26);
             updateCheckBox.Name = "updateCheckBox";
-            updateCheckBox.Size = new System.Drawing.Size(221, 24);
+            updateCheckBox.Size = new System.Drawing.Size(228, 24);
             updateCheckBox.TabIndex = 1;
-            updateCheckBox.Text = "Check for updates on startup";
+            updateCheckBox.Text = "Check for updates on startup?";
             updateCheckBox.UseVisualStyleBackColor = true;
             // 
             // cancelButton
             // 
-            cancelButton.Location = new System.Drawing.Point(195, 349);
+            cancelButton.Location = new System.Drawing.Point(195, 417);
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new System.Drawing.Size(63, 29);
-            cancelButton.TabIndex = 7;
+            cancelButton.TabIndex = 8;
             cancelButton.Text = "Cancel";
             cancelButton.UseVisualStyleBackColor = true;
             cancelButton.Click += cancelButton_Click;
             // 
             // saveButton
             // 
-            saveButton.Location = new System.Drawing.Point(95, 349);
+            saveButton.Location = new System.Drawing.Point(95, 417);
             saveButton.Name = "saveButton";
             saveButton.Size = new System.Drawing.Size(94, 29);
-            saveButton.TabIndex = 6;
+            saveButton.TabIndex = 7;
             saveButton.Text = "Save";
             saveButton.UseVisualStyleBackColor = true;
             saveButton.Click += saveButton_Click;
@@ -158,11 +164,33 @@
             resetGpuButton.UseVisualStyleBackColor = true;
             resetGpuButton.Click += resetGpuButton_Click;
             // 
+            // groupBox4
+            // 
+            groupBox4.Controls.Add(experimentalCheckBox);
+            groupBox4.Location = new System.Drawing.Point(12, 349);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new System.Drawing.Size(246, 58);
+            groupBox4.TabIndex = 6;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Experimental";
+            // 
+            // experimentalCheckBox
+            // 
+            experimentalCheckBox.AutoSize = true;
+            experimentalCheckBox.Location = new System.Drawing.Point(12, 26);
+            experimentalCheckBox.Name = "experimentalCheckBox";
+            experimentalCheckBox.Size = new System.Drawing.Size(222, 24);
+            experimentalCheckBox.TabIndex = 6;
+            experimentalCheckBox.Text = "Use experimental data repo?";
+            toolTip1.SetToolTip(experimentalCheckBox, "Uses an experimental GPU metadata repo. This resolves issues with eGPUs and TNUC not able to identify GPUs by name.\r\nNOTE: Release description is not implemented");
+            experimentalCheckBox.UseVisualStyleBackColor = true;
+            // 
             // ConfigurationForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(270, 388);
+            ClientSize = new System.Drawing.Size(270, 458);
+            Controls.Add(groupBox4);
             Controls.Add(multiGpuGroupBox);
             Controls.Add(label1);
             Controls.Add(groupBox2);
@@ -180,6 +208,8 @@
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             multiGpuGroupBox.ResumeLayout(false);
+            groupBox4.ResumeLayout(false);
+            groupBox4.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -197,5 +227,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox multiGpuGroupBox;
         private System.Windows.Forms.Button resetGpuButton;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.CheckBox experimentalCheckBox;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
