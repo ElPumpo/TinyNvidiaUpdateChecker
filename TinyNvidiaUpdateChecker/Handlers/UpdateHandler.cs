@@ -37,7 +37,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
                             new("Ignore") { Tag = "no" }
                         ];
 
-                        string dialog = ConfigurationHandler.ShowButtonDialog("TinyNvidiaUpdateChecker - New Client Update Available", changelog, TaskDialogIcon.Information, buttons);
+                        string dialog = ConfigurationHandler.ShowButtonDialog("New Client Update Available", changelog, TaskDialogIcon.Information, buttons);
 
                         if (dialog == "update") {
                             UpdateNow(args, downloadUrl, serverHash.Trim());
