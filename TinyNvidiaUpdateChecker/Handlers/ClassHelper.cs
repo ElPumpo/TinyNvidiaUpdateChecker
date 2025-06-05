@@ -81,6 +81,7 @@ public class Asset
     public string content_type { get; set; }
     public string state { get; set; }
     public int size { get; set; }
+    public string digest { get; set; }
     public int download_count { get; set; }
     public DateTime created_at { get; set; }
     public DateTime updated_at { get; set; }

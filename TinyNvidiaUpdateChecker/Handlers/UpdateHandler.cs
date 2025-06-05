@@ -20,9 +20,8 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 MainConsole.onlineVer = release.tag_name[1..];
 
                 Asset exeFile = release.assets.Where(x => x.name == "TinyNvidiaUpdateChecker.exe").First();
-                Asset checksumFile = release.assets.Where(x => x.name == "checksum").First();
                 string downloadUrl = exeFile.browser_download_url;
-                string serverHash = MainConsole.ReadURL(checksumFile.browser_download_url);
+                string serverHash = exeFile.digest[7..];
                 string changelog = release.body;
 
                 Console.Write("OK!");
@@ -40,7 +39,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
                         string dialog = ConfigurationHandler.ShowButtonDialog("New Client Update Available", changelog, TaskDialogIcon.Information, buttons);
 
                         if (dialog == "update") {
-                            UpdateNow(args, downloadUrl, serverHash.Trim());
+                            UpdateNow(args, downloadUrl, serverHash);
                         }
                     }
                 }
@@ -75,8 +74,8 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 Console.WriteLine("OK!");
                 Console.Write("Validating checksum . . . ");
 
-                // Validate checksum MD5
-                string tempHash = CalculateMD5(tempFile);
+                // Validate checksum SHA256
+                string tempHash = CalculateSHA256(tempFile);
 
                 if (tempHash != null && tempHash == serverHash) {
                     Console.WriteLine("OK!");
@@ -102,15 +101,22 @@ namespace TinyNvidiaUpdateChecker.Handlers
             File.Move(currentExe + ".old", currentExe, true);
         }
 
-        public static string CalculateMD5(string filePath)
+        public static string CalculateSHA256(string filePath)
         {
-            using (MD5 md5 = MD5.Create()) {
-                try {
-                    using (FileStream stream = File.OpenRead(filePath)) {
-                        string hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                try
+                {
+                    using (FileStream stream = File.OpenRead(filePath))
+                    {
+                        string hash = BitConverter.ToString(sha256.ComputeHash(stream))
+                            .Replace("-", "")
+                            .ToLowerInvariant();
                         return hash;
                     }
-                } catch {
+                }
+                catch
+                {
                     Console.WriteLine("ERROR");
                     Console.WriteLine();
                     return null;
