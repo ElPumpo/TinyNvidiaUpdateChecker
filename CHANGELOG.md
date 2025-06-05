@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Release notes not deleting images and links
 
+### Security
+- The release notes are now sanitized, as a security measure
+
 ## [1.22.0] - 2025-05-25
 ### Added
 - Experimental method to retrieve GPU metadata. This fixes all problems assosiated with eGPUs, or failing GPU matches

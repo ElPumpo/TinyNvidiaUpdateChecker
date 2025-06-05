@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Ganss.Xss;
 using Newtonsoft.Json.Linq;
 using TinyNvidiaUpdateChecker;
 
@@ -177,12 +178,16 @@ public class MetadataHandlerExperimental
                 limitedHtml += matches[i].Value;
             }
 
-            string finalHtml = "<html><head><meta charset=\"UTF-8\"></head><body>" + limitedHtml + "</body></html>";
+            // Sanitize
+            HtmlSanitizer sanitizer = new HtmlSanitizer();
+            string sanitizedHtml = sanitizer.Sanitize(limitedHtml);
+
+            string finalHtml = $"<html><head><meta charset=\"UTF-8\"></head><body>{sanitizedHtml}</body></html>";
             return finalHtml;
         }
         catch
         {
-            return "Unable to retireve release notes.";
+            return "Unable to retrieve release notes.";
         }
     }
 }

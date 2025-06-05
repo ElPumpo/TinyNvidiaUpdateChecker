@@ -17,6 +17,7 @@ using HtmlAgilityPack;
 using System.Net.Http;
 using HttpClientProgress;
 using System.Threading.Tasks;
+using Ganss.Xss;
 
 namespace TinyNvidiaUpdateChecker
 {
@@ -224,8 +225,12 @@ namespace TinyNvidiaUpdateChecker
                 // Save the cleaned release description
                 tempNotes = htmlDocument.DocumentNode.OuterHtml;
 
+                // Sanitize it
+                HtmlSanitizer sanitizer = new HtmlSanitizer();
+                string sanitizedHtml = sanitizer.Sanitize(tempNotes);
+
                 // Finally set new release description
-                metadata.releaseNotes = tempNotes;
+                metadata.releaseNotes = sanitizedHtml;
 
                 // Get file size in bytes
                 using (var request = new HttpRequestMessage(HttpMethod.Head, metadata.downloadUrl)) {
