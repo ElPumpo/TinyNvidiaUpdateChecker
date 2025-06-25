@@ -38,6 +38,13 @@ scoop bucket add extras
 scoop install tinynvidiaupdatechecker
 ```
 
+### Install with [Windows Package Manager](https://github.com/microsoft/winget-pkgs)
+
+```
+winget source update
+winget install Hawaii_Beach.TinyNvidiaUpdateChecker
+```
+
 ## How to use
 
 Be sure to [check out the wiki](https://github.com/ElPumpo/TinyNvidiaUpdateChecker/wiki) to learn more about how to use TNUC.
