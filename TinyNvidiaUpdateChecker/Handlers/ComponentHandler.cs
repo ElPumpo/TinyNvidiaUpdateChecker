@@ -165,6 +165,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
 
             return searchName;
         }
+
         public static string GetComponentDescription(string name)
         {
             if (componentDescription.ContainsKey(name))
