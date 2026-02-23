@@ -18,6 +18,8 @@ Some even require admin permissions to run (!!).
 
 ### Debloats the driver install
 
+![Minimall install feature showcase](TNUC_minimal_install.png)
+
 Stops the NVIDIA spyware from being installed on your computer. You choose EXACTLY which components of the driver you actually want to install.
 
 No bloatware gets installed.
