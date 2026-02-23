@@ -1,29 +1,33 @@
 ![TNUC Logo](image.png)
 
-# GeForce Experience sucks, use this tool instead.
+# THE NVIDIA GPU update checker for Windows power users/gamers
 
-The __most popular__ open-sourced tool to keep your NVIDIA GPUs updated.
+The best and __most popular__ open-sourced utility to check for NVIDIA GPU updates.
+
+Made by Windows power users, to Windows power users.
 
 ## Main features
 
-### It's lightweight, portable and open-sourced
+### Lightweight, portable and fully open-sourced
 
-All the other known tools are either bloated, or not open-sourced. It's a security vulnerability waiting to happen.
+Alternatives are either bloated, or not open-sourced, or both. They are a security vulnerability waiting to happen.
 
-Or they require you to install them, and cannot be run in portable mode, and some even require admin permissions to run (!!).
+Or they require you to install them, and cannot be run in portable mode - leaving a lot of trash files in your PC.
+
+Some even require admin permissions to run (!!).
 
 ### Debloats the driver install
 
-Stops the NVIDIA spyware from being installed on your computer, and lets you choose EXACTLY which components of the driver you actually want.
+Stops the NVIDIA spyware from being installed on your computer. You choose EXACTLY which components of the driver you actually want to install.
 
-No more bloatware.
+No bloatware gets installed.
 
 ## Dependencies
 
 - Windows 10 or higher
-- [.NET Desktop Runtime 8 x64](https://dotnet.microsoft.com/en-us/download/dotnet/8.0), it will be prompted to install if missing
+- [.NET Desktop Runtime 8 x64](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (it will be prompted to install if missing)
 - Internet connection
-- (optional) WinRAR, 7-Zip or NanaZip for minimal install feature
+- (optional) WinRAR, 7-Zip or NanaZip for minimal install feature (driver debloat)
 
 ## Installation
 
