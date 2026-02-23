@@ -1,4 +1,4 @@
-![TNUC Logo](image.png)
+![TNUC Logo](TNUC_hero.webp)
 
 # THE NVIDIA GPU update checker for Windows power users/gamers
 
