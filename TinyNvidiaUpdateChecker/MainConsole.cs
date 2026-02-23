@@ -175,80 +175,106 @@ namespace TinyNvidiaUpdateChecker
             GPU gpu;
             int osId;
             string driverType = ConfigurationHandler.ReadSetting("Driver type");
+            string useExperimental = ConfigurationHandler.ReadSetting("Use Experimental Metadata", null, false);
 
-            if (ConfigurationHandler.ReadSetting("Use Experimental Metadata", null, false) == "true") {
-                (gpu, osId) = MetadataHandler.GetDriverMetadata(false, true);
-                (metadata, string error) = MetadataHandlerExperimental.GetDriverMetadata(gpu.deviceId, driverType);
+            if (useExperimental == "true") {
+                (gpu, osId, bool success) = OldMetadataHandler.GetDriverMetadata(false, true);
+                (metadata, string error) = NewMetadataHandler.GetDriverMetadata(gpu.deviceId, driverType);
 
                 if (metadata == null) {
                     Write("ERROR!");
                     WriteLine();
-                    WriteLine("Experimental GPU repo parsing error. TNUC can not continue.");
+                    WriteLine("GPU metadata lookup using NewMetadataHandler failed. TNUC can not continue.");
                     WriteLine($"Error reason: {error}");
                     callExit(1);
                 }
             } else {
-                MetadataHandler.PrepareCache();
-                (gpu, osId) = MetadataHandler.GetDriverMetadata();
-                JObject downloadInfo = GetDriverDownloadInfo(gpu.id, osId, gpu.isDch, driverType);
-                metadata = new();
+                OldMetadataHandler.PrepareCache();
+                (gpu, osId, bool success) = OldMetadataHandler.GetDriverMetadata();
 
-                string tempUrl = downloadInfo["DownloadURL"].ToString();
-                // Some GPUs return URL with HTTP and not HTTPS
-                tempUrl = tempUrl.StartsWith("https://") ? tempUrl[10..] : tempUrl[9..];
-                metadata.downloadUrl = $"https://international{tempUrl}";
-                metadata.version = downloadInfo["Version"].ToString();
-                metadata.releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
+                // If Old was able to lookup GPU data
+                if (success)
+                {
+                    JObject downloadInfo = GetDriverDownloadInfo(gpu.id, osId, gpu.isDch, driverType);
+                    metadata = new();
 
-                // Get driver type/platform
-                metadata.platform = (driverType == "grd") ? (!gpu.isNotebook ? "Desktop" : "Notebook") : "Studio";
+                    string tempUrl = downloadInfo["DownloadURL"].ToString();
+                    // Some GPUs return URL with HTTP and not HTTPS
+                    tempUrl = tempUrl.StartsWith("https://") ? tempUrl[10..] : tempUrl[9..];
+                    metadata.downloadUrl = $"https://international{tempUrl}";
+                    metadata.version = downloadInfo["Version"].ToString();
+                    metadata.releaseDate = DateTime.Parse(downloadInfo["ReleaseDateTime"].ToString());
 
-                // Santitize release notes, and get PDF
-                string tempNotes = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
+                    // Get driver type/platform
+                    metadata.platform = (driverType == "grd") ? (!gpu.isNotebook ? "Desktop" : "Notebook") : "Studio";
 
-                // Cleanup release description
-                var htmlDocument = new HtmlAgilityPack.HtmlDocument();
-                htmlDocument.LoadHtml(tempNotes);
+                    // Santitize release notes, and get PDF
+                    string tempNotes = Uri.UnescapeDataString(downloadInfo["ReleaseNotes"].ToString());
 
-                // Remove image nodes
-                var nodes = htmlDocument.DocumentNode.SelectNodes("//img");
-                if (nodes != null && nodes.Count > 0) {
-                    foreach (var child in nodes) child.Remove();
-                }
+                    // Cleanup release description
+                    var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+                    htmlDocument.LoadHtml(tempNotes);
 
-                // Remove all links
-                try {
-                    var hrefNodes = htmlDocument.DocumentNode.SelectNodes("//a").Where(x => x.Attributes.Contains("href"));
-                    foreach (var child in hrefNodes) child.Remove();
-                } catch { }
-                
-                // Save the cleaned release description
-                tempNotes = htmlDocument.DocumentNode.OuterHtml;
+                    // Remove image nodes
+                    var nodes = htmlDocument.DocumentNode.SelectNodes("//img");
+                    if (nodes != null && nodes.Count > 0)
+                    {
+                        foreach (var child in nodes) child.Remove();
+                    }
 
-                // Sanitize it
-                HtmlSanitizer sanitizer = new HtmlSanitizer();
-                string sanitizedHtml = sanitizer.Sanitize(tempNotes);
+                    // Remove all links
+                    try
+                    {
+                        var hrefNodes = htmlDocument.DocumentNode.SelectNodes("//a").Where(x => x.Attributes.Contains("href"));
+                        foreach (var child in hrefNodes) child.Remove();
+                    }
+                    catch { }
 
-                // Finally set new release description
-                metadata.releaseNotes = sanitizedHtml;
+                    // Save the cleaned release description
+                    tempNotes = htmlDocument.DocumentNode.OuterHtml;
 
-                // Get file size in bytes
-                using (var request = new HttpRequestMessage(HttpMethod.Head, metadata.downloadUrl)) {
-                    using var response = httpClient.Send(request);
-                    response.EnsureSuccessStatusCode();
-                    metadata.fileSize = response.Content.Headers.ContentLength.Value;
-                }
+                    // Sanitize it
+                    HtmlSanitizer sanitizer = new HtmlSanitizer();
+                    string sanitizedHtml = sanitizer.Sanitize(tempNotes);
 
-                // Get PDF release notes
-                var otherNotes = Uri.UnescapeDataString(downloadInfo["OtherNotes"].ToString());
+                    // Finally set new release description
+                    metadata.releaseNotes = sanitizedHtml;
 
-                htmlDocument.LoadHtml(otherNotes);
-                IEnumerable<HtmlNode> node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
+                    // Get file size in bytes
+                    using (var request = new HttpRequestMessage(HttpMethod.Head, metadata.downloadUrl))
+                    {
+                        using var response = httpClient.Send(request);
+                        response.EnsureSuccessStatusCode();
+                        metadata.fileSize = response.Content.Headers.ContentLength.Value;
+                    }
 
-                foreach (var child in node) {
-                    if (child.Attributes["href"].Value.Contains("release-notes.pdf")) {
-                        metadata.pdfUrl = child.Attributes["href"].Value.Trim();
-                        break;
+                    // Get PDF release notes
+                    var otherNotes = Uri.UnescapeDataString(downloadInfo["OtherNotes"].ToString());
+
+                    htmlDocument.LoadHtml(otherNotes);
+                    IEnumerable<HtmlNode> node = htmlDocument.DocumentNode.Descendants("a").Where(x => x.Attributes.Contains("href"));
+
+                    foreach (var child in node)
+                    {
+                        if (child.Attributes["href"].Value.Contains("release-notes.pdf"))
+                        {
+                            metadata.pdfUrl = child.Attributes["href"].Value.Trim();
+                            break;
+                        }
+                    }
+                } else {
+                    Write("Now loading NewMetadataHandler. . . ");
+                    // OldMetadataHandler failed lookup, revert to NewMetadataHandler
+                    (gpu, osId, bool success2) = OldMetadataHandler.GetDriverMetadata(false, true);
+                    (metadata, string error) = NewMetadataHandler.GetDriverMetadata(gpu.deviceId, driverType);
+
+                    if (metadata == null)
+                    {
+                        Write("ERROR!");
+                        WriteLine();
+                        WriteLine("GPU metadata lookup using NewMetadataHandler failed. TNUC can not continue.");
+                        WriteLine($"Error reason: {error}");
+                        callExit(1);
                     }
                 }
             }

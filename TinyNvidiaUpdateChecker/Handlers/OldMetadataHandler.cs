@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace TinyNvidiaUpdateChecker.Handlers
 {
-    class MetadataHandler
+    class OldMetadataHandler
     {
         /// <summary>
         /// Cache max duration in days
@@ -103,7 +103,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
         /// <summary>
         /// Finds the GPU, the version and queries up to date information
         /// </summary>
-        public static (GPU, int) GetDriverMetadata(bool forceRecache = false, bool experimental = false)
+        public static (GPU, int, bool) GetDriverMetadata(bool forceRecache = false, bool experimental = false)
         {
             bool isNotebook = false;
             bool isDchDriver = false; // TODO rewrite for each GPU
@@ -132,7 +132,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
                 }
 
                 // Get operating system ID
-                OSClassRoot osData = MetadataHandler.RetrieveOSData();
+                OSClassRoot osData = OldMetadataHandler.RetrieveOSData();
                 string osVersion = $"{Environment.OSVersion.Version.Major}.{Environment.OSVersion.Version.Minor}";
                 string osBit = Environment.Is64BitOperatingSystem ? "64" : "32";
 
@@ -248,7 +248,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
             {
                 foreach (GPU gpu in gpuList.Where(x => x.isValidated))
                 {
-                    (bool success, int gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, gpu.isNotebook);
+                    (bool success, int gpuId) = OldMetadataHandler.GetGpuIdFromName(gpu.name, gpu.isNotebook);
 
                     if (success)
                     {
@@ -257,7 +257,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
                     else
                     {
                         // check the other type, perhaps it is an eGPU?
-                        (success, gpuId) = MetadataHandler.GetGpuIdFromName(gpu.name, !gpu.isNotebook);
+                        (success, gpuId) = OldMetadataHandler.GetGpuIdFromName(gpu.name, !gpu.isNotebook);
 
                         if (success)
                         {
@@ -285,7 +285,7 @@ namespace TinyNvidiaUpdateChecker.Handlers
                     {
                         if (gpu.id == configGpuId)
                         {
-                            return (gpu, osId);
+                            return (gpu, osId, true);
                         }
                     }
 
@@ -296,14 +296,14 @@ namespace TinyNvidiaUpdateChecker.Handlers
                     {
                         if (gpu.id == configGpuId)
                         {
-                            return (gpu, osId);
+                            return (gpu, osId, true);
                         }
                     }
                 }
                 else
                 {
                     GPU gpu = gpuList.Where(x => x.isValidated).First();
-                    return (gpu, osId);
+                    return (gpu, osId, true);
                 }
             }
 
@@ -311,14 +311,15 @@ namespace TinyNvidiaUpdateChecker.Handlers
             // This fixes issues related with outdated cache
             if (!forceRecache & !experimental)
             {
-                MetadataHandler.PrepareCache(true);
+                OldMetadataHandler.PrepareCache(true);
                 return GetDriverMetadata(true);
             }
             else
             {
                 MainConsole.Write("ERROR!");
                 MainConsole.WriteLine();
-                MainConsole.WriteLine("GPU metadata lookup has failed! Please file an issue on the GitHub project page and include the following information:");
+                MainConsole.WriteLine("GPU metadata lookup using OldMetadataHandler failed!");
+                MainConsole.WriteLine("Debug information:");
                 MainConsole.WriteLine();
 
                 foreach (GPU gpu in gpuList)
@@ -326,8 +327,11 @@ namespace TinyNvidiaUpdateChecker.Handlers
                     MainConsole.WriteLine($"GPU Name: '{gpu.name}' | VendorId: {gpu.vendorId} | DeviceId: {gpu.deviceId} | IsNotebook: {gpu.isNotebook}");
                 }
 
-                MainConsole.callExit(1);
-                return (null, 0);
+                MainConsole.WriteLine();
+
+                // Return success false state
+                // This will fall back to NewMetadataHandler
+                return (null, 0, false);
             }
         }
         }

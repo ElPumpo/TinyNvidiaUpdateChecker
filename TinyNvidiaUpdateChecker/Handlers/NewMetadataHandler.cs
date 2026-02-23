@@ -33,7 +33,7 @@ public class CombinedGpuData
     public List<DriverVersion> versions { get; set; }
 }
 
-public class MetadataHandlerExperimental
+public class NewMetadataHandler
 {
     private static CombinedGpuData _combinedGpuData;
 
