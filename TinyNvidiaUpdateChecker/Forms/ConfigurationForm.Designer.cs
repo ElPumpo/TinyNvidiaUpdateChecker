@@ -182,7 +182,7 @@
             experimentalCheckBox.Size = new System.Drawing.Size(222, 24);
             experimentalCheckBox.TabIndex = 6;
             experimentalCheckBox.Text = "Use experimental data repo?";
-            toolTip1.SetToolTip(experimentalCheckBox, "Uses an experimental GPU metadata repo. This resolves issues with eGPUs and TNUC not able to identify GPUs by name.\r\nNOTE: Release description is not implemented");
+            toolTip1.SetToolTip(experimentalCheckBox, "Uses an experimental GPU metadata repo. This resolves issues with eGPUs and TNUC not able to identify GPUs by name.");
             experimentalCheckBox.UseVisualStyleBackColor = true;
             // 
             // ConfigurationForm
