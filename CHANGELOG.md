@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Fixed
+- Compatibility with WinRAR versions under v7
+
 ## [1.23.0] - 2026-02-23
 ### Changed
 - Fallback to New Metadata Handler if GPU metadata was not found in Zenith repo

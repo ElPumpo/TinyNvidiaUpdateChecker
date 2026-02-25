@@ -809,7 +809,7 @@ namespace TinyNvidiaUpdateChecker
                 process.StartInfo = new ProcessStartInfo {
                     FileName = libraryFile.GetInstallationDirectory() + "winrar.exe",
                     WorkingDirectory = savePath,
-                    Arguments = $"x {fileName} -optemp -y",
+                    Arguments = @$"x {fileName} -y temp\",
                     UseShellExecute = false
                 };
 
